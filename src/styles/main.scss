@@ -1,0 +1,19 @@
+// abstracts：變數、mixin 等工具，編譯後不會直接產生任何 CSS
+@use 'abstracts/variables' as *;
+@use 'abstracts/mixins' as *;
+
+// base：跟特定元件無關的全站基礎樣式（reset、字體排版）
+@use 'base/reset';
+@use 'base/typography';
+
+// layout：頁面骨架區塊，只會出現一次的區域（header、footer）
+@use 'layout/header';
+@use 'layout/footer';
+
+// components：可重複使用的元件樣式（目前只有 .section 共用樣式）
+@use 'components/section';
+
+// pages：只屬於單一頁面/區塊的專屬樣式
+@use 'pages/about';
+@use 'pages/works';
+@use 'pages/contact';
