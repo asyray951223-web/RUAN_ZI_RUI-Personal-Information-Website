@@ -1,3 +1,6 @@
+// 引用顏色變數，讓底色跟其他地方共用同一個顏色來源，之後要換色只需改 _variables.scss 一處
+@use '../abstracts/variables' as *;
+
 // 讓 padding、border 都算進元素本身設定的寬高裡，
 // 避免之後加了 padding/border 導致實際尺寸比預期還大、版面跑版
 *,
@@ -9,5 +12,7 @@
 body {
   // 瀏覽器預設 body 有約 8px margin，歸零讓內容貼齊視窗邊緣
   margin: 0;
-  background-color: rgba(247, 251, 254, 0.86);
+  background-color: $color-platinum;
+
+
 }

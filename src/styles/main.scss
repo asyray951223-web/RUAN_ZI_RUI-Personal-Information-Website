@@ -15,5 +15,7 @@
 
 // pages：只屬於單一頁面/區塊的專屬樣式
 @use 'pages/about';
-@use 'pages/works';
+@use 'pages/resume';
+@use 'pages/portfolio';
+@use 'pages/skills';
 @use 'pages/contact';

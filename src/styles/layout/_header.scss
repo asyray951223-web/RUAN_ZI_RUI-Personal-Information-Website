@@ -1,46 +1,52 @@
 // .site-header / .site-nav 樣式放這裡
-@use '../abstracts/variables' as *;
+@use "../abstracts/variables" as *;
 
 .site-header {
-  position: fixed;
+  position: fixed; // 固定在視窗頂端，滾動時不隨頁面移動
   top: 0;
   left: 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: $header-height;
-  padding: 0 2rem;
-  background: transparent;
-  z-index: 100;
-  box-sizing: border-box;
-}
+  width: 100%; // 撐滿整個視窗寬度
+  display: flex; // 標題與導覽列同一行水平排列
+  align-items: center; // 垂直置中對齊
+  justify-content: space-between; // 標題靠左、導覽列靠右，兩端對齊
+  height: $header-height; // 固定高度，對應 .site-main 的 padding-top
+  padding: 0 2rem; // 左右留白，避免內容貼邊
+  background: transparent; // 透明背景，可看到底下內容
+  z-index: 100; // 確保 header 疊在其他內容之上
+  box-sizing: border-box; // padding 不撐大整體寬高
 
-.site-header__title {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.site-nav__list {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.site-nav__link {
-  color: inherit;
-  text-decoration: none;
-  font-size: 0.95rem;
-
-  &:hover {
-    opacity: 0.7;
+  // &__title 會編譯成 .site-header__title，巢狀在父層底下方便閱讀對應關係
+  &__title {
+    margin: 0; // 移除 h1 預設外距，避免撐開 header 高度
+    font-size: 1.25rem;
+    font-weight: 700;
   }
 }
 
-.site-main {
-  padding-top: $header-height; // 避免內容被固定 header 蓋住
+.site-nav {
+  // &__list 會編譯成 .site-nav__list
+  &__list {
+    display: flex; // 導覽項目橫向排列
+    align-items: center; // 垂直置中
+    gap: 1.5rem; // 項目間距
+    margin: 0;
+    padding: 0;
+    list-style: none; // 去掉 ul 預設項目符號
+  }
+
+  // &__link 會編譯成 .site-nav__link
+  &__link {
+    color: inherit; // 繼承文字顏色，方便統一換色
+    text-decoration: none; // 去掉底線
+    font-size: 0.95rem;
+
+    &:hover {
+      color: $color-pacific-cyan; // 滑鼠移過稍微變淡，提供互動回饋
+      text-decoration: underline;
+    }
+  }
+}
+
+  .site-main {
+  padding-top: $header-height; // 幫內容往下推，避免被固定 header 蓋住
 }

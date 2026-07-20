@@ -110,3 +110,38 @@ src/styles/
 **背景**：`.playwright-mcp/`（Claude Code 用 Playwright MCP 驗證網頁時產生的截圖/紀錄暫存資料夾）位於專案根目錄，跟 `src/` 是平行關係。`.gitignore` 的規則只對「所在資料夾及其子資料夾」生效，`src/.gitignore` 管不到根目錄的東西，所以不能共用。
 
 **變更**：新增專案根目錄的 `.gitignore`，把 `.playwright-mcp/` 排除在版控外；`src/.gitignore`（管 `node_modules/`）維持不變，兩者分工：根目錄管全 repo 通用的忽略規則，`src/.gitignore` 管 `src/` 內部建置產物。
+
+### 8. 讓有機會用到顏色的 SCSS 檔案改用顏色變數
+
+**背景**：`abstracts/_variables.scss` 已定義 `$color-parchment: rgba(245, 239, 237);`，但 `base/_reset.scss` 的 `body { background-color: rgba(245, 239, 237); }` 仍是寫死同一個顏色值，沒有引用變數，之後要換色得兩處一起改，容易漏改。
+
+**變更**：
+- `src/styles/base/_reset.scss`：開頭加上 `@use '../abstracts/variables' as *;`，並把 `background-color: rgba(245, 239, 237);` 改成 `background-color: $color-parchment;`。
+
+**檢查過的其他檔案**：`layout/_header.scss`、`layout/_footer.scss`、`components/_section.scss`、`pages/_about.scss`、`pages/_works.scss`、`pages/_contact.scss`、`abstracts/_mixins.scss` 目前都沒有寫死的顏色值（多數還是空檔案），暫時不需要引用顏色變數；等之後這些檔案補上樣式、用到顏色時，記得比照本次做法引用 `$color-parchment` 或新增的顏色變數，不要再寫死色碼。
+
+**驗證方式**：`npx sass src/styles/main.scss src/styles/main.css` 重新編譯成功，`main.css` 輸出的背景色數值與變更前完全一致（僅來源從寫死值改為變數）。
+
+### 9. 頁面內容擴充為五大區塊（自我介紹／履歷／作品集／技能／聯絡方式）
+
+**背景**：原本 `index.html` 只有三個簡略區塊（自我介紹、作品列表、聯絡方式），使用者依照完整個人網站規劃（履歷、作品集、技能等常見區塊應包含的資訊項目），要求先規劃並產出 HTML 結構，暫不做排版與 CSS 裝飾，文字內容一律用結構性佔位文字，之後由使用者自行填入真實資料。
+
+**變更**：
+- `src/pages/index.html`：
+  - 導覽列 `site-nav__list` 從三個錨點擴充為五個：`#about`／`#resume`／`#portfolio`／`#skills`／`#contact`。
+  - `#about`：新增 `about__tagline`（一句話定位）、`about__bio`（簡短背景）、`about__value`（價值主張）三段。
+  - 新增 `#resume`（履歷／經歷）區塊：分「工作經歷／專案經歷／教育背景／證照獎項」四個 `resume__group` 子群組，每筆條目用 `<article>` 包裹，方便日後複製新增。
+  - 原本的「作品列表」`#works` 擴充改名為 `#portfolio`（作品集），每個作品項目用 `<article>` 包含封面圖、名稱、一句話說明、技術標籤列表、角色、案例故事、連結列表。
+  - 新增 `#skills`（技能）區塊：分「技術／工具／語言」三個 `skills__group`，每項用 `skills__name` + `skills__level` 兩個 `span` 標示名稱與熟練度。
+  - `#contact` 新增 `contact__social-list`（社群連結）與 `contact__form`（聯絡表單 HTML 骨架：姓名／Email／訊息／送出鈕，`label for` 對應 `input id`，但沒有 `action`/`method`，不含任何送出邏輯）。
+- SCSS 同步調整（維持空白樣式檔，不寫實際 CSS 規則）：
+  - `src/styles/pages/_works.scss` 改名為 `src/styles/pages/_portfolio.scss`，呼應 HTML 區塊改名。
+  - 新增空白樣式檔 `src/styles/pages/_resume.scss`、`src/styles/pages/_skills.scss`。
+  - `src/styles/main.scss` 的 `@use` 清單同步更新（`pages/works` → `pages/portfolio`，新增 `pages/resume`、`pages/skills`）。
+
+**取捨說明**：
+- 「作品列表」改名「作品集」是使用者確認的決定，class/id 命名從 `works` 全面改成 `portfolio`，避免新舊命名混用造成混淆。
+- 聯絡表單這次只搭骨架、不串接（不接 Google 表單、不寫後端、不加 JS），因為串接方式屬於之後才會定案的技術細節。
+- 全部使用結構性佔位文字，不是使用者真實履歷/作品資料，之後要上線前需要使用者自行替換成真實內容。
+
+**驗證方式**：`npx sass src/styles/main.scss src/styles/main.css` 重新編譯成功，無錯誤；新增/改名的空白 SCSS 模組不影響現有 `main.css` 視覺輸出。

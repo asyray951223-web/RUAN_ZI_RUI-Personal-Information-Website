@@ -12,6 +12,9 @@
     />
     <link rel="stylesheet" href="/src/styles/main.css" />
   </head>
+
+
+
   <body>
     <!-- site-header 是 Block；site-header__title 是它底下的 Element，
          只能存在於 site-header 裡面，不會被單獨拿去別的地方用 -->
@@ -25,7 +28,13 @@
             <a class="site-nav__link" href="#about">自我介紹</a>
           </li>
           <li class="site-nav__item">
-            <a class="site-nav__link" href="#works">作品列表</a>
+            <a class="site-nav__link" href="#resume">履歷</a>
+          </li>
+          <li class="site-nav__item">
+            <a class="site-nav__link" href="#portfolio">作品集</a>
+          </li>
+          <li class="site-nav__item">
+            <a class="site-nav__link" href="#skills">技能</a>
           </li>
           <li class="site-nav__item">
             <a class="site-nav__link" href="#contact">聯絡方式</a>
@@ -34,24 +43,131 @@
       </nav>
     </header>
     <main id="main" class="site-main">
-      <!-- class="section about"：section 是三個區塊共用的樣式（例如統一間距），
+      <!-- class="section about"：section 是各區塊共用的樣式（例如統一間距），
            about 是這個區塊專屬的樣式；id="about" 則保留給上面 <a href="#about"> 錨點跳轉用，
            跟 class 負責的事情分開，不要混用 -->
       <section id="about" class="section about">
         <h2 class="section__title">自我介紹</h2>
-        <p class="about__text">這裡寫一段簡短的自我介紹。</p>
+        <!-- 三段各自獨立 class，方便之後分開排版（例如 tagline 用大字、value 用不同顏色強調） -->
+        <p class="about__tagline">一句話定位佔位文字（例如：前端工程師 / 視覺設計師）</p>
+        <p class="about__bio">簡短背景佔位文字（目前身分、擅長領域）</p>
+        <p class="about__value">價值主張佔位文字（能幫別人解決什麼問題）</p>
       </section>
 
-      <section id="works" class="section works">
-        <h2 class="section__title">作品列表</h2>
-        <!-- works__list 是 Block(works)底下的 Element；
-             每個 works__item 都重複同樣的結構，之後要新增作品只要照抄一行 li -->
-        <ul class="works__list">
-          <li class="works__item"><a class="works__link" href="#">作品一</a></li>
-          <li class="works__item"><a class="works__link" href="#">作品二</a></li>
+      <!-- resume 區塊分四個子群組，每組用 <h3 class="resume__subtitle"> 當小標題，
+           群組內的每一筆條目都用 <article> 包裹：<article> 代表「可以獨立抽出來看也講得通的一段內容」，
+           之後要新增第二份工作/第二個學歷，只要照抄同一個 <li><article>...</article></li> 結構 -->
+      <section id="resume" class="section resume">
+        <h2 class="section__title">履歷 / 經歷</h2>
+
+        <div class="resume__group">
+          <h3 class="resume__subtitle">工作經歷</h3>
+          <ul class="resume__job-list">
+            <li class="resume__job">
+              <article>
+                <h4 class="resume__job-title">職稱佔位</h4>
+                <p class="resume__job-meta">公司名稱・期間佔位（例如 2023.01–2024.06）</p>
+                <p class="resume__job-desc">負責項目與成果佔位文字（可量化更好）</p>
+              </article>
+            </li>
+          </ul>
+        </div>
+
+        <div class="resume__group">
+          <h3 class="resume__subtitle">專案經歷</h3>
+          <ul class="resume__project-list">
+            <li class="resume__project">
+              <article>
+                <h4 class="resume__project-title">專案名稱佔位</h4>
+                <p class="resume__project-desc">專案簡述佔位（公司內部或 side project）</p>
+              </article>
+            </li>
+          </ul>
+        </div>
+
+        <div class="resume__group">
+          <h3 class="resume__subtitle">教育背景</h3>
+          <ul class="resume__edu-list">
+            <li class="resume__edu">
+              <article>
+                <h4 class="resume__edu-school">學校 / 科系佔位</h4>
+                <p class="resume__edu-meta">在學期間・相關課程或專題佔位</p>
+              </article>
+            </li>
+          </ul>
+        </div>
+
+        <div class="resume__group">
+          <h3 class="resume__subtitle">證照 / 獎項</h3>
+          <ul class="resume__award-list">
+            <li class="resume__award">證照或獎項名稱佔位</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- portfolio 是「作品列表」擴充改名而來（原本 class 是 works），
+           每個作品用 <article> 包裹一整組資訊（封面圖／名稱／技術／角色／案例故事／連結），
+           之後新增作品只要照抄同一個 <li class="portfolio__item"><article>...</article></li> 結構 -->
+      <section id="portfolio" class="section portfolio">
+        <h2 class="section__title">作品集</h2>
+        <ul class="portfolio__list">
+          <li class="portfolio__item">
+            <article>
+              <img class="portfolio__cover" src="" alt="作品封面圖佔位" />
+              <h3 class="portfolio__name">作品名稱佔位</h3>
+              <p class="portfolio__summary">一句話說明佔位</p>
+              <ul class="portfolio__tech-list">
+                <li class="portfolio__tech">技術名稱佔位</li>
+              </ul>
+              <p class="portfolio__role">角色佔位（獨自 / 團隊，負責什麼）</p>
+              <p class="portfolio__story">案例故事佔位（選填：問題 → 解法 → 成果）</p>
+              <ul class="portfolio__link-list">
+                <li class="portfolio__link-item"><a class="portfolio__link" href="#">線上 Demo</a></li>
+                <li class="portfolio__link-item"><a class="portfolio__link" href="#">GitHub</a></li>
+              </ul>
+            </article>
+          </li>
         </ul>
       </section>
 
+      <!-- skills 分技術／工具／語言三群組，每個項目用 skills__name + skills__level 兩個 span，
+           先用文字描述熟練度（例如「熟練」），之後要做成進度條/星級，只需改樣式不用改結構 -->
+      <section id="skills" class="section skills">
+        <h2 class="section__title">技能</h2>
+
+        <div class="skills__group">
+          <h3 class="skills__subtitle">技術</h3>
+          <ul class="skills__list">
+            <li class="skills__item">
+              <span class="skills__name">技能名稱佔位</span>
+              <span class="skills__level">熟練度佔位</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="skills__group">
+          <h3 class="skills__subtitle">工具</h3>
+          <ul class="skills__list">
+            <li class="skills__item">
+              <span class="skills__name">工具名稱佔位</span>
+              <span class="skills__level">熟練度佔位</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="skills__group">
+          <h3 class="skills__subtitle">語言</h3>
+          <ul class="skills__list">
+            <li class="skills__item">
+              <span class="skills__name">語言名稱佔位</span>
+              <span class="skills__level">熟練度佔位</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- contact__form 只是先搭好骨架（label for 對應 input id，方便無障礙），
+           沒有 action/method，也沒有接任何後端或 JS，送出鈕目前按下去不會有作用 -->
       <section id="contact" class="section contact">
         <h2 class="section__title">聯絡方式</h2>
         <p class="contact__text">
@@ -59,6 +175,27 @@
             >asyray951223@gmail.com</a
           >
         </p>
+
+        <ul class="contact__social-list">
+          <li class="contact__social-item"><a class="contact__social-link" href="#">GitHub 佔位連結</a></li>
+          <li class="contact__social-item"><a class="contact__social-link" href="#">LinkedIn 佔位連結</a></li>
+        </ul>
+
+        <form class="contact__form">
+          <div class="contact__form-field">
+            <label class="contact__form-label" for="contact-name">姓名</label>
+            <input class="contact__form-input" type="text" id="contact-name" name="name" />
+          </div>
+          <div class="contact__form-field">
+            <label class="contact__form-label" for="contact-email">Email</label>
+            <input class="contact__form-input" type="email" id="contact-email" name="email" />
+          </div>
+          <div class="contact__form-field">
+            <label class="contact__form-label" for="contact-message">訊息</label>
+            <textarea class="contact__form-textarea" id="contact-message" name="message"></textarea>
+          </div>
+          <button class="contact__form-submit" type="submit">送出</button>
+        </form>
       </section>
     </main>
 
