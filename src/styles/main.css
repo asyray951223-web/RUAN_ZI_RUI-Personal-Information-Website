@@ -116,7 +116,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  font-size: 1.5rem;
+  font-size: 1.88rem;
   font-weight: 800;
   color: rgb(13, 50, 77);
   margin-bottom: 1.6rem;
@@ -137,7 +137,7 @@ body {
 }
 .about__info-list li {
   padding: 0.35rem 0 0.35rem 0.9rem;
-  font-size: 0.85rem;
+  font-size: 1.06rem;
   color: #32424d;
 }
 .about__info-list b {
@@ -145,7 +145,7 @@ body {
   width: 4.2em;
   color: #9aa8b0;
   font-weight: 700;
-  font-size: 0.72rem;
+  font-size: 0.9rem;
   letter-spacing: 0.04em;
 }
 
@@ -172,15 +172,14 @@ body {
   border: 2px solid #b3401f;
   background: #eef2f5;
   color: #9aa8b0;
-  font-size: 0.75rem;
+  font-size: 0.94rem;
   text-align: center;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 
 .about__tagline {
   margin: 0 0 0.5rem;
-  font-size: 1.6rem;
+  font-size: 2rem;
   font-weight: 800;
   line-height: 1.35;
   letter-spacing: -0.01em;
@@ -190,13 +189,13 @@ body {
 
 .about__identity {
   margin: 0 0 1rem;
-  font-size: 0.92rem;
+  font-size: 1.15rem;
   color: #55707f;
 }
 
 .about__bio {
   margin: 0 0 1.1rem;
-  font-size: 0.94rem;
+  font-size: 1.18rem;
   line-height: 1.8;
   color: #32424d;
 }
@@ -214,7 +213,7 @@ body {
   background: #eef2f5;
   color: #3d5566;
   font-family: "Space Mono", monospace;
-  font-size: 0.78rem;
+  font-size: 0.98rem;
   font-weight: 700;
 }
 .about__tag::before {
@@ -226,7 +225,7 @@ body {
   margin: 1.1rem 0 0;
   padding-top: 0.9rem;
   border-top: 1px dashed rgba(13, 50, 77, 0.18);
-  font-size: 1.15rem;
+  font-size: 1.44rem;
   font-weight: 700;
   font-style: italic;
   color: #b3401f;
@@ -240,7 +239,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  font-size: 1.5rem;
+  font-size: 1.88rem;
   font-weight: 800;
   color: rgb(13, 50, 77);
   margin-bottom: 1.4rem;
@@ -257,7 +256,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 0.8rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #b3401f;
   text-decoration: none;
@@ -276,7 +275,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 1rem 0;
-  font-size: 0.95rem;
+  font-size: 1.19rem;
   font-weight: 700;
   color: rgb(13, 50, 77);
   cursor: pointer;
@@ -289,7 +288,7 @@ body {
   content: "+";
   color: #b3401f;
   font-family: "Space Mono", monospace;
-  font-size: 1.1rem;
+  font-size: 1.38rem;
 }
 
 .resume__group[open] > .resume__subtitle::after {
@@ -365,7 +364,7 @@ body {
 .resume__cert-name,
 .resume__award-name {
   margin: 0 0 0.2rem;
-  font-size: 0.92rem;
+  font-size: 1.15rem;
   color: rgb(13, 50, 77);
 }
 
@@ -374,7 +373,7 @@ body {
 .resume__cert-meta,
 .resume__award-meta {
   margin: 0 0 0.4rem;
-  font-size: 0.78rem;
+  font-size: 0.98rem;
   color: #9aa8b0;
 }
 
@@ -385,7 +384,7 @@ body {
 .resume__project-role,
 .resume__campus {
   margin: 0 0 0.3rem;
-  font-size: 0.86rem;
+  font-size: 1.08rem;
   line-height: 1.7;
   color: #32424d;
 }
@@ -400,7 +399,7 @@ body {
 }
 
 .resume__project-tag {
-  font-size: 0.72rem;
+  font-size: 0.9rem;
   padding: 0.2rem 0.55rem;
   border-radius: 6px;
   background: #eef2f5;
@@ -413,8 +412,10 @@ body {
 }
 
 .resume__project-link {
-  font-size: 0.82rem;
+  font-size: 1.03rem;
   color: #b3401f;
   display: inline-block;
   margin-top: 0.4rem;
-}/*# sourceMappingURL=main.css.map */
+}
+
+/*# sourceMappingURL=main.css.map */

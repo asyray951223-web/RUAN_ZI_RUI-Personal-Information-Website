@@ -433,3 +433,19 @@ src/styles/
 - 手動重建 `main.css` 時，是逐一比對「當下」每個 `.scss` 檔案的真實內容而不是憑記憶／舊筆記回推，避免又出現另一層對不上的問題；但這代表如果使用者自己電腦上的 `main.css` 曾經跟 `.scss` 原始碼有過細微差異（例如手動微調過某個數值而沒有同步回 `.scss`），這次的重建會以 `.scss` 為準，蓋掉那類差異。
 
 **驗證方式**：手動核對 `main.css` 內容跟目前 `.about`／`.resume`／`.site-header`／`.site-nav` 對應的 `.scss` 規則逐條比對過一致；未在沙盒 shell 裡再次執行 `npx sass`。建議使用者之後有空時，在自己電腦上執行一次正式的 `npx sass` 編譯，確認輸出結果跟這次手動重建的版本一致。
+
+### 25. `#about`／`#resume` 全部字體 ×1.25 等比例放大
+
+**背景**：使用者用 `/plan` 要求把「個人介紹、履歷」兩個區塊的字體全部等比例放大，沒有指定放大多少倍。先盤點 `src/styles/pages/_about.scss`、`src/styles/pages/_resume.scss` 兩個檔案目前所有 `font-size`（各 9 處），用 AskUserQuestion 確認放大倍率後（1.15×／1.25×／1.4× 三選一），使用者選定 **1.25×**。
+
+**變更**：
+- `src/styles/pages/_about.scss`：`about__eyebrow`（1.5→1.88rem）、`about__info-list li`（0.85→1.06rem）、`about__info-list b`（0.72→0.9rem）、`about__avatar` 佔位文字（0.75→0.94rem）、`about__tagline`（1.6→2rem）、`about__identity`（0.92→1.15rem）、`about__bio`（0.94→1.18rem）、`about__tag`（0.78→0.98rem）、`about__motto`（1.15→1.44rem），全部乘以 1.25 並四捨五入到小數兩位。
+- `src/styles/pages/_resume.scss`：`resume__eyebrow`（1.5→1.88rem）、`resume__pdf-link`（0.8→1rem）、`resume__subtitle`（0.95→1.19rem）、摺疊圖示 `::after`（1.1→1.38rem）、`-edu-school`/`-job-title`/`-project-title`/`-cert-name`/`-award-name`（0.92→1.15rem）、`-edu-meta`/`-job-meta`/`-cert-meta`/`-award-meta`（0.78→0.98rem）、`-edu-extra`/`-job-desc`/`-job-tools`/`-project-desc`/`-project-role`/`.resume__campus`（0.86→1.08rem）、`resume__project-tag`（0.72→0.9rem）、`resume__project-link`（0.82→1.03rem），同樣乘以 1.25。
+- `src/styles/main.css`：執行 `npx sass src/styles/main.scss src/styles/main.css` 整份重新編譯。
+
+**取捨說明**：
+- `letter-spacing`（例如 `about__tagline` 的 `-0.01em`）跟 `max-width: 26ch`（`about__tagline`）都是相對單位，會自動跟著新字級等比縮放，這次沒有另外調整。
+- 只放大 `font-size`，沒有連動放大 `padding`／`gap`／`border-radius` 等非字體相關的間距數值——使用者要求的是「字體」放大，不是整體區塊等比放大，兩者是不同範圍的需求。
+- 放大後每個 class 的相對大小順序（例如 tagline 仍是全區塊最大字）完全不變，因為是同一個倍率乘上所有數值，數學上必然維持順序。
+
+**驗證方式**：`npx sass` 重新編譯成功、無錯誤；用 Playwright 開啟本機靜態伺服器（從專案根目錄啟動）截圖比對 `#about`／`#resume` 放大前後，確認字級明顯變大、排版沒有破版（tagline 換行位置、時間軸圓點對齊、標籤列、證照/獎項虛線分隔皆正常）。

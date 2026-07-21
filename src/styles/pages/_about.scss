@@ -15,11 +15,12 @@
 // .about__eyebrow：標題列，短豎線色塊 + 「自我介紹」文字；
 // 這次改版把字級從 0.95rem 大幅放大到 1.5rem，讓它有真正「區塊標題」的份量，
 // 不再只是小型的標籤字
+// 這次全區塊 ×1.25 放大：1.5rem → 1.88rem
 .about__eyebrow {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  font-size: 1.5rem;
+  font-size: 1.88rem;
   font-weight: 800;
   color: $color-deep-space-blue;
   margin-bottom: 1.6rem;
@@ -48,18 +49,20 @@
   padding: 0;
   border-left: 2px solid #e2e6e9;
 
+  // 這次全區塊 ×1.25 放大：0.85rem → 1.06rem
   li {
     padding: 0.35rem 0 0.35rem 0.9rem;
-    font-size: 0.85rem;
+    font-size: 1.06rem;
     color: #32424d;
   }
 
+  // 這次全區塊 ×1.25 放大：0.72rem → 0.9rem
   b {
     display: inline-block;
     width: 4.2em; // 固定寬度讓欄位名稱對齊，數值統一從同一個位置開始
     color: #9aa8b0;
     font-weight: 700;
-    font-size: 0.72rem;
+    font-size: 0.9rem;
     letter-spacing: 0.04em;
   }
 }
@@ -98,7 +101,8 @@
   border: 2px solid $color-accent;
   background: #eef2f5;
   color: #9aa8b0;
-  font-size: 0.75rem;
+  // 這次全區塊 ×1.25 放大：0.75rem → 0.94rem
+  font-size: 0.94rem;
   text-align: center;
   // 目前是 <div> 佔位，對它沒有作用；先加上是為了之後換成 <img> 放真實照片時，
   // 就算照片長寬比不是正方形也會自動裁切填滿圓形，不會被拉伸變形
@@ -107,9 +111,10 @@
 
 // .about__tagline：主題字句，全卡片視覺焦點，顏色直接沿用 $color-deep-space-blue，
 // 跟 header 背景同一個深藍，讓卡片跟 header 的品牌色有視覺連結
+// 這次全區塊 ×1.25 放大：1.6rem → 2rem
 .about__tagline {
   margin: 0 0 0.5rem;
-  font-size: 1.6rem;
+  font-size: 2rem;
   font-weight: 800;
   line-height: 1.35;
   letter-spacing: -0.01em;
@@ -121,16 +126,18 @@
 
 // .about__identity：身份/職業說明，用從深空藍推導出的中間調灰藍色弱化，
 // 對白底對比度約 5.23:1，通過 WCAG AA 一般文字門檻
+// 這次全區塊 ×1.25 放大：0.92rem → 1.15rem
 .about__identity {
   margin: 0 0 1rem;
-  font-size: 0.92rem;
+  font-size: 1.15rem;
   color: #55707f;
 }
 
 // .about__bio：精簡介紹，深空藍推導出的深灰藍，對白底對比度約 10.38:1，長文字閱讀舒適
+// 這次全區塊 ×1.25 放大：0.94rem → 1.18rem
 .about__bio {
   margin: 0 0 1.1rem;
-  font-size: 0.94rem;
+  font-size: 1.18rem;
   line-height: 1.8;
   color: #32424d;
 }
@@ -145,13 +152,14 @@
 
 // .about__tag：技能標籤，改用等寬字 + ::before 加 "#" 前綴，做成「# 標籤」的 code-chip 觀感，
 // 呼應 header 拼音字首的等寬字語彙，是這張卡片刻意設計的簽名元素，不是示範檔案的灰底圓角膠囊
+// 這次全區塊 ×1.25 放大：0.78rem → 0.98rem
 .about__tag {
   padding: 0.3rem 0.65rem;
   border-radius: 6px;
   background: #eef2f5;
   color: #3d5566;
   font-family: 'Space Mono', monospace;
-  font-size: 0.78rem;
+  font-size: 0.98rem;
   font-weight: 700;
 
   &::before {
@@ -164,11 +172,12 @@
 // 讓分隔線也帶一點本站色彩，而不是示範檔案裡跟品牌無關的灰色；
 // 這次改版把字級從 0.85rem 放大到 1.15rem 並加粗，提升它的視覺份量，
 // 不再只是小字收尾
+// 這次全區塊 ×1.25 放大：1.15rem → 1.44rem
 .about__motto {
   margin: 1.1rem 0 0;
   padding-top: 0.9rem;
   border-top: 1px dashed rgba(13, 50, 77, 0.18);
-  font-size: 1.15rem;
+  font-size: 1.44rem;
   font-weight: 700;
   font-style: italic;
   color: $color-accent;
