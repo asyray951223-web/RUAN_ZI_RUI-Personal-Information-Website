@@ -14,12 +14,67 @@
   background: transparent; // 透明背景，可看到底下內容
   z-index: 100; // 確保 header 疊在其他內容之上
   box-sizing: border-box; // padding 不撐大整體寬高
+  background-color: $color-deep-space-blue;
+  color: $color-platinum;
 
-  // &__title 會編譯成 .site-header__title，巢狀在父層底下方便閱讀對應關係
+  // &__title 會編譯成 .site-header__title：排版容器，中文名跟英文拼音改成並排（原本是上下疊放）
   &__title {
-    margin: 0; // 移除 h1 預設外距，避免撐開 header 高度
-    font-size: 1.25rem;
-    font-weight: 700;
+    display: flex;
+    align-items: baseline; // 中英文字級不同，用 baseline 對齊文字底部比置中更整齊
+    gap: 0.6rem; // 並排的間距，取代原本上下疊放時英文用的 margin-top
+
+    // &-cn 會編譯成 .site-header__title-cn：中文主標，全站唯一的 <h1>
+    &-cn {
+      margin: 0; // 移除 h1 預設外距，避免撐開 header 高度
+      font-size: 2.4rem; // 覺得原本 1.7rem 太小，跟英文一起等比例放大約 1.4 倍
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: 0.02em;
+    }
+
+    // &-en 會編譯成 .site-header__title-en：英文拼音，Space Mono 等寬字 + 小寫底線格式
+    &-en {
+      margin: 0; // 改並排後間距改由父層 gap 控制，不再需要 margin-top
+      font-family: "Space Mono", monospace;
+      font-size: 1rem; // 跟中文同比例放大（原 0.72rem）
+      color: $color-silver; // 灰階弱化，跟字首的強調色形成對比
+
+      // ::after 加一個會閃爍的底線游標，模擬終端機輸入的感覺
+      &::after {
+        content: "_";
+        animation: blink 1s steps(1) infinite;
+      }
+
+      // &-accent 會編譯成 .site-header__title-en-accent：拼音字首用強調色點綴，呼應姓氏縮寫
+      &-accent {
+        color: $color-accent-on-dark;
+      }
+    }
+
+    // &-divider 會編譯成 .site-header__title-divider：垂直分隔線，區隔英文拼音跟後面的身分/專長副標
+    &-divider {
+      align-self: center; // 純色色塊沒有基線可對齊，改用置中，避免跟著父層 baseline 偏上或偏下
+      width: 2px;
+      height: 1.2rem; // 略高於旁邊文字的 font-size，視覺上是一條完整的短豎線
+      // 改用深底專用的強調色：$color-accent（磚紅 #b3401f）對深藍底 header 對比度只有 2.32:1，
+      // 不符合 WCAG AA 非文字元件需 3:1 的標準；$color-accent-on-dark 對比度約 4.7:1
+      background-color: $color-accent-on-dark;
+    }
+
+    // &-tagline 會編譯成 .site-header__title-tagline：身分/專長副標文字
+    &-tagline {
+      align-self: center; // 跟旁邊的 &-divider 一樣改用置中，兩者才會落在同一條水平線上，而不是被父層 baseline 拉去對齊文字底部
+      margin: 0;
+      font-size: 0.95rem;
+      color:$color-golden-pollen; // 沿用跟英文拼音一致的灰階弱化色，維持標題區主從關係（中文名最搶眼）
+    }
+  }
+}
+
+// 閃爍游標動畫：每秒讓透明度在 1 與 0 之間切換一次，steps(1) 讓變化是瞬間跳動而非漸層
+@keyframes blink {
+  50% {
+    opacity: 0;
   }
 }
 
@@ -36,17 +91,35 @@
 
   // &__link 會編譯成 .site-nav__link
   &__link {
-    color: inherit; // 繼承文字顏色，方便統一換色
+    color: $color-silver;
     text-decoration: none; // 去掉底線
     font-size: 0.95rem;
+    position: relative; // 讓 ::after 的底線可以絕對定位對齊文字寬度
 
-    &:hover {
-      color: $color-pacific-cyan; // 滑鼠移過稍微變淡，提供互動回饋
-      text-decoration: underline;
+    // hover 時用強調色的底線由左至右展開，取代原本變色+底線的效果，跟 header 拼音字首呼應
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 0;
+      height: 2px;
+      // 這條底線疊在深藍色 header 上，改用深底專用的 $color-accent-on-dark，
+      // 原本的 $color-accent 對深藍底對比度不足（詳見 _variables.scss 的註解）
+      background: $color-accent-on-dark;
+      transition: width 0.2s;
+    }
+
+     &:hover {
+      color: #fff; // 滑鼠移入時文字變亮
+    }
+
+    &:hover::after {
+      width: 100%;
     }
   }
 }
 
-  .site-main {
+.site-main {
   padding-top: $header-height; // 幫內容往下推，避免被固定 header 蓋住
 }

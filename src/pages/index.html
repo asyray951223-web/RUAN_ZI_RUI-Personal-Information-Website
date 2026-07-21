@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/src/styles/main.css" />
@@ -19,22 +19,45 @@
     <!-- site-header 是 Block；site-header__title 是它底下的 Element，
          只能存在於 site-header 裡面，不會被單獨拿去別的地方用 -->
     <header class="site-header">
-      <h1 class="site-header__title">阮梓睿 RUAN ZI RUI</h1>
+      <!-- site-header__title 是排版容器（並排放大版，跟 _header.scss 對上），
+           中文名維持全站唯一的 <h1>（對 SEO/無障礙較好），英文拼音用 <p> 放在旁邊；
+           <h1> 依 HTML 規範不能直接包 <p>，所以外層改用 <div> 而不是 <h1> -->
+      <div class="site-header__title">
+        <h1 class="site-header__title-cn">阮梓睿</h1>
+        <!-- 字首 r 用 span 包起來套強調色，其餘 uan_zi_rui 沿用父層灰階樣式 -->
+        <p class="site-header__title-en"><span class="site-header__title-en-accent">r</span>uan_zi_rui</p>
+        <!-- 磚紅色垂直分隔線，純視覺裝飾用 aria-hidden 隱藏，避免螢幕報讀器唸出 -->
+        <span class="site-header__title-divider" aria-hidden="true"></span>
+        <!-- 身分/專長副標，跟英文拼音同一層級 -->
+        <p class="site-header__title-tagline">資訊管理・全端開發</p>
+      </div>
       <!-- site-nav 是「獨立的另一個 Block」，不是 site-header 的 Element，
            因為導覽列本身也是一個可以獨立存在、重複使用的元件 -->
       <nav class="site-nav">
         <ul class="site-nav__list">
           <li class="site-nav__item">
-            <a class="site-nav__link" href="#about">自我介紹</a>
+            <a class="site-nav__link" href="#about">個人介紹</a>
           </li>
           <li class="site-nav__item">
             <a class="site-nav__link" href="#resume">履歷</a>
           </li>
           <li class="site-nav__item">
+            <a class="site-nav__link" href="#skills">技能</a>
+          </li>
+          <li class="site-nav__item">
             <a class="site-nav__link" href="#portfolio">作品集</a>
           </li>
           <li class="site-nav__item">
-            <a class="site-nav__link" href="#skills">技能</a>
+            <a class="site-nav__link" href="#activities">課外經歷</a>
+          </li>
+          <li class="site-nav__item">
+            <a class="site-nav__link" href="#casestudy">案例故事</a>
+          </li>
+          <li class="site-nav__item">
+            <a class="site-nav__link" href="#notes">學習筆記</a>
+          </li>
+          <li class="site-nav__item">
+            <a class="site-nav__link" href="#goals">目標願景</a>
           </li>
           <li class="site-nav__item">
             <a class="site-nav__link" href="#contact">聯絡方式</a>
@@ -47,21 +70,68 @@
            about 是這個區塊專屬的樣式；id="about" 則保留給上面 <a href="#about"> 錨點跳轉用，
            跟 class 負責的事情分開，不要混用 -->
       <section id="about" class="section about">
-        <h2 class="section__title">自我介紹</h2>
-        <!-- 三段各自獨立 class，方便之後分開排版（例如 tagline 用大字、value 用不同顏色強調） -->
-        <p class="about__tagline">一句話定位佔位文字（例如：前端工程師 / 視覺設計師）</p>
-        <p class="about__bio">簡短背景佔位文字（目前身分、擅長領域）</p>
-        <p class="about__value">價值主張佔位文字（能幫別人解決什麼問題）</p>
+        <!-- about__eyebrow 是標題列（短豎線色塊 + 文字），取代原本的 section__title，
+             是這次改版刻意採用的設計語彙，跟其他區塊的標題樣式不同；
+             這次改版把字級放大成真正的區塊標題份量，短豎線也加上閃爍動畫，
+             呼應 header 拼音字尾閃爍游標的終端機語彙 -->
+        <div class="about__eyebrow"><span class="about__eyebrow-bar"></span>個人介紹</div>
+
+        <!-- about__layout 分左右兩欄：左邊大頭照、右邊文字內容，取代原本上下堆疊的 about__group 結構；
+             大頭照這次放大到約版面 1/3 寬，視覺份量明顯提升 -->
+        <div class="about__layout">
+          <div class="about__avatar">大頭照（待補）</div>
+          <div class="about__content">
+            <!-- 拿掉手動 <br /> 斷行：原本寫死斷成兩行，換成真實內容長度不同時會斷得很奇怪，
+                 改用 .about__tagline 的 max-width 讓瀏覽器依實際內容自然換行 -->
+            <p class="about__tagline">主題字句佔位，之後替換成真實的一句話定位文字</p>
+
+            <!-- about__info-list 是新增的「個人資訊」區塊，放在主題字句跟身份說明之間，
+                 用直向清單呈現姓名/生日/居住地等個人資料，跟下面「身份/學校科系年級」
+                 的求學/專業身份資訊分成兩層，之後要增減欄位只要照抄同一個 <li> 結構 -->
+            <ul class="about__info-list">
+              <li><b>姓名</b>阮梓睿（佔位）</li>
+              <li><b>生日</b>2005 年 X 月 X 日（佔位）</li>
+              <li><b>居住地</b>台灣・台北（佔位）</li>
+            </ul>
+
+            <p class="about__identity">身份/學校科系年級佔位（例如：某大學 資訊工程學系 大三）</p>
+            <p class="about__bio">精簡介紹佔位：正在學習／專注的技能與興趣方向（例如：主力學習 HTML/CSS/JS、Python、Figma，對網頁開發＋UI 設計很有興趣）</p>
+            <!-- about__tags 用等寬字 + # 前綴呈現，呼應 header 拼音字首的終端機語彙，是這張卡片的簽名元素 -->
+            <div class="about__tags">
+              <span class="about__tag">HTML/CSS/JS</span>
+              <span class="about__tag">Python</span>
+              <span class="about__tag">Figma</span>
+            </div>
+            <!-- about__motto 這次放大字級，跟原本座右銘只是小字收尾不同，提升它的視覺份量 -->
+            <p class="about__motto">座右銘/信條佔位文字（例如：先讓自己看懂，再讓別人看懂）</p>
+          </div>
+        </div>
       </section>
 
-      <!-- resume 區塊分四個子群組，每組用 <h3 class="resume__subtitle"> 當小標題，
+      <!-- resume 區塊分五個子群組，每組用 <h3 class="resume__subtitle"> 當小標題，
            群組內的每一筆條目都用 <article> 包裹：<article> 代表「可以獨立抽出來看也講得通的一段內容」，
-           之後要新增第二份工作/第二個學歷，只要照抄同一個 <li><article>...</article></li> 結構 -->
+           之後要新增第二份工作/第二個學歷，只要照抄同一個 <li><article>...</article></li> 結構；
+           校園經歷這裡只放精簡重點，完整版在後面獨立的 #activities 章節，避免兩處內容重複 -->
       <section id="resume" class="section resume">
         <h2 class="section__title">履歷 / 經歷</h2>
 
+        <!-- 完整履歷 PDF 下載，先放連結骨架，href 之後換成真實檔案路徑 -->
+        <a class="resume__pdf-link" href="#">下載完整履歷 PDF</a>
+
         <div class="resume__group">
-          <h3 class="resume__subtitle">工作經歷</h3>
+          <h3 class="resume__subtitle">教育背景</h3>
+          <ul class="resume__edu-list">
+            <li class="resume__edu">
+              <article>
+                <h4 class="resume__edu-school">學校 / 科系佔位</h4>
+                <p class="resume__edu-meta">在學期間・相關課程或專題佔位</p>
+              </article>
+            </li>
+          </ul>
+        </div>
+
+        <div class="resume__group">
+          <h3 class="resume__subtitle">實習 / 工讀經歷</h3>
           <ul class="resume__job-list">
             <li class="resume__job">
               <article>
@@ -86,14 +156,9 @@
         </div>
 
         <div class="resume__group">
-          <h3 class="resume__subtitle">教育背景</h3>
-          <ul class="resume__edu-list">
-            <li class="resume__edu">
-              <article>
-                <h4 class="resume__edu-school">學校 / 科系佔位</h4>
-                <p class="resume__edu-meta">在學期間・相關課程或專題佔位</p>
-              </article>
-            </li>
+          <h3 class="resume__subtitle">校園經歷（精簡版）</h3>
+          <ul class="resume__campus-list">
+            <li class="resume__campus">校園經歷重點佔位（例如：系學會活動組長；完整內容見下方「課外經歷」）</li>
           </ul>
         </div>
 
@@ -105,33 +170,9 @@
         </div>
       </section>
 
-      <!-- portfolio 是「作品列表」擴充改名而來（原本 class 是 works），
-           每個作品用 <article> 包裹一整組資訊（封面圖／名稱／技術／角色／案例故事／連結），
-           之後新增作品只要照抄同一個 <li class="portfolio__item"><article>...</article></li> 結構 -->
-      <section id="portfolio" class="section portfolio">
-        <h2 class="section__title">作品集</h2>
-        <ul class="portfolio__list">
-          <li class="portfolio__item">
-            <article>
-              <img class="portfolio__cover" src="" alt="作品封面圖佔位" />
-              <h3 class="portfolio__name">作品名稱佔位</h3>
-              <p class="portfolio__summary">一句話說明佔位</p>
-              <ul class="portfolio__tech-list">
-                <li class="portfolio__tech">技術名稱佔位</li>
-              </ul>
-              <p class="portfolio__role">角色佔位（獨自 / 團隊，負責什麼）</p>
-              <p class="portfolio__story">案例故事佔位（選填：問題 → 解法 → 成果）</p>
-              <ul class="portfolio__link-list">
-                <li class="portfolio__link-item"><a class="portfolio__link" href="#">線上 Demo</a></li>
-                <li class="portfolio__link-item"><a class="portfolio__link" href="#">GitHub</a></li>
-              </ul>
-            </article>
-          </li>
-        </ul>
-      </section>
-
       <!-- skills 分技術／工具／語言三群組，每個項目用 skills__name + skills__level 兩個 span，
-           先用文字描述熟練度（例如「熟練」），之後要做成進度條/星級，只需改樣式不用改結構 -->
+           先用文字描述熟練度（例如「熟練」），之後要做成進度條/星級，只需改樣式不用改結構；
+           順序對齊上方 nav（履歷之後、作品集之前） -->
       <section id="skills" class="section skills">
         <h2 class="section__title">技能</h2>
 
@@ -163,6 +204,143 @@
               <span class="skills__level">熟練度佔位</span>
             </li>
           </ul>
+        </div>
+      </section>
+
+      <!-- portfolio 是「作品列表」擴充改名而來（原本 class 是 works），
+           每個作品用 <article> 包裹一整組資訊（封面圖／類型／技術／角色／成果與收穫／連結），
+           之後新增作品只要照抄同一個 <li class="portfolio__item"><article>...</article></li> 結構 -->
+      <section id="portfolio" class="section portfolio">
+        <h2 class="section__title">作品集</h2>
+        <ul class="portfolio__list">
+          <li class="portfolio__item">
+            <article>
+              <img class="portfolio__cover" src="" alt="作品封面圖佔位" />
+              <!-- 作品類型標籤，方便之後用篩選或視覺區分不同類型的作品 -->
+              <p class="portfolio__type">作品類型佔位（例如：課程作業／自主練習／專題競賽／Side Project）</p>
+              <h3 class="portfolio__name">作品名稱佔位</h3>
+              <p class="portfolio__summary">一句話說明佔位</p>
+              <ul class="portfolio__tech-list">
+                <li class="portfolio__tech">技術名稱佔位</li>
+              </ul>
+              <p class="portfolio__role">角色佔位（獨自 / 團隊，負責什麼）</p>
+              <!-- 這裡只放單一作品層級的簡短成果，1-2 個最想深談的作品可以另外寫進下方 #casestudy -->
+              <p class="portfolio__outcome">成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）</p>
+              <ul class="portfolio__link-list">
+                <li class="portfolio__link-item"><a class="portfolio__link" href="#">線上 Demo</a></li>
+                <li class="portfolio__link-item"><a class="portfolio__link" href="#">GitHub</a></li>
+              </ul>
+            </article>
+          </li>
+        </ul>
+      </section>
+
+      <!-- activities 是全新章節，完整呈現社團／競賽／志工經歷，
+           跟上面 resume 裡的「校園經歷（精簡版）」互相對應但不重複打字內容 -->
+      <section id="activities" class="section activities">
+        <h2 class="section__title">課外經歷</h2>
+
+        <div class="activities__group">
+          <h3 class="activities__subtitle">社團</h3>
+          <ul class="activities__club-list">
+            <li class="activities__club">
+              <article>
+                <h4 class="activities__club-name">社團名稱佔位</h4>
+                <p class="activities__club-role">角色佔位（例如：活動組長、技術支援、宣傳設計）</p>
+              </article>
+            </li>
+          </ul>
+        </div>
+
+        <div class="activities__group">
+          <h3 class="activities__subtitle">競賽</h3>
+          <ul class="activities__competition-list">
+            <li class="activities__competition">
+              <article>
+                <h4 class="activities__competition-name">競賽名稱佔位</h4>
+                <p class="activities__competition-desc">競賽成果／參與內容佔位</p>
+              </article>
+            </li>
+          </ul>
+        </div>
+
+        <div class="activities__group">
+          <h3 class="activities__subtitle">志工 / 服務學習</h3>
+          <ul class="activities__volunteer-list">
+            <li class="activities__volunteer">志工／服務學習經歷佔位</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- casestudy 是從 portfolio 挑 1-2 個最想被看到的作品，做更深入的敘事；
+           每則案例用 <article> 包裹五段式結構（背景/目標/過程/挑戰/成果），跟 portfolio 的簡短資訊分開放，
+           之後要新增第二個案例故事只要照抄同一個 <li class="casestudy__item"><article>...</article></li> 結構 -->
+      <section id="casestudy" class="section casestudy">
+        <h2 class="section__title">案例故事</h2>
+
+        <ul class="casestudy__list">
+          <li class="casestudy__item">
+            <article>
+              <h3 class="casestudy__name">案例作品名稱佔位</h3>
+
+              <div class="casestudy__block">
+                <h4 class="casestudy__block-title">背景</h4>
+                <p class="casestudy__block-text">背景佔位（為什麼要做？課程作業／競賽／自己想解決的問題？）</p>
+              </div>
+
+              <div class="casestudy__block">
+                <h4 class="casestudy__block-title">目標</h4>
+                <p class="casestudy__block-text">目標佔位（想達成什麼？）</p>
+              </div>
+
+              <div class="casestudy__block">
+                <h4 class="casestudy__block-title">過程</h4>
+                <p class="casestudy__block-text">過程佔位（怎麼規劃？設計 → 實作 → 測試）</p>
+              </div>
+
+              <div class="casestudy__block">
+                <h4 class="casestudy__block-title">挑戰</h4>
+                <p class="casestudy__block-text">挑戰佔位（遇到什麼困難？怎麼解決？）</p>
+              </div>
+
+              <div class="casestudy__block">
+                <h4 class="casestudy__block-title">成果與收穫</h4>
+                <p class="casestudy__block-text">成果與收穫佔位（最後做出來是什麼樣子？學到什麼？下次會怎麼改進？）</p>
+              </div>
+            </article>
+          </li>
+        </ul>
+      </section>
+
+      <!-- notes 是學習紀錄／筆記清單，每篇用 <article> 包裹，之後可能會連到獨立的文章頁面，先用 # 佔位連結 -->
+      <section id="notes" class="section notes">
+        <h2 class="section__title">學習筆記</h2>
+
+        <ul class="notes__list">
+          <li class="notes__item">
+            <article>
+              <h3 class="notes__title">
+                <a class="notes__link" href="#">筆記標題佔位（例如：30 天學 JavaScript 心得）</a>
+              </h3>
+              <p class="notes__excerpt">摘要佔位（課程筆記／技術學習／讀書或課程心得）</p>
+              <p class="notes__date">日期佔位</p>
+            </article>
+          </li>
+        </ul>
+      </section>
+
+      <!-- goals 分短期／中長期兩段，都是簡短一兩句話即可，不需要複雜結構 -->
+      <section id="goals" class="section goals">
+        <h2 class="section__title">目標願景</h2>
+
+        <div class="goals__group">
+          <h3 class="goals__subtitle">短期目標</h3>
+          <p class="goals__short-term">短期目標佔位（例如：希望在大四前找到前端實習）</p>
+        </div>
+
+        <div class="goals__group">
+          <h3 class="goals__subtitle">中長期方向</h3>
+          <p class="goals__long-term">中長期方向佔位（例如：對新創產品開發很有興趣）</p>
         </div>
       </section>
 

@@ -145,3 +145,214 @@ src/styles/
 - 全部使用結構性佔位文字，不是使用者真實履歷/作品資料，之後要上線前需要使用者自行替換成真實內容。
 
 **驗證方式**：`npx sass src/styles/main.scss src/styles/main.css` 重新編譯成功，無錯誤；新增/改名的空白 SCSS 模組不影響現有 `main.css` 視覺輸出。
+
+### 10. Header 姓名標題改版：組合 C · 強調色點綴版
+
+**背景**：使用者參考自備的設計範例檔 `claude助手-設計範例展示資料夾\設計範例展示.html` 裡的 `.comboC`（組合 C · 強調色點綴版），要求把 header 的 `阮梓睿 RUAN ZI RUI`（單行 `<h1>`）正式改版：中文名為主標、大字放上排，英文拼音改成小寫底線格式的等寬字（Space Mono）放下排、字尾帶閃爍游標，字首用磚紅強調色點綴；導覽列 hover 也統一改用同一個強調色，呈現底線由左至右展開的效果。
+
+**變更**：
+- `src/pages/index.html`：
+  - `<head>` 的 Google Fonts `<link>` 加入 `Space Mono:wght@400;700`。
+  - `<h1 class="site-header__title">阮梓睿 RUAN ZI RUI</h1>` 拆成 `<div class="site-header__title">` 包住 `<h1 class="site-header__title-cn">阮梓睿</h1>` 與 `<p class="site-header__title-en">`（內含 `<span class="site-header__title-en-accent">r</span>uan_zi_rui`）。
+- `src/styles/abstracts/_variables.scss`：新增 `$color-accent: #b3401f;`（磚紅強調色）。
+- `src/styles/layout/_header.scss`：
+  - `.site-header__title` 改寫成 `flex-direction: column` 容器，巢狀 `&-cn`（中文主標樣式）與 `&-en`（英文拼音樣式，含 `::after` 閃爍游標動畫、`&-accent` 強調色）。
+  - 新增 `@keyframes blink`。
+  - `.site-nav__link:hover` 從「變色 + 底線」改成 `::after` 底線由左至右展開（用 `$color-accent`），移除原本的 `$color-pacific-cyan` hover 樣式。
+
+**取捨說明**：
+- 使用者原規格是把最外層拆成 `<div><p>中文</p><p>英文</p></div>`，但 `<h1>` 依 HTML 規範不能直接包 `<p>`，且全站只有這一個 `<h1>`，拿掉會讓頁面失去語意標題。改成：最外層 `site-header__title` 用 `<div>` 做排版容器，中文名維持用 `<h1 class="site-header__title-cn">`（全站唯一標題），英文拼音用 `<p>`。視覺與 class 命名跟原規格完全一致，只是修正了不合法的巢狀結構。
+- 英文拼音的灰階顏色 `#999` 先直接寫死，沒有另外新增變數，因為目前只有這一處使用，之後若有其他地方要重複用到同一個灰階才考慮抽成變數。
+- `$color-pacific-cyan` 變數保留不刪，雖然這次拿掉了它在 header hover 的唯一使用處，但先留著供之後其他地方需要青色點綴時使用。
+
+**驗證方式**：`npx sass src/styles/main.scss src/styles/main.css` 重新編譯成功；用 Playwright 開啟本機靜態伺服器（`python -m http.server`）截圖確認中文主標／英文等寬拼音／字首強調色／閃爍游標的排版效果，並模擬 hover「履歷」導覽連結，確認底線由左至右展開、呈現磚紅強調色。
+
+### 11. Header 標題改為並排＋放大字級
+
+**背景**：使用者看過組合 C 上下疊放版後，覺得標題偏小，希望中文名跟英文拼音改成並排顯示，並把中英文字級等比例放大。
+
+**變更**：`src/styles/layout/_header.scss` 的 `.site-header__title`：
+- `flex-direction: column`（上下疊放）改成預設的 `row`（並排），並加上 `align-items: baseline`（中英文字級不同，用文字基線對齊比置中更整齊）與 `gap: 0.6rem` 控制間距。
+- `&-cn` 字級從 `1.7rem` 放大到 `2.4rem`；`&-en` 字級從 `0.72rem` 放大到 `1rem`，兩者放大倍率一致（約 1.4 倍），維持原本的中英文比例關係。
+- `&-en` 的 `margin: 4px 0 0`（原本用來跟中文名留出上下間距）改成 `margin: 0`，間距改交給父層 `gap` 統一控制。
+
+**驗證方式**：`npx sass` 重新編譯成功；Playwright 截圖確認中文名明顯放大、與英文拼音並排在同一行、基線對齊，且沒有超出 header 固定高度（`$header-height: 4rem`）的範圍。
+
+### 12. 內容擴充為大學生版九大區塊，並修復 header HTML/CSS 不同步問題
+
+**背景**：使用者提供一份針對大學生的個人網站內容規劃（核心五項：自我介紹／履歷摘要／作品專案／技能／聯絡方式，加分四項：學習紀錄筆記／案例故事／校園課外經歷／目標願景），要求先規劃並套用 HTML 結構，暫不做排版與 CSS。動手前發現 `index.html` 的 header 已經被還原回最舊的單一 `<h1>` 版本，但 `_header.scss` 仍停留在第 10～11 筆紀錄做的「組合 C 並排放大版」樣式，兩者對不上（CSS 選到的 `-cn`／`-en`／`-en-accent` class 在 HTML 裡不存在）。跟使用者確認後，這次順便把 header HTML 補回來對齊 CSS。
+
+**變更**：
+- `src/pages/index.html`：
+  - `<head>` 補回 `Space Mono` 字型 `<link>`（配合 header）。
+  - header 標題補回「組合 C 並排放大版」結構：`<div class="site-header__title">` 包 `<h1 class="site-header__title-cn">阮梓睿</h1>` + `<p class="site-header__title-en">`（含 `-en-accent` 字首）。
+  - `#about`：移除原本籠統的 `about__bio`／`about__value`，改成 `about__group` 底下的「目前狀態」（學校／科系／年級、正在學習的技能）與「興趣方向」兩組，貼近大學生實際會寫的內容。
+  - `#resume`：新增 `resume__pdf-link`（完整履歷 PDF 下載連結骨架）；子群組重新排序為教育背景／實習工讀經歷／專案經歷／校園經歷（精簡版）／證照獎項，「校園經歷」這裡只放 1 行重點，完整版另開 `#activities`。
+  - 新增 `#activities`（課外經歷）：社團／競賽／志工服務學習三個子群組，跟 `#resume` 的精簡版互相對應但不重複打字。
+  - `#portfolio`：新增 `portfolio__type`（作品類型標籤），`portfolio__story` 改名為 `portfolio__outcome`（成果與收穫，語意跟新的 `#casestudy` 深度敘事分開）。
+  - 新增 `#casestudy`（案例故事）：從作品集挑 1–2 個作品，用背景／目標／過程／挑戰／成果五段式敘事。
+  - 新增 `#notes`（學習筆記）：文章列表，每篇 `<article>` 含標題連結／摘要／日期。
+  - 新增 `#goals`（目標願景）：短期目標／中長期方向兩段。
+  - `site-nav__list` 從 5 個錨點擴充為 9 個，順序對應 `about → resume → activities → portfolio → casestudy → skills → notes → goals → contact`。
+- SCSS 同步新增空白樣式檔 `pages/_activities.scss`、`pages/_casestudy.scss`、`pages/_notes.scss`、`pages/_goals.scss`，並在 `main.scss` 的 `@use` 清單依區塊順序加入。
+- `FuturePlan.md` 補上「規劃三：作品集（及未來可能的部落格/筆記）拆成獨立分頁」，記錄使用者提出的分頁想法、為什麼這次先不做（沒有建置工具，手動複製 header/nav 維護風險高，跟規劃一的雙語頁面是同一類問題）、以及未來觸發條件與建議做法。
+
+**取捨說明**：
+- Header 這次「順便」修復是使用者當場確認要做的，不是原始任務範圍，但因為本來就要大幅改寫 `index.html`，一起處理成本最低。
+- `#resume` 的「校園經歷」跟 `#activities`（課外經歷）刻意分成精簡版／完整版兩處，而不是二選一，是使用者確認的方向：履歷摘要維持精簡、完整故事放獨立章節。
+- `portfolio__story` 改名 `portfolio__outcome`：因為新增了 `#casestudy` 做真正的深度案例敘事，原本 `portfolio__story` 的「問題→解法→成果」定位跟新章節重疊，改成「成果與收穫」聚焦在單一作品層級的簡短總結，深度故事留給 `#casestudy`。
+- 作品集／學習筆記要不要拆成獨立分頁：使用者一度提出這個想法，但確認這次先不做，記錄進 `FuturePlan.md`，避免在沒有建置工具的情況下手動複製 header 造成維護風險。
+
+**驗證方式**：`npx sass src/styles/main.scss src/styles/main.css` 重新編譯成功；用 Playwright 開啟本機靜態伺服器，透過 accessibility snapshot 確認九個區塊依序出現、標題階層正確（全站僅一個 `<h1>`，各區塊 `<h2>`，子群組 `<h3>`/`<h4>`），header 中英文並排放大樣式與 nav 連結數量、錨點皆正確。
+
+---
+
+## 2026-07-21
+
+### 13. 內容區塊順序跟著 nav 選單順序調整
+
+**背景**：使用者已自行把 `site-nav__list` 的錨點順序從第 12 筆紀錄的 `about → resume → activities → portfolio → casestudy → skills → notes → goals → contact` 改成 `about → resume → skills → portfolio → activities → casestudy → notes → goals → contact`（技能提前到履歷後、作品集前），但下方 `<main>` 裡實際的 `<section>` 排列還停留在舊順序，兩邊對不上，要求同步。
+
+**變更**：
+- `src/pages/index.html`：只搬動 `<section>` 區塊在 `<main>` 裡的先後位置（含各自上方的說明註解），內容、class、id 完全不變。新順序：`#about → #resume → #skills → #portfolio → #activities → #casestudy → #notes → #goals → #contact`，跟 nav 一致。
+
+**取捨說明**：
+- 純粹是區塊搬移，沒有調整任何區塊內部結構或文字，避免順手做超出這次要求的修改。
+- `#skills` 的說明註解補了一句「順序對齊上方 nav（履歷之後、作品集之前）」，方便之後有人再調 nav 順序時，能同時想到要回來對這裡。
+
+**驗證方式**：搬移後用 Grep 確認 `<section id=` 出現順序與 nav 錨點順序一致；未執行 sass 重新編譯，因為這次沒有改動任何 CSS/SCSS。
+
+### 14. `CLAUDE.md` 新增本專案預設使用的 Skill 清單
+
+**背景**：使用者確認往後在本專案討論設計/前端相關工作時，希望固定使用 frontend-design、frontend-design-direction、brainstorming、browser-use、adversarial-ux-test 五個 skill，不用每次額外指定。
+
+**變更**：`CLAUDE.md` 新增「預設使用的 Skill」章節，列出上述五個 skill 與各自用途（視覺設計方向、產品級設計方向、創意前先釐清需求、瀏覽器實測、完成後的 UX 檢查）。
+
+**取捨說明**：這是規則檔變更、不是程式碼變更，但依專案慣例仍記錄一筆，方便之後回顧「為什麼固定用這幾個 skill」。
+
+### 15. Header 標題右側加上磚紅色垂直分隔線 + 身分/專長副標
+
+**背景**：使用者希望在 header 標題區（中文名＋英文拼音）右側，再加上一條垂直的磚紅色底線，並在線右邊加上「資訊管理・全端開發」文字，補上身分/專長標示。
+
+**變更**：
+- `src/pages/index.html`：`.site-header__title` 內，英文拼音 `<p class="site-header__title-en">` 之後新增 `<span class="site-header__title-divider" aria-hidden="true"></span>`（純視覺分隔線，`aria-hidden` 避免螢幕報讀器唸出）與 `<p class="site-header__title-tagline">資訊管理・全端開發</p>`。
+- `src/styles/layout/_header.scss`：`&__title` 底下新增 `&-divider`（寬 2px、高 1.2rem、背景色 `$color-accent`，`align-self: center` 置中）與 `&-tagline`（font-size 0.95rem、顏色 `#999`，跟英文拼音同一套灰階弱化樣式）。
+- `src/styles/abstracts/_variables.scss`：`$color-accent` 的用途註解補上「header 標題分隔線」。
+
+**取捨說明**：
+- 分隔線顏色直接沿用既有的 `$color-accent`（磚紅），不新增顏色變數，維持全站配色一致。
+- 父層 `.site-header__title` 是 `align-items: baseline`，但純色 `<span>` 沒有基線可對齊，會偏上或偏下，所以 `&-divider` 額外加 `align-self: center` 覆寫，讓分隔線視覺置中。
+- 副標文字色調刻意跟英文拼音一致（灰階弱化），維持中文名是視覺最搶眼元素的主從關係，不跟中文名搶焦點。
+
+**驗證方式**：`npx sass src/styles/main.scss src/styles/main.css` 重新編譯成功，無錯誤。
+
+**後續調整**：使用者回報「資訊管理・全端開發」文字沒有跟分隔線對齊在同一水平（被父層 `align-items: baseline` 拉去對齊文字底部）。修正：`&-tagline` 補上 `align-self: center`，跟 `&-divider` 用同一種對齊方式，兩者才會落在同一條水平線上。
+
+### 16. 修正 header 深色背景上強調色的對比度不足問題
+
+**背景**：使用者請 Claude 用 adversarial-ux-test 檢視 header 實際截圖的配色。實際換算截圖對應色碼後發現：`$color-accent`（磚紅 `#b3401f`）對 header 的深藍底 `$color-deep-space-blue`（`rgb(13,50,77)`）對比度只有約 2.32:1，不符合 WCAG AA 標準（一般文字需 4.5:1，非文字元件如底線／分隔線需 3:1）。這個顏色當初是設計給淺色背景使用（例如 `示範.html` 裡的自我介紹卡片），被直接沿用到深色 header 上才出問題。使用者確認採用「新增一個深底專用強調色」的建議並請 Claude 動手改。
+
+**變更**：
+- `src/styles/abstracts/_variables.scss`：新增 `$color-accent-on-dark: #ff6b47;`（同色系但拉高亮度，對深藍底對比度約 4.7:1，符合 WCAG AA）。`site-header__title-en-accent`（拼音字首）已由使用者自行改用新變數；這次補上剩下兩處：
+- `src/styles/layout/_header.scss`：
+  - `&-divider`（header 標題分隔線）改用 `$color-accent-on-dark`，並補註解說明原因。
+  - `.site-nav__link::after`（導覽列 hover 底線）改用 `$color-accent-on-dark`，並補註解說明原因。
+- `src/styles/main.css`：同步手動更新 `.site-header__title-divider` 與 `.site-nav__link::after` 的 `background-color`/`background` 為 `#ff6b47`（因專案沒有存檔自動編譯，`main.css` 需要跟 `.scss` 手動保持同步）。
+
+**取捨說明**：
+- 沒有直接把 `$color-accent` 本身改成 `#ff6b47`，因為 `$color-accent`（磚紅）在淺色背景的情境下（例如 `示範.html` 的自我介紹卡片設計稿）對比度是足夠的，直接改動會影響那些情境的視覺效果；改用新增一個「深底專用」變數，讓兩種背景情境各自使用適合自己的強調色版本，之後有其他深色區塊要用強調色，也直接引用 `$color-accent-on-dark` 即可。
+- 只換色碼，沒有動任何排版結構。
+
+**驗證方式**：手動計算 WCAG 相對亮度公式，確認 `#ff6b47` 對 `rgb(13,50,77)` 的對比度約 4.7:1，符合一般文字 4.5:1 的門檻；`main.css` 同步更新後，兩個色碼與 `.scss` 來源一致。
+
+### 17. 修正 `#about` 兩個 adversarial-ux-test 找出的 RED 項目
+
+**背景**：使用者請 Claude 用 adversarial-ux-test 檢視已實作的 `#about` 區塊截圖，找出兩個跟螢幕大小無關、之後填入真實內容一定會踩到的問題：① 主題字句用 `<br />` 寫死斷行，換成真實文字長度不同時會斷得不自然；② 大頭照目前是 `<div>` 佔位，沒有預先加 `object-fit: cover`，之後換成真實 `<img>` 時如果照片不是正方形會被拉伸變形。使用者確認直接修正。
+
+**變更**：
+- `src/pages/index.html`：`.about__tagline` 拿掉 `<br />`，改成一段完整文字（佔位內容也一併簡化成一句話，避免誤導成「一定要兩行」）。
+- `src/styles/pages/_about.scss`：
+  - `.about__tagline` 新增 `max-width: 26ch;`，改讓瀏覽器依實際內容自然換行，取代原本手動斷行。
+  - `.about__avatar` 新增 `object-fit: cover;`，目前對 `<div>` 沒有實際效果，但之後換成 `<img>` 時會直接生效，不用回頭補。
+- `src/styles/main.css`：同步手動更新 `.about__tagline`（加 `max-width`）與 `.about__avatar`（加 `object-fit`），因專案沒有存檔自動編譯。
+
+**取捨說明**：
+- `max-width: 26ch` 是抓一個大約跟原本兩行佔位字寬度相近的值，之後使用者填入真實一句話定位文字時，如果字數落差很大，可能還是要微調這個數值，但至少不會再有「斷點寫死在錯誤位置」的結構性問題。
+- `object-fit: cover` 只有搭配 `<img>` 元素才會生效，這次先加上是預防性修正，不影響目前佔位版面的顯示結果。
+
+**驗證方式**：純樣式/標籤微調，未執行 sass 重新編譯（`main.css` 已手動同步），視覺上主標從兩行固定文字變成一行、換行邏輯交給瀏覽器，佔位版面顯示結果與修正前接近。
+
+### 17. `#about` 改版為「01・基礎延伸版」卡片排版（已撤銷）
+
+**背景**：曾參考自備設計範例把首頁自我介紹區塊改成白底圓角卡片（eyebrow 標題、圓形大頭照、tagline/identity/bio/tags/motto），`identity`／`bio`／`tags` 欄位對應方式與 tagline 佔位文字都已跟使用者確認過。改完之後使用者要求撤銷本次變動，因此 `src/pages/index.html` 的 `#about`、`src/styles/components/_section.scss`、`src/styles/pages/_about.scss` 都已還原回改版前的狀態（`about__group` 兩欄結構、空白樣式檔）。這筆紀錄保留是為了讓之後想重新做這個改版時，能查到當初已經談定的欄位對應與設計規格。
+
+### 18. `#about` 重新改版為「01・基礎延伸版」——這次數值自主設計，不照抄參考檔案
+
+**背景**：使用者用 `/plan` 重新提出跟第 17 筆同樣的版面需求，但這次特別加註「示範.html 僅供參考、禁止直接套用」。訊息裡雖然仍列出跟第 17 筆完全相同的具體數值（1.55rem、`#23303d`、`#8a939c`、`#f1f3f5` 等），但透過 AskUserQuestion 確認後，使用者要的是「版面邏輯（eyebrow + 左圖右文兩欄 + 標籤 + 座右銘）可以參考示範檔案，但字級/行高/色碼這次由 Claude 重新設計，不直接沿用示範檔案或訊息裡列的數字」。因此這次用 `frontend-design` skill 重新做了一輪設計判斷：本站在 header 已經建立「深空藍 + 磚紅強調色 + Space Mono 等寬字/閃爍游標」的開發者語彙，若直接照搬示範檔案的中性灰階，`#about` 會變成一張跟本站身分脫節的通用卡片，所以這次改成從 `$color-deep-space-blue` 推導出一組專屬深藍灰階（tagline/identity/bio 三階），並把技能標籤設計成 Space Mono 等寬「# 標籤」小卡片，作為呼應 header 語彙的簽名元素。
+
+**變更**：
+- `src/pages/index.html`：`#about` 結構跟第 17 筆相同（`about__eyebrow` + `about__layout` 內 `about__avatar` + `about__content` 包 `about__tagline`／`about__identity`／`about__bio`／`about__tags`（3 個 `about__tag`）／`about__motto`），移除 `about__group` 等舊 class。
+- `src/styles/components/_section.scss`：新增 `@mixin section-card`（白底、圓角 14px、`box-shadow` 改用 `rgba(13, 50, 77, 0.08)` 帶一點本站主色調，取代純黑陰影；`max-width: 920px` 置中）。維持第 17 筆確認過的做法：不直接套用在 `.section` class 上，只有需要的區塊自行 `@include`，這次只有 `.about` 用。
+- `src/styles/pages/_about.scss`：`.about { @include section-card; }`，並補上以下自主設計的樣式（取代第 17 筆直接沿用範例檔案的版本）：
+  - `.about__eyebrow`：0.95rem/700，`letter-spacing: 0.08em`，顏色 `$color-deep-space-blue`；`&-bar` 3px 寬強調色短豎線。
+  - `.about__tagline`：1.6rem/800，`line-height: 1.35`，`letter-spacing: -0.01em`，顏色直接用 `$color-deep-space-blue`（呼應 header 背景色）。
+  - `.about__identity`：0.92rem，顏色 `#55707f`（從深空藍推導的中間調）。
+  - `.about__bio`：0.94rem/`line-height: 1.8`，顏色 `#32424d`。
+  - `.about__tags`／`.about__tag`：改用 `'Space Mono', monospace` + `::before { content: '#'; color: $color-accent; }`，底色 `#eef2f5`、文字 `#3d5566`，圓角 6px（不是全圓膠囊），做成「# 標籤」code-chip 觀感。
+  - `.about__avatar`：136px 圓形、2px 實線 `$color-accent` 邊框、底色 `#eef2f5`（跟 tag 底色一致）。
+  - `.about__motto`：0.85rem 斜體 `$color-accent`，上方分隔線改用 `rgba(13, 50, 77, 0.18)` 虛線（主色低透明度，取代示範檔案的中性灰）。
+
+**取捨說明**：
+- 所有新色碼都手動驗算過對白底的 WCAG 對比度：identity `#55707f` 約 5.23:1、bio `#32424d` 約 10.38:1、tag 文字 `#3d5566` 對淺底約 6.93:1、`$color-accent` 對白底約 5.72:1，皆通過一般文字 4.5:1 門檻（`$color-accent` 在 header 深底情境對比度不足，才有第 16 筆的 `$color-accent-on-dark`；這裡是白底卡片，情境不同，另外驗算過沒有沿用那個深底專用變數）。
+- 簽名元素（Space Mono 等寬 + `#` 前綴標籤）只用在 tags 這一處，identity/bio 維持全站基礎字體，避免整張卡片過度風格化，符合「boldness 只花在一個地方」的設計原則。
+- 版面結構（eyebrow/兩欄/標籤/座右銘）跟第 17 筆一致，因為使用者只要求「數值不要照抄」，沒有要求改版面邏輯。
+
+**驗證方式**：`npx sass src/styles/main.scss src/styles/main.css` 重新編譯成功；起本機靜態伺服器並用 Playwright 截圖確認：卡片呈現深藍/磚紅/等寬字的專屬觀感（tagline 深藍、標籤帶 `#` 前綴等寬字）、`#resume`（履歷/經歷）等其餘區塊未受影響，證實視覺上跟示範檔案的中性灰清爽風有明顯區隔，同時跟 header 的既有品牌識別一致。
+
+### 19. 取消 `#about` 的卡片視覺，內容保留
+
+**背景**：第 18 筆讓 `#about` 變成一張獨立白底卡片（`section-card` mixin：背景、圓角、陰影、`max-width` 置中），跟頁面其餘區塊（resume/portfolio 等完全無樣式）風格不一致，使用者覺得格格不入，並訂下規則：**本網站主區塊預設不做成卡片，除非之後特別要求**。
+
+**變更**：
+- `src/styles/pages/_about.scss`：移除 `.about { @include section-card; }` 整個 ruleset，以及不再需要的 `@use '../components/section' as *;`；`.about__eyebrow`／`.about__layout`／`.about__avatar`／`.about__tagline`／`.about__identity`／`.about__bio`／`.about__tags`／`.about__tag`／`.about__motto` 完全不動，內容與排版保留。
+- `src/styles/components/_section.scss`：`@mixin section-card` 定義維持不刪，只是目前沒有任何區塊 `@include` 它——工具留著，之後有區塊明確要做成卡片可以直接用，但不會自動套用。
+
+**取捨說明**：拿掉卡片外觀後 `.about` 沒有背景/圓角/陰影/寬度限制，回到跟其他區塊一樣貼齊版面；只拿掉外層容器樣式，不動內部設計（深藍配色、等寬字標籤等第 18 筆的設計判斷維持）。
+
+**驗證方式**：`npx sass src/styles/main.scss src/styles/main.css` 重新編譯成功；Playwright 截圖確認 `#about` 不再有白底卡片外觀，內容與內部排版跟改版前一致。
+
+### 20. `#about` 加上 clamp() 流體留白（左右留白 + 上下間距）
+
+**背景**：使用者希望 `#about` 左右留空、上下間距加大，並且要「保持空間的彈性與呼吸感」。先在 `示範.html` 規劃三個方向（① 置中容器＋固定留白 ② `clamp()` 流體留白 ③ 不對稱大留白＋加大節奏感），使用者確認採用方案二。
+
+**變更**：
+- `src/styles/pages/_about.scss`：新增 `.about { padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem); }`，並補上說明留白邏輯的註解。
+- `src/styles/main.css`：同步手動新增同一段 `.about` 規則（因專案沒有存檔自動編譯）。
+
+**取捨說明**：
+- 沒有採用「置中容器＋固定寬度」的方案一，因為使用者明確要「彈性」，固定寬度容器在極寬螢幕上留白量不會繼續增加，不符合需求。
+- 用 `clamp()` 直接讓留白隨視窗寬度連續縮放，不用等之後做響應式斷點才有彈性，這一層的彈性現在就到位；但這不等於完整的響應式設計（例如 `.about__layout` 在窄螢幕會不會擠壓變形這件事仍未處理），使用者已確認響應式工程留給之後。
+- 只加在 `.about` 這個區塊，沒有動 `components/_section.scss`，因為使用者這次只針對 `#about` 提出需求，其他區塊目前都還是空白樣式檔，之後如果要統一各區塊的留白邏輯，建議再抽到共用的 `_section.scss`。
+
+**驗證方式**：純樣式新增，`clamp()` 語法瀏覽器原生支援不需編譯轉換；未執行 sass 重新編譯（`main.css` 已手動同步）。
+
+### 21. `#about` 大改版：大頭照放大、標題放大、分隔線閃爍、新增「個人資訊」直向清單、座右銘放大
+
+**背景**：使用者先在 `示範.html` 規劃六款「#about 大改版」示範（大頭照放大到約 1/3 版面寬、「自我介紹」字級放大、左側分隔線閃爍、主題字句下方新增「個人資訊」內容區塊、座右銘放大），並釐清「個人資訊」不是幫身份說明加標籤，而是插入一個全新的區塊放姓名/生日/居住地等個人資料，跟原本「身份/學校科系年級」分成兩層。使用者最後選定「01・左圖右文，個人資訊做成直向清單」套用到真實網站。
+
+**變更**：
+- `src/pages/index.html`：`#about` 內新增 `<ul class="about__info-list">`（含姓名/生日/居住地三筆佔位資料的 `<li><b>欄位名</b>數值</li>`），放在 `about__tagline` 與 `about__identity` 之間；其餘結構不變。
+- `src/styles/pages/_about.scss`：
+  - `.about__eyebrow` 字級從 0.95rem 放大到 1.5rem、字重 800，拿掉原本的 `letter-spacing` 標籤感寫法。
+  - `.about__eyebrow-bar` 加大到 5px×1.5em，並加上 `animation: blink 1s steps(1) infinite;`——直接沿用 `layout/_header.scss` 已定義的 `@keyframes blink`（`main.scss` 的 `@use` 順序 header 排在 about 前面，編譯後 keyframes 全域共用，這裡不重複定義）。
+  - 新增 `.about__info-list`／`li`／`b` 三層樣式：左側 2px 灰色細線、每行左內距、欄位名稱固定寬度 4.2em 對齊、灰階小字。
+  - `.about__avatar` 從固定 `136px × 136px` 改成 `width: clamp(136px, 30%, 220px)` 搭配 `aspect-ratio: 1 / 1`，讓照片隨版面寬度放大到約 1/3、同時維持正圓形不被壓扁。
+  - `.about__motto` 字級從 0.85rem 放大到 1.15rem 並加上 `font-weight: 700`。
+- `src/styles/main.css`：同步手動更新以上四處樣式（因專案沒有存檔自動編譯）。
+
+**取捨說明**：
+- 大頭照用 `clamp(136px, 30%, 220px)` 而不是單純 `width: 33%`，是為了避免視窗極寬時照片被放到不合理的巨大尺寸、視窗極窄時又縮太小，用上下限包住「約 1/3 版面寬」這個需求。
+- 分隔線閃爍動畫沒有另外定義新的 `@keyframes`，直接沿用 header 已有的同名動畫，減少重複程式碼，但這代表 `_about.scss` 對 `_header.scss` 的編譯順序有隱性依賴，`main.scss` 的 `@use` 清單如果之後調整順序（header 排到 about 後面）需要注意這裡會失效。
+- 姓名/生日/居住地目前都是佔位文字，之後使用者要填入真實資料時，`about__info-list` 的 `<li>` 結構可以直接複製增減欄位。
+
+**驗證方式**：純樣式與標籤新增，未執行 sass 重新編譯（`main.css` 已手動同步）；視覺上大頭照明顯放大、eyebrow 標題與短豎線份量提升（短豎線持續閃爍）、主題字句與身份說明之間多一段個人資訊清單、座右銘字級與字重提升。

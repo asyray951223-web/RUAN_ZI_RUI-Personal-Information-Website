@@ -15,3 +15,13 @@
 ## Git commit 訊息語言
 
 commit message 一律使用**繁體中文**撰寫，不要用英文。
+
+## 預設使用的 Skill
+
+本專案預設使用以下五個 skill，不需要使用者每次額外提醒或指定：
+
+- **frontend-design**：視覺設計方向指引，避免落入樣板感的配色、字體、排版
+- **frontend-design-direction**：更完整的產品級前端設計方向設定
+- **brainstorming**：任何創意/新功能/樣式改動前，先釐清需求與取捨
+- **browser-use**：實際打開瀏覽器測試效果、抓截圖驗證
+- **adversarial-ux-test**：完成後模擬挑剔使用者操作，抓出真正值得修的 UX 問題

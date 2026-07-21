@@ -1,1 +1,12 @@
 // .section 共用樣式放這裡（about / works / contact 三個區塊共用的部分）
+// 這裡先只定義一個可重複使用的 mixin，不直接套用在 .section class 上，
+// 避免還沒設計好樣式的其他區塊被迫一起變成白底卡片；
+// 哪個區塊要用這種卡片視覺，自己在對應的 pages/_xxx.scss 裡 @include section-card 就好
+@mixin section-card {
+  max-width: 920px;
+  margin: 0 auto 2rem; // 置中並跟視窗邊緣保持距離，margin-bottom 讓上下相鄰的卡片有呼吸空間
+  background: #fff;
+  border-radius: 14px;
+  padding: 2.4rem 2.6rem;
+  box-shadow: 0 4px 20px rgba(13, 50, 77, 0.08); // 陰影帶一點本站主色調（深空藍），取代預設的純黑陰影
+}

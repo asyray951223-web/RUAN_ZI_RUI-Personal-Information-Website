@@ -1,1 +1,163 @@
-// .about 專屬樣式放這裡
+@use '../abstracts/variables' as *;
+
+// 本網站主區塊預設不做成卡片（除非特別要求），所以這裡不套用 components/_section.scss 的
+// section-card mixin，.about 沒有背景/圓角/陰影，維持跟其他區塊一樣貼齊版面
+
+// .about：左右留白 + 上下間距，採用「示範.html 方案二」的 clamp() 流體留白，
+// 不設固定寬度容器，讓留白直接隨視窗寬度連續縮放：
+// - 螢幕越窄，留白自動收斂到 clamp() 的最小值，不會被擠壓到貼邊
+// - 螢幕越寬，留白自動放大到 clamp() 的最大值，不會顯得空洞或侷促
+// - 之後就算做響應式斷點，這組留白邏輯本身已經有彈性，不用另外處理這一層
+.about {
+  padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
+}
+
+// .about__eyebrow：標題列，短豎線色塊 + 「自我介紹」文字；
+// 這次改版把字級從 0.95rem 大幅放大到 1.5rem，讓它有真正「區塊標題」的份量，
+// 不再只是小型的標籤字
+.about__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: $color-deep-space-blue;
+  margin-bottom: 1.6rem;
+  // 拿掉原本的 letter-spacing 標籤感寫法：字級變大後拉字距會讓標題顯得鬆散，
+  // 大字級改追求扎實的標題感，不再模仿小標籤的排法
+
+  // &-bar 會編譯成 .about__eyebrow-bar：短豎線色塊，用強調色，加上閃爍動畫
+  // 呼應 header 拼音字尾閃爍游標的終端機語彙；animation 直接沿用 layout/_header.scss
+  // 裡已經定義的 @keyframes blink（該檔案排在 main.scss 的 @use 順序中比較前面，
+  // 編譯後 keyframes 是全域的，這裡不用重複定義同一組動畫）
+  &-bar {
+    width: 5px;
+    height: 1.5em;
+    background: $color-accent;
+    border-radius: 2px;
+    animation: blink 1s steps(1) infinite;
+  }
+}
+
+// .about__info-list：新增的「個人資訊」區塊，直向清單樣式——左側細灰線串起，
+// 每行前面用小型灰階標籤字標示欄位名稱（姓名/生日/居住地等），放在主題字句跟
+// 身份說明之間，跟「求學/專業身份」的資訊分成兩層，不會混在一起
+.about__info-list {
+  list-style: none;
+  margin: 0 0 1.1rem;
+  padding: 0;
+  border-left: 2px solid #e2e6e9;
+
+  li {
+    padding: 0.35rem 0 0.35rem 0.9rem;
+    font-size: 0.85rem;
+    color: #32424d;
+  }
+
+  b {
+    display: inline-block;
+    width: 4.2em; // 固定寬度讓欄位名稱對齊，數值統一從同一個位置開始
+    color: #9aa8b0;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+  }
+}
+
+// .about__layout：左右兩欄排版容器（左：大頭照／右：文字內容）
+.about__layout {
+  display: flex;
+  gap: 2.2rem;
+  align-items: flex-start;
+}
+
+// .about__avatar：圓形大頭照佔位，之後使用者會換成真實照片；
+// 底色跟 .about__tag 用同一個淺藍灰 #eef2f5，讓卡片內的「淺色區塊」語彙一致；
+// 這次改版把尺寸從固定 136px 放大到約版面 1/3 寬（用 clamp() 控制上下限，
+// 避免視窗極窄或極寬時比例跑掉），視覺份量大幅提升
+.about__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(136px, 30%, 220px);
+  aspect-ratio: 1 / 1; // 用 aspect-ratio 搭配百分比寬度，維持正圓形不會被壓扁
+  flex-shrink: 0; // 避免右側文字太長時把圓形照片擠扁
+  border-radius: 50%;
+  border: 2px solid $color-accent;
+  background: #eef2f5;
+  color: #9aa8b0;
+  font-size: 0.75rem;
+  text-align: center;
+  // 目前是 <div> 佔位，對它沒有作用；先加上是為了之後換成 <img> 放真實照片時，
+  // 就算照片長寬比不是正方形也會自動裁切填滿圓形，不會被拉伸變形
+  object-fit: cover;
+}
+
+// .about__tagline：主題字句，全卡片視覺焦點，顏色直接沿用 $color-deep-space-blue，
+// 跟 header 背景同一個深藍，讓卡片跟 header 的品牌色有視覺連結
+.about__tagline {
+  margin: 0 0 0.5rem;
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: $color-deep-space-blue;
+  // 拿掉 HTML 裡手動的 <br /> 斷行後，改用 max-width 限制寬度，
+  // 讓瀏覽器依實際內容長度自然換行，不會因為真實文字長度不同而斷在奇怪的位置
+  max-width: 26ch;
+}
+
+// .about__identity：身份/職業說明，用從深空藍推導出的中間調灰藍色弱化，
+// 對白底對比度約 5.23:1，通過 WCAG AA 一般文字門檻
+.about__identity {
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
+  color: #55707f;
+}
+
+// .about__bio：精簡介紹，深空藍推導出的深灰藍，對白底對比度約 10.38:1，長文字閱讀舒適
+.about__bio {
+  margin: 0 0 1.1rem;
+  font-size: 0.94rem;
+  line-height: 1.8;
+  color: #32424d;
+}
+
+// .about__tags：標籤列，允許換行避免標籤太多時被裁切
+.about__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.1rem;
+}
+
+// .about__tag：技能標籤，改用等寬字 + ::before 加 "#" 前綴，做成「# 標籤」的 code-chip 觀感，
+// 呼應 header 拼音字首的等寬字語彙，是這張卡片刻意設計的簽名元素，不是示範檔案的灰底圓角膠囊
+.about__tag {
+  padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+  background: #eef2f5;
+  color: #3d5566;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+
+  &::before {
+    content: '#';
+    color: $color-accent;
+  }
+}
+
+// .about__motto：座右銘/信條，斜體＋強調色；分隔線用主色低透明度取代中性灰虛線，
+// 讓分隔線也帶一點本站色彩，而不是示範檔案裡跟品牌無關的灰色；
+// 這次改版把字級從 0.85rem 放大到 1.15rem 並加粗，提升它的視覺份量，
+// 不再只是小字收尾
+.about__motto {
+  margin: 1.1rem 0 0;
+  padding-top: 0.9rem;
+  border-top: 1px dashed rgba(13, 50, 77, 0.18);
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-style: italic;
+  color: $color-accent;
+}
