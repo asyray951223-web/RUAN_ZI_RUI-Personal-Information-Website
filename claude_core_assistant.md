@@ -356,3 +356,80 @@ src/styles/
 - 姓名/生日/居住地目前都是佔位文字，之後使用者要填入真實資料時，`about__info-list` 的 `<li>` 結構可以直接複製增減欄位。
 
 **驗證方式**：純樣式與標籤新增，未執行 sass 重新編譯（`main.css` 已手動同步）；視覺上大頭照明顯放大、eyebrow 標題與短豎線份量提升（短豎線持續閃爍）、主題字句與身份說明之間多一段個人資訊清單、座右銘字級與字重提升。
+
+### 22. `#about` 大頭照改成靠右、比例調整為 64:36，並修正 adversarial-ux-test 找出的兩個 RED 問題
+
+**背景**：使用者提供一張參考截圖，希望文字跟照片的比例更接近「照片佔 4-5 成、垂直幾乎撐滿」的效果。先在 `示範.html` 規劃三個方向（A 照片右/56:44/圓形、B 照片左/42:58/圓形、C 照片右/45:55/圓角矩形），並用 adversarial-ux-test 檢視，找出三款共通的兩個 RED 問題：① 完全沒有窄容器保護，照片比例放大後這個問題比之前更嚴重；② `align-items: center` 在文字內容變長時會讓照片飄在文字區塊中間、觀感不穩定。使用者最後選定「範例 A・照片右／64:36／圓形」（把比例從 56:44 調整為 64:36，文字更寬裕），並確認一併套用兩個 RED 修正。
+
+**變更**：
+- `src/pages/index.html`：`.about__layout` 內把 `.about__avatar` 移到 `.about__content` 之後（DOM 順序決定視覺順序，大頭照從左邊換到右邊，不使用 CSS `order`）。
+- `src/styles/pages/_about.scss`：
+  - `.about__layout` 新增 `flex-wrap: wrap;`——容器不夠寬時大頭照自動換到文字下方，不會把兩欄硬擠在一起；`align-items` 維持既有的 `flex-start`（先前已經是頂端對齊，這次確認保留，不是這次新加）。
+  - 新增 `.about__content { flex: 1 1 62%; min-width: 260px; }`，文字欄占約 62%，並用 `min-width` 避免欄位被壓到過窄才觸發換行。
+  - `.about__avatar` 從 `width: clamp(136px, 30%, 220px)` 改成 `flex: 0 0 34%; max-width: 280px;`，大頭照比例放大到約 34%，並用 `max-width` 避免超寬螢幕時被撐到不合理的巨大尺寸。
+- `src/styles/main.css`：同步手動更新 `.about__layout`（加 `flex-wrap`）、新增 `.about__content`、更新 `.about__avatar`（因專案沒有存檔自動編譯）。
+
+**取捨說明**：
+- 沒有用 CSS `order` 屬性把照片視覺移到右邊，而是直接調整 HTML 的 DOM 順序，讓視覺順序跟閱讀/無障礙朗讀順序一致（文字先、照片後），避免 `order` 造成視覺順序跟 DOM 順序不一致、螢幕報讀器唸出順序跟畫面看到的不同。
+- `flex-wrap` 只是「窄容器不擠壞」的防呆底線，不等於完整的響應式設計（例如換行後大頭照該多大、要不要置中，這些細節之後做響應式工程時仍要另外規劃），使用者已確認這個範圍。
+- `.about__avatar` 拿掉了原本的 `flex-shrink: 0`，因為現在用 `flex: 0 0 34%` 已經明確定義了 flex-grow/flex-shrink/flex-basis（0 0 34%），`flex-shrink: 0` 已經包含在這個簡寫裡，不用重複寫。
+
+**驗證方式**：純樣式與 HTML 順序調整，未執行 sass 重新編譯（`main.css` 已手動同步）；視覺上大頭照從左邊移到右邊、比例放大到約 36%，文字欄約占 64%，兩個 RED 修正（`flex-wrap` 防擠壓、頂端對齊）已在程式碼中確認到位。
+
+### 23. `#resume` 補齊各群組的擴充欄位結構
+
+**背景**：使用者用 `/plan` 請 Claude 分析「履歷/經歷」需要哪些必要資訊、哪些完整擴充資訊，Claude 先產出分析文件（未動程式碼），過程中一度誤判「站內完全沒有語言能力欄位」——後來核對發現 `#skills` 早就有「語言」子群組（`skills__name` + `skills__level`，`skills__level` 是自由文字，本來就能填檢定分數），這個「缺口」其實不存在，且依本站既有分工原則（`#resume` 不重複 `#skills`/`#contact` 內容），語言能力不該在 `#resume` 另開一組。排除語言能力後，使用者確認要把分析中列出的其他擴充欄位（教育背景/實習經歷/專案經歷/證照獎項）補進 HTML 結構，暫不填真實資料、也不寫 CSS。
+
+**變更**：`src/pages/index.html` 的 `#resume` 四個群組，各自的 `<article>` 內新增擴充欄位（皆為結構性佔位文字）：
+- 教育背景（`resume__edu`）：新增 `resume__edu-extra`（GPA／輔系或雙主修／交換學生經驗，註解註明「非必要，沒有可直接刪除這行」）。
+- 實習/工讀經歷（`resume__job`）：新增 `resume__job-tools`（使用工具/技術）。
+- 專案經歷（`resume__project`）：新增 `resume__project-role`（角色）、`resume__project-tags`/`resume__project-tag`（技術標籤列表）、`resume__project-link`（GitHub/Demo 連結）——class 命名刻意對齊 `#portfolio` 已有的 `portfolio__role`/`portfolio__tech-list`/`portfolio__link-list`，避免同一種資訊在站內有兩套不同命名。
+- 證照/獎項（`resume__award`）：從單行 `<li>` 文字改成跟教育背景/實習經歷一致的 `<article><h4>+<p></article>` 結構，`<h4 class="resume__award-name">` 放名稱、新增 `<p class="resume__award-meta">` 放頒發單位／取得時間。
+
+**取捨說明**：
+- 分析中列出的「軟實力/工作風格」「推薦人/推薦信」兩項，因為分析階段已判定對大學生履歷「非必要、容易流於空泛」，這次沒有加入結構。
+- 專案經歷的「遇到的挑戰與解法」這項擴充欄位刻意沒有加：本站已有 `#casestudy` 章節專門用五段式敘事深談 1–2 個作品的挑戰與過程，`#resume` 的專案經歷維持精簡版，避免跟 `#casestudy` 內容重複。
+- 校園經歷（精簡版）群組沒有變動：分析階段已確認完整版留給 `#activities`，`#resume` 這裡只放 1 行重點，不需要再擴充欄位。
+
+**驗證方式**：純 HTML 結構新增，未執行 sass 重新編譯（沒有動到任何 CSS/SCSS，`src/styles/pages/_resume.scss` 確認仍是空檔案）；用 Grep 確認新增的 class 都成對出現在對應的 `resume__group` 內，且 `<article>` 巢狀結構未被破壞。
+
+### 24. `#resume` 改版：手風琴摺疊 + 時間軸（定案版套用到正式網站）
+
+**背景**：使用者先在 `claude助手-設計範例展示資料夾/示範.html` 規劃六種 `#resume` 排版方向（時間軸／頁籤／手風琴／卡片網格／終端機／側邊導覽），並用 adversarial-ux-test 找出兩個問題：①分頁需要額外開發互動邏輯，②手風琴預設全摺疊會讓忙碌訪客漏看重點經歷。定案採用「手風琴摺疊（教育/實習/專案預設展開）」，後續又加碼「教育/實習/專案三組內部套用時間軸」與「證照/獎項拆成兩個獨立摺疊面板」。這次用 `/plan` 走完整規劃流程（讀示範檔案最終版本、規劃改動範圍、跟使用者確認兩個未定案的細節）後正式套用到 `src/pages/index.html` 與 `src/styles/pages/_resume.scss`。
+
+**變更**：
+- `src/pages/index.html` 的 `#resume` 整段改寫：
+  - 標題列 `<h2 class="section__title">` 改成比照 `#about` 的 `about__eyebrow` 做法：`resume__eyebrow` + `resume__eyebrow-bar`（短豎線色塊）。
+  - 五個 `<div class="resume__group"><h3>...</h3><ul>...</ul></div>` 全部改成原生 `<details class="resume__group">`/`<summary class="resume__subtitle">`，不需要 JavaScript；教育背景／實習工讀經歷／專案經歷預設 `open`，校園經歷（精簡版）／證照／獎項維持摺疊。
+  - 原本合併的「證照 / 獎項」拆成兩個獨立 `<details>`：新增「證照」面板（`resume__cert-list`/`resume__cert`/`resume__cert-name`/`resume__cert-meta`，結構比照既有 `resume__award-list`），「獎項」沿用原結構搬進新面板；兩者依使用者確認都放 2 筆佔位條目，展示同面板內多筆資料的虛線分隔效果。
+  - 教育背景／實習工讀經歷／專案經歷各自的清單也補成 2 筆佔位條目，展示時間軸在多筆資料下的排列效果。
+  - 更新區塊最上方的說明註解，改成描述手風琴摺疊＋時間軸的新結構邏輯與各群組預設展開/摺疊的理由。
+- `src/styles/pages/_resume.scss`（原本空白，整份新寫）：
+  - `.resume__eyebrow`/`&-bar`：比照 `.about__eyebrow`，依使用者確認**加上閃爍動畫**（沿用 `layout/_header.scss` 的 `@keyframes blink`）。
+  - `.resume__pdf-link`：改成磚紅色文字＋磚紅細外框的膠囊樣式，不做色塊填滿。
+  - `.resume__group`/`.resume__subtitle`：手風琴摺疊樣式，`summary` 拿掉瀏覽器預設箭頭（`list-style: none` + `::-webkit-details-marker`），改用 Space Mono 等寬字的 `+`/`−` 當展開/收合圖示（`[open]` 狀態切換）。
+  - 時間軸（`resume__edu-list`/`resume__job-list`/`resume__project-list` 當線、對應的 `li` 當圓點）：完全照使用者指定的「線跟圓點共用同一個 x 座標 + `transform: translateX(-50%)` 各自置中」做法實作，不用手動疊加 padding/border 負值對齊。
+  - 無時間軸的三組（校園經歷/證照/獎項）：同面板內第二筆以後用 `+` 相鄰選擇器加虛線分隔（`border-top: 1px dashed #eef0f2`）。
+  - 補上內容欄位（h4 名稱／meta／desc／tags／link）的字級顏色，色碼沿用 `$color-deep-space-blue`／`$color-accent` 與 `#about` 已用過的灰階寫死值（`#9aa8b0`/`#32424d`/`#e2e6e9`），沒有新增變數。
+- `src/styles/main.css`：執行 `npx sass src/styles/main.scss src/styles/main.css` 整份重新編譯（這次改動範圍大，不採用過去小改動時手動同步片段 CSS 的做法）。
+
+**取捨說明**：
+- PDF 連結文字維持「下載完整履歷 PDF」，沒有加示範檔案裡的 `↓` 箭頭字元——這次範圍是排版風格改版，不是新增裝飾性內容。
+- 標題短豎線動畫、證照佔位筆數兩點是示範檔案本身沒有寫死答案（或跟站內既有慣例衝突）的地方，執行前用 AskUserQuestion 跟使用者確認過，不是自行假設：短豎線比照 `about`/`header` 加閃爍動畫；證照/獎項都採 2 筆佔位（跟其他群組目前只放 1 筆佔位的慣例不同，但使用者確認要優先呈現分隔線效果）。
+- 時間軸只套用教育/實習/專案三組，校園經歷/證照/獎項不套用——因為後者本身沒有強烈的時間先後意涵，比較像清單而非流程，這是使用者在需求裡明確指定的範圍，不是自行擴大。
+
+**驗證方式**：`npx sass src/styles/main.scss src/styles/main.css` 重新編譯成功、無錯誤；用 `browser-use`（Playwright）啟動本機靜態伺服器（需從專案根目錄啟動，不能只從 `src/pages` 啟動，因為 `index.html` 的 `<link>` 用的是 `/src/styles/main.css` 絕對路徑）並截圖確認：教育/實習/專案三組預設展開且時間軸線與圓點對齊、校園經歷/證照/獎項預設摺疊且圖示為 `+`、強制展開後證照/獎項的兩筆佔位間有虛線分隔、PDF 連結呈現磚紅膠囊外框。過程中發現一個**站內既有、非本次引入**的問題：`.site-header` 是 `position: fixed`，用錨點（`#resume`）直接跳轉或 `scrollIntoView` 時，區塊標題會被固定 header 蓋住（因為全站都沒有設定 `scroll-margin-top`），這是所有區塊共通的問題，不只 `#resume`，這次沒有動手修，記錄在這裡供之後排查。
+
+### 23. `#resume` 加上 clamp() 流體留白 + 誤用沙盒內 `npx sass` 導致 `main.css` 一度被覆蓋成錯誤訊息、已手動修復
+
+**背景**：使用者希望 `#resume` 也比照 `#about` 左右留空、上下間距加大並保持彈性。這次改動本身很單純（沿用 `.about` 已確認的 `clamp()` 方案），但過程中發生一個工具面的意外：Claude 在這個對話環境的 shell（Linux 沙盒）裡執行 `npx sass src/styles/main.scss src/styles/main.css` 想重新編譯，沙盒掛載到的專案資料夾版本比較舊、部分檔案（`abstracts/_variables.scss` 等）內容不完整，導致編譯失敗；dart-sass 遇到編譯錯誤時預設行為是把「錯誤訊息」當成一份 CSS（`body::before { content: "Error: ..." }`）寫進輸出檔案，而這個寫入動作是真的寫到使用者電腦上的 `src/styles/main.css`，等於把原本正確、已經編譯好的樣式表整個覆蓋掉。
+
+**變更**：
+- `src/styles/pages/_resume.scss`：新增 `.resume { padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem); }`，數值跟 `.about` 完全一致。
+- `src/styles/main.css`：發現被覆蓋成錯誤訊息後，改用 `Read` 工具（對應使用者電腦上的實際檔案，不是沙盒掛載版本）逐一重新讀取 `abstracts/_variables.scss`、`base/_reset.scss`、`base/_typography.scss`、`layout/_header.scss`、`components/_section.scss`（僅 mixin，無輸出）、`pages/_about.scss`、`pages/_resume.scss` 目前的真實內容，手動比對每個 `$變數` 對應的實際色碼／數值，重新組回一份完整、正確的 `main.css`（含這次新增的 `.resume` 留白規則）。
+
+**取捨說明**：
+- 之後這個對話環境如果還要「重新編譯確認」，不應該在這裡的 shell 執行 `npx sass`，因為沙盒掛載到的檔案版本可能跟使用者電腦上的實際檔案不同步；比較安全的做法是像這次一樣，用 `Read`/`Edit` 工具直接對照實際 `.scss` 內容手動同步 `main.css`，或請使用者在自己電腦上執行編譯後告知結果。
+- 手動重建 `main.css` 時，是逐一比對「當下」每個 `.scss` 檔案的真實內容而不是憑記憶／舊筆記回推，避免又出現另一層對不上的問題；但這代表如果使用者自己電腦上的 `main.css` 曾經跟 `.scss` 原始碼有過細微差異（例如手動微調過某個數值而沒有同步回 `.scss`），這次的重建會以 `.scss` 為準，蓋掉那類差異。
+
+**驗證方式**：手動核對 `main.css` 內容跟目前 `.about`／`.resume`／`.site-header`／`.site-nav` 對應的 `.scss` 規則逐條比對過一致；未在沙盒 shell 裡再次執行 `npx sass`。建議使用者之後有空時，在自己電腦上執行一次正式的 `npx sass` 編譯，確認輸出結果跟這次手動重建的版本一致。

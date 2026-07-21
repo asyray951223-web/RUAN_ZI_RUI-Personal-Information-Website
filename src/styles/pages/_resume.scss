@@ -1,1 +1,231 @@
-// .resume 專屬樣式放這裡
+@use '../abstracts/variables' as *;
+
+// 本網站主區塊預設不做成卡片，.resume 不套用 section-card mixin，維持跟其他區塊一樣貼齊版面
+// （沿用 #about 已確認的規則）
+
+// .resume：左右留白 + 上下間距，做法照抄 #about 已確認採用的「clamp() 流體留白」方案：
+// 不設固定寬度容器，讓留白直接隨視窗寬度連續縮放
+// - 螢幕越窄，留白自動收斂到 clamp() 的最小值，不會被擠壓到貼邊
+// - 螢幕越寬，留白自動放大到 clamp() 的最大值，不會顯得空洞或侷促
+// - 之後就算做響應式斷點，這組留白邏輯本身已經有彈性，不用另外處理這一層
+// 數值跟 .about 完全一致，維持全站區塊留白節奏統一
+.resume {
+  padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
+}
+
+// .resume__eyebrow：標題列，做法比照 #about 的 about__eyebrow（短豎線色塊＋文字），
+// 取代原本的 section__title
+.resume__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: $color-deep-space-blue;
+  margin-bottom: 1.4rem;
+
+  // &-bar 會編譯成 .resume__eyebrow-bar：短豎線色塊，使用者確認要跟 about__eyebrow-bar／
+  // header 拼音游標一致加上閃爍動畫，直接沿用 layout/_header.scss 已定義的 @keyframes blink
+  // （main.scss 的 @use 順序 header 排在 resume 前面，編譯後 keyframes 全域共用，不用重複定義）
+  &-bar {
+    width: 5px;
+    height: 1.5em;
+    background: $color-accent;
+    border-radius: 2px;
+    animation: blink 1s steps(1) infinite;
+  }
+}
+
+// .resume__pdf-link：膠囊外框樣式，磚紅文字＋磚紅細外框，不做色塊填滿，
+// 維持「次要動作」的視覺份量（跟下面的手風琴主要內容做出層級區隔）
+.resume__pdf-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: $color-accent;
+  text-decoration: none;
+  border: 1px solid #f0d3ca; // 磚紅色的淺色調，外框夠淺，不會搶過強調色文字本身
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  margin-bottom: 1.6rem;
+}
+
+// .resume__group：手風琴摺疊面板，用原生 <details> 實作，不需要 JavaScript；
+// 每組之間用 border-bottom 分隔，取代原本群組之間單純的空白間距
+.resume__group {
+  border-bottom: 1px solid #e2e6e9;
+}
+
+// .resume__subtitle：<summary>，拿掉瀏覽器預設的三角形箭頭，改用等寬字的 +/− 當展開/收合圖示
+.resume__subtitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: $color-deep-space-blue;
+  cursor: pointer;
+  list-style: none; // Firefox 等瀏覽器：拿掉預設三角形箭頭
+
+  // Chrome/Safari 系瀏覽器的預設箭頭是另一個偽元素，list-style 管不到，要另外關閉
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  // 用等寬字的 + 當「展開」圖示，呼應全站終端機語彙（Space Mono）
+  &::after {
+    content: '+';
+    color: $color-accent;
+    font-family: 'Space Mono', monospace;
+    font-size: 1.1rem;
+  }
+}
+
+// <details open> 狀態下，summary 的圖示從 + 切換成 −
+.resume__group[open] > .resume__subtitle::after {
+  content: '−';
+}
+
+// 六個清單共用的面板內距，取代原本 section 之間的間距感；
+// list-style: none 是因為清單本身用時間軸圓點或內容排版取代原生項目符號，不需要瀏覽器預設圓點
+.resume__edu-list,
+.resume__job-list,
+.resume__project-list,
+.resume__campus-list,
+.resume__cert-list,
+.resume__award-list {
+  margin: 0;
+  padding: 0 0 1.2rem;
+  list-style: none;
+}
+
+// 時間軸：只套用在教育背景／實習工讀經歷／專案經歷，這三類天生可能有多筆、有時間先後
+// （多個學歷、多份工作、多個專案），時間軸能一眼看出先後順序；校園經歷/證照/獎項比較像
+// 清單而非流程，不套用。
+//
+// 線跟圓點刻意不用「border-left + 手動計算負值 padding」對齊，而是統一用「兩者都用同一個
+// x 座標 left: 0.7rem + transform: translateX(-50%)，讓元素以自己的中心點對齊那個座標」——
+// 不管線多粗、圓點多大，永遠對齊在同一條中心線上，不會像手動疊加 padding/border 那樣，
+// 只要有一層估算有誤差就跑版（設計階段的示範檔案第一版就是這樣，來回修正兩次才穩定，
+// 詳見 claude助手-設計範例展示資料夾/示範.html 對應註解）。
+.resume__edu-list,
+.resume__job-list,
+.resume__project-list {
+  position: relative;
+  padding-left: 1.4rem;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0.7rem; // 這個 x 座標同時也是下面圓點要對齊的座標，兩者必須寫一樣的值
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    transform: translateX(-50%); // 讓線以自己的中心對齊 left 座標，而不是用左邊緣對齊
+    background: #e2e6e9;
+  }
+}
+
+.resume__edu,
+.resume__job,
+.resume__project {
+  position: relative;
+  padding-bottom: 1.1rem;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    // <li> 位在父層 ul 的 padding-left（1.4rem）內側，所以座標要扣掉這個偏移量：
+    // 0.7rem（跟線一樣的座標）− 1.4rem（父層 padding-left）= -0.7rem
+    left: -0.7rem;
+    top: 0.3rem;
+    width: 9px;
+    height: 9px;
+    transform: translateX(-50%); // 圓點同樣用自己的中心對齊 left 座標，不用手算半徑
+    border-radius: 50%;
+    background: $color-accent;
+    box-shadow: 0 0 0 3px #fff;
+  }
+}
+
+// 沒有時間軸的三組（校園經歷精簡版／證照／獎項）：條目本身沒有強烈時間先後意涵，
+// 維持一般清單排版；但同一面板內有多筆條目時，第二筆以後加一條細虛線分隔，
+// 避免多筆資料黏在一起分不清楚
+.resume__campus + .resume__campus,
+.resume__cert + .resume__cert,
+.resume__award + .resume__award {
+  border-top: 1px dashed #eef0f2;
+  padding-top: 0.9rem;
+}
+
+// 內容欄位的字級/顏色：h4 名稱用深空藍、meta 用淺灰、desc 類段落用深灰藍，
+// 灰階沿用 #about 已經用過的同一批寫死值，維持全站配色一致，不新增變數
+.resume__edu-school,
+.resume__job-title,
+.resume__project-title,
+.resume__cert-name,
+.resume__award-name {
+  margin: 0 0 0.2rem;
+  font-size: 0.92rem;
+  color: $color-deep-space-blue;
+}
+
+.resume__edu-meta,
+.resume__job-meta,
+.resume__cert-meta,
+.resume__award-meta {
+  margin: 0 0 0.4rem;
+  font-size: 0.78rem;
+  color: #9aa8b0;
+}
+
+.resume__edu-extra,
+.resume__job-desc,
+.resume__job-tools,
+.resume__project-desc,
+.resume__project-role,
+.resume__campus {
+  margin: 0 0 0.3rem;
+  font-size: 0.86rem;
+  line-height: 1.7;
+  color: #32424d;
+}
+
+// .resume__project-tags／-tag：等寬字 + "#" 前綴，呼應 #about 的 .about__tag 簽名元素，
+// 全站對「技術標籤」這種資訊統一用同一套視覺語彙
+.resume__project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.resume__project-tag {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  background: #eef2f5;
+  color: #3d5566;
+  font-family: 'Space Mono', monospace;
+
+  &::before {
+    content: '#';
+    color: $color-accent;
+  }
+}
+
+.resume__project-link {
+  font-size: 0.82rem;
+  color: $color-accent;
+  display: inline-block;
+  margin-top: 0.4rem;
+}

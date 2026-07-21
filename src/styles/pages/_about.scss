@@ -64,24 +64,36 @@
   }
 }
 
-// .about__layout：左右兩欄排版容器（左：大頭照／右：文字內容）
+// .about__layout：左右兩欄排版容器（這次改版：左邊文字／右邊大頭照，比例約 64:36）
+// - flex-wrap：容器不夠寬時，大頭照自動換到文字下方，而不是把兩欄硬擠在一起，
+//   是 adversarial-ux-test 抓到「完全沒有窄螢幕保護」這個 RED 問題的修正
+// - align-items: flex-start：從頂端切齊，不管文字內容多長，大頭照位置都可預期，
+//   取代原本的置中對齊（置中在文字變長時會讓照片飄在中間，觀感不穩定）
 .about__layout {
   display: flex;
+  flex-wrap: wrap;
   gap: 2.2rem;
   align-items: flex-start;
 }
 
+// .about__content：文字內容欄，占版面約 62%；min-width 確保欄位不會被壓到過窄
+// 才觸發換行，避免中英文混排的內容（例如標籤列）被擠成過多行
+.about__content {
+  flex: 1 1 62%;
+  min-width: 260px;
+}
+
 // .about__avatar：圓形大頭照佔位，之後使用者會換成真實照片；
 // 底色跟 .about__tag 用同一個淺藍灰 #eef2f5，讓卡片內的「淺色區塊」語彙一致；
-// 這次改版把尺寸從固定 136px 放大到約版面 1/3 寬（用 clamp() 控制上下限，
-// 避免視窗極窄或極寬時比例跑掉），視覺份量大幅提升
+// 這次改版把比例從約 1/3 版面寬放大到約 34%（flex-basis），並用 max-width 280px
+// 避免超寬螢幕時照片被撐到不合理的巨大尺寸
 .about__avatar {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: clamp(136px, 30%, 220px);
-  aspect-ratio: 1 / 1; // 用 aspect-ratio 搭配百分比寬度，維持正圓形不會被壓扁
-  flex-shrink: 0; // 避免右側文字太長時把圓形照片擠扁
+  flex: 0 0 34%;
+  max-width: 280px;
+  aspect-ratio: 1 / 1; // 搭配 flex-basis 百分比寬度，維持正圓形不會被壓扁
   border-radius: 50%;
   border: 2px solid $color-accent;
   background: #eef2f5;
