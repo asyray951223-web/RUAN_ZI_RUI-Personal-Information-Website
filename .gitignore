@@ -1,2 +1,5 @@
 # Claude Code 用 Playwright MCP 驗證網頁時產生的暫存截圖/紀錄，非網站原始碼
 .playwright-mcp/
+
+# Claude Code /brainstorming 視覺化輔助工具（瀏覽器 mockup 比較）產生的暫存檔，非網站原始碼
+.superpowers/

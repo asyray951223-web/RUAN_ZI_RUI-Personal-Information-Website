@@ -282,18 +282,53 @@
         </details>
       </section>
 
-      <!-- skills 分技術／工具／語言三群組，每個項目用 skills__name + skills__level 兩個 span，
-           先用文字描述熟練度（例如「熟練」），之後要做成進度條/星級，只需改樣式不用改結構；
-           順序對齊上方 nav（履歷之後、作品集之前） -->
+      <!-- #skills 依 docs/superpowers/specs/2026-07-23-skills-redesign-design.md 設計文件實作：
+           技術／工具子群組熟練度用 CEFR 六級圓點量表（入門～精通），因為這兩類沒有官方檢定可
+           佐證；語言子群組改用真實檢定文字（比照 resume__cert-meta 的「名稱・取得時間」寫
+           法），因為語言能力本來就有 JLPT/TOEIC 等公認外部檢定，套用通用量表反而失真。年資用
+           「65 年尺標」長條呈現（100% = 65 年），數字本身才是主要資訊，長條刻意淡化避免被誤
+           讀成技術強弱；作品佐證用原生 <details>/<summary> 展開，沿用 #resume 手風琴已確立的
+           「不用 JavaScript」慣例。圓點填色數量／長條 width 百分比都是手動寫死的 HTML（本站無
+           JS/模板引擎），之後填真實資料時記得手動調整這兩處數值；順序對齊上方 nav（履歷之
+           後、作品集之前） -->
       <section id="skills" class="section skills">
-        <h2 class="section__title">技能</h2>
+        <div class="skills__eyebrow">
+          <span class="skills__eyebrow-bar" aria-hidden="true"></span>技能
+        </div>
 
         <div class="skills__group">
           <h3 class="skills__subtitle">技術</h3>
           <ul class="skills__list">
             <li class="skills__item">
-              <span class="skills__name">技能名稱佔位</span>
-              <span class="skills__level">熟練度佔位</span>
+              <div class="skills__row1">
+                <span class="skills__name">技能名稱佔位</span>
+                <!-- CEFR 六級量表：4/6 顆填色＝「中高」，佔位示範用 -->
+                <div class="skills__level" aria-label="熟練度：中高">
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-label">中高</span>
+                </div>
+              </div>
+              <div class="skills__row2">
+                <span class="skills__tenure-num">3 年</span>
+                <!-- 65 年尺標：3 / 65 ≈ 4.6% -->
+                <div class="skills__tenure-track">
+                  <div class="skills__tenure-fill" style="width: 4.6%;"></div>
+                </div>
+              </div>
+              <details class="skills__evidence">
+                <summary class="skills__evidence-summary">用於 <span class="skills__evidence-count">2</span> 個作品</summary>
+                <div class="skills__evidence-grid">
+                  <!-- title 屬性補上完整文字：6 欄網格窄，連結文字會被 ellipsis 截斷，
+                       hover 時靠 title 顯示完整作品名稱，不會因為截斷而看不出是哪個作品 -->
+                  <a class="skills__evidence-link" href="#" title="作品名稱佔位（一）">作品名稱佔位（一）</a>
+                  <a class="skills__evidence-link" href="#" title="作品名稱佔位（二）">作品名稱佔位（二）</a>
+                </div>
+              </details>
             </li>
           </ul>
         </div>
@@ -302,8 +337,27 @@
           <h3 class="skills__subtitle">工具</h3>
           <ul class="skills__list">
             <li class="skills__item">
-              <span class="skills__name">工具名稱佔位</span>
-              <span class="skills__level">熟練度佔位</span>
+              <div class="skills__row1">
+                <span class="skills__name">工具名稱佔位</span>
+                <!-- CEFR 六級量表：2/6 顆填色＝「基礎」 -->
+                <div class="skills__level" aria-label="熟練度：基礎">
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-label">基礎</span>
+                </div>
+              </div>
+              <div class="skills__row2">
+                <span class="skills__tenure-num">1 年</span>
+                <!-- 65 年尺標：1 / 65 ≈ 1.5% -->
+                <div class="skills__tenure-track">
+                  <div class="skills__tenure-fill" style="width: 1.5%;"></div>
+                </div>
+              </div>
+              <p class="skills__evidence-empty">尚無對應作品連結</p>
             </li>
           </ul>
         </div>
@@ -311,9 +365,12 @@
         <div class="skills__group">
           <h3 class="skills__subtitle">語言</h3>
           <ul class="skills__list">
-            <li class="skills__item">
-              <span class="skills__name">語言名稱佔位</span>
-              <span class="skills__level">熟練度佔位</span>
+            <li class="skills__item skills__item--lang">
+              <div class="skills__row1">
+                <span class="skills__name">語言名稱佔位</span>
+              </div>
+              <!-- 語言類不套用 CEFR 圓點，改沿用 resume__cert-meta 的「名稱・取得時間」寫法 -->
+              <p class="skills__cert-meta"><b>檢定名稱佔位</b>・取得時間佔位</p>
             </li>
           </ul>
         </div>

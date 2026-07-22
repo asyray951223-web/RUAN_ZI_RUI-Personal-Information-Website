@@ -449,3 +449,56 @@ src/styles/
 - 放大後每個 class 的相對大小順序（例如 tagline 仍是全區塊最大字）完全不變，因為是同一個倍率乘上所有數值，數學上必然維持順序。
 
 **驗證方式**：`npx sass` 重新編譯成功、無錯誤；用 Playwright 開啟本機靜態伺服器（從專案根目錄啟動）截圖比對 `#about`／`#resume` 放大前後，確認字級明顯變大、排版沒有破版（tagline 換行位置、時間軸圓點對齊、標籤列、證照/獎項虛線分隔皆正常）。
+
+### 26. `#about`／`#resume` 全部字體 ×0.9 微幅縮小（在 ×1.25 放大版基礎上）
+
+**背景**：使用者用 `/plan` 覺得上一筆（第 25 筆）×1.25 放大後的字級偏大，要求把「個人介紹、履歷」兩個區塊的字體全部等比例縮小，沒有指定倍率。先派 Explore agent 重新盤點目前 `_about.scss`、`_resume.scss` 兩檔案各 9 處 `font-size` 現況，確認專案沒有中央字體變數系統（`_variables.scss` 只有顏色/字體家族/header 高度），字體仍是逐一寫死的 rem 值。用 AskUserQuestion 確認縮小倍率（×0.8／×0.85／×0.9 三選一），使用者選定 **×0.9**（比放大版略小，但仍比最原始字級大一點，非完全復原）。
+
+**變更**：
+- `src/styles/pages/_about.scss`：`about__eyebrow`（1.88→1.69rem）、`about__info-list li`（1.06→0.95rem）、`about__info-list b`（0.9→0.81rem）、`about__avatar` 佔位文字（0.94→0.85rem）、`about__tagline`（2→1.8rem）、`about__identity`（1.15→1.04rem）、`about__bio`（1.18→1.06rem）、`about__tag`（0.98→0.88rem）、`about__motto`（1.44→1.3rem），全部乘以 0.9 並四捨五入到小數兩位。
+- `src/styles/pages/_resume.scss`：`resume__eyebrow`（1.88→1.69rem）、`resume__pdf-link`（1→0.9rem）、`resume__subtitle`（1.19→1.07rem）、摺疊圖示 `::after`（1.38→1.24rem）、`-edu-school`/`-job-title`/`-project-title`/`-cert-name`/`-award-name`（1.15→1.04rem）、`-edu-meta`/`-job-meta`/`-cert-meta`/`-award-meta`（0.98→0.88rem）、`-edu-extra`/`-job-desc`/`-job-tools`/`-project-desc`/`-project-role`/`.resume__campus`（1.08→0.97rem）、`resume__project-tag`（0.9→0.81rem）、`resume__project-link`（1.03→0.93rem），同樣乘以 0.9。
+- 每處都在原本「×1.25 放大」註解下方**加一行**「×0.9 微幅縮小」的新註解，保留兩次調整的完整歷史脈絡，不刪舊註解。
+- `src/styles/main.css`：執行 `npx sass src/styles/main.scss src/styles/main.css` 整份重新編譯。
+
+**取捨說明**：
+- 沿用第 25 筆放大時的慣例：只動 `font-size`，不連動調整 `padding`／`gap`／`border-radius`；`letter-spacing`、`max-width: 26ch` 等相對單位隨字級自動縮放，不需另外處理。
+- 因為專案沒有中央字體變數（`$font-size-*` 或 CSS 自訂屬性），這次跟上次一樣採逐一手動改數值的做法，而不是新增變數系統——避免在字體需求還沒穩定前，為了單次調整就引入額外的抽象層。
+- 兩個區塊的 `.about`／`.resume` 各自獨立 scss 檔、獨立 class 命名，其他區塊（skills/portfolio/activities/casestudy/notes/goals/contact 等）不共用字體規則，確認這次縮小不會誤傷其他區塊。
+
+**驗證方式**：`npx sass` 重新編譯成功、無錯誤，且用 `grep` 核對編譯後的 `main.css` 確實含新數值（如 `1.69rem`、`0.95rem`、`1.8rem`）；用 Playwright 開啟本機靜態伺服器（從專案根目錄啟動，`python -m http.server`）截圖 `#about`／`#resume` 全頁，確認字級明顯變小、排版沒有破版（tagline 換行正常、摺疊 +/− 圖示與文字對齊、時間軸圓點與虛線分隔正常）。
+
+### 27. `#skills` 資訊架構與視覺設計分析（`/brainstorming` + `/adversarial-ux-test`，未動程式碼）
+
+**背景**：使用者請 Claude 用 `/brainstorming` 搭配 `/adversarial-ux-test` 分析「技能」（`#skills`）需要哪些必要資訊、哪些是完整擴充資訊、以及如何展現特色。先用 Playwright 檢視現況才發現 `_skills.scss` 幾乎是空檔案（只有一行註解），編譯後 `main.css` 查無任何 `.skills` 規則——這個區塊完全沒有視覺樣式，跟全站已確立的深空藍/磚紅/等寬字語彙完全脫節。接著模擬一位每天看 40–50 份新鮮人履歷網站的挑剔 HR persona（陳姐）檢視，找出「視覺斷層」（RED）與「熟練度自評形容詞不可信」（GREEN，內容架構問題）兩個真實問題；瀏覽器截圖過程中出現的「文字呈現藍色底線」現象經核對 `getComputedStyle` 為黑色/無底線，判斷是本機真實 Chrome 的擴充功能疊加效果，非網站本身樣式問題，未列入分析。
+
+之後用 `/brainstorming` 一次問一個問題釐清方向，並在「熟練度視覺化」這個明顯需要用看的而非用講的問題上，依規範先用 AskUserQuestion 徵求使用者同意後，才啟動 brainstorming skill 附帶的瀏覽器視覺化輔助伺服器（`scripts/start-server.sh`），來回畫了多版 mockup 讓使用者直接點選比較，逐步收斂出最終設計。
+
+**產出**：`docs/superpowers/specs/2026-07-23-skills-redesign-design.md`（設計規格文件，尚未修改 `index.html`／`_skills.scss` 任何程式碼）。重點決定：
+- `#skills` 與 `#resume` 專案標籤的分工：`#skills` 是完整技能庫，`#resume` 標籤只標記「這個專案用了什麼」，兩者不去重複、互為總覽與實例佐證。
+- 熟練度呈現：技術/工具類用 CEFR 六級量表（入門/基礎/中等/中高/高等/精通，6 顆圓點）＋ 65 年尺標長條（100% = 65 年，畫面不顯示尺標倍率文字，年資數字才是主要資訊，長條刻意淡化避免被誤讀成技術強弱）；語言類不套 CEFR，改成沿用 `.resume__cert-meta` 既有「檢定名稱・取得時間」文字語彙（例如「JLPT N3・2024 年取得」）。
+- 作品佐證：不做成彩色標籤（避免視覺上跟 `#portfolio` 卡片重複），改成預設收合的「用於 N 個作品 ▾」一行文字，點擊展開成 6 欄網格連結清單，手機窄螢幕降為 3–4 欄。
+- 順手補上 `.gitignore` 排除 `.superpowers/`（brainstorming 視覺化輔助工具的暫存 mockup 目錄，非網站原始碼）。
+
+**取捨說明**：
+- 沒有把 `#skills` 熟練度做成單純「進度條=強弱」的量表，是刻意設計：陳姐這個persona明確表達「不信自誇形容詞」，65 年尺標與 CEFR 六級量表都是「有外部參照系統、不是自吹自擂」的呈現方式，用來回應這個真實找到的 UX 問題，而不是為了炫技加圖表。
+- 語言類技能不跟技術/工具共用 CEFR 圓點量表，是因為語言早就有公認的外部檢定（JLPT/TOEIC），硬套一個通用框架反而比直接秀真實檢定失真；這也是為什麼設計文件把三個子群組分成兩套不同的熟練度呈現邏輯，而不是強求外觀統一。
+- 這次刻意不比照 `#resume` 用中央 `.claude/plans/` 的 `/plan` 流程，而是照 `/brainstorming` skill 預設走 `docs/superpowers/specs/` 路徑，因為使用者這次明確呼叫的是 `/brainstorming` 而非 `/plan`，兩者是不同流程、不應該混用彼此的產物路徑。
+- 沒有依 brainstorming skill 預設「寫完設計文件後自動 commit」，因為使用者沒有明確要求 commit，維持「只在使用者明確要求時才 commit」的既有規則優先於 skill 的預設步驟。
+
+**驗證方式**：這次是分析/設計階段，沒有程式碼可驗證；設計文件本身經過 placeholder/內部矛盾/範疇/歧義的自我審查（spec self-review）後才交付，等使用者確認規格文件內容無誤。
+
+### 28. `#skills` 依規格文件實作（改 HTML 結構 + 補齊 `_skills.scss`）
+
+**背景**：使用者確認第 27 筆的設計文件（`docs/superpowers/specs/2026-07-23-skills-redesign-design.md`）後，回覆「好」，接續請 Claude 落地實作。因為 `/brainstorming` skill 預期的下一步 `writing-plans` skill 在這個環境沒有安裝，改用 Claude Code 內建的 `EnterPlanMode`／`ExitPlanMode` 規劃流程（跟先前 `/plan` 走同一套機制）產生實作計畫，經使用者核准後動手。
+
+**變更**：
+- `src/pages/index.html`（`#skills` 整段）：標題從 `<h2 class="section__title">技能</h2>` 改成比照 `about__eyebrow`/`resume__eyebrow` 的短豎線色塊+文字結構；技術/工具子群組項目改成兩行＋可選第三行（標籤+CEFR 六點量表、年資數字+65年尺標長條、原生 `<details>` 展開式作品佐證或「尚無對應作品連結」文字）；語言子群組改成標籤 + `.skills__cert-meta`「檢定名稱・取得時間」文字，不套用圓點/長條。圓點填色數量與長條 `width` 百分比都是手動寫死的示範值（3年/65≈4.6%、1年/65≈1.5%），之後填真實資料要手動調整。
+- `src/styles/pages/_skills.scss`（原本只有 1 行註解，整份改寫）：新增 `.skills` 留白、`.skills__eyebrow`（沿用全域 `@keyframes blink`）、`.skills__group`/`.skills__subtitle`、`.skills__item` 虛線分隔、`.skills__name`（`#` 前綴 Space Mono chip，沿用 `about__tag`/`resume__project-tag` 語彙）、`.skills__level`/`.skills__level-dot`（6 顆圓點，磚紅實心/淺灰空心）、`.skills__tenure-track`/`-fill`（中性灰藍色刻意不用強調色，避免被誤讀成實力強弱）、`.skills__evidence`（`<details>`，沿用 `#resume` 手風琴「不用 JS」慣例）、`.skills__evidence-grid`（6 欄網格，`@media (max-width:600px)` 降為 3 欄）、`.skills__cert-meta`（沿用 `.resume__cert-meta` 數值）。
+- 實作過程中發現一個設計文件沒預料到的問題：`.skills__row1` 用 `justify-content: space-between`，但 `.skills` 沒有像 `.about__layout` 那樣的雙欄配置限制寬度，導致熟練度圓點被推到滿版視窗（約 1520px）最右邊，跟左邊標籤中間留下大片不合理空白；修正方式是幫 `.skills__list` 加上 `max-width: 640px`，讓標籤跟熟練度指標保持在合理距離內，這是規格文件跟 mockup（在較窄的視覺化輔助分頁裡預覽，沒有暴露這個問題）都沒抓到的實作階段發現。
+- 補上兩個作品連結的 `title` 屬性，因為 6 欄網格欄寬窄，連結文字會被 `ellipsis` 截斷，用 `title` 讓 hover 時能看到完整作品名稱。
+
+**取捨說明**：
+- 6 欄網格在只有 1–2 個作品時，仍會保留 6 欄的網格容器寬度，右側留白看起來稍微空——這是使用者兩輪確認過的「6 欄」設計本身的已知取捨（原本設計是為了容納「未來作品很多」的情境），這次沒有另外加邏輯讓網格寬度隨項目數量收縮，避免為了稀疏情境的美觀，讓「多筆作品要換行」的核心情境變複雜。
+- 沒有引入任何 JavaScript：作品佐證展開/收合完全靠原生 `<details>/<summary>`，跟 `#resume` 手風琴一致，維持全站「不需要 JS」的慣例。
+
+**驗證方式**：`npx sass` 重新編譯成功、無錯誤；用 Playwright 開啟本機靜態伺服器截圖確認：桌面寬度下標籤、六點量表、年資長條、展開式作品佐證排版正常且彼此距離合理（修正 `max-width` 後）；點擊展開 `<details>` 後 6 欄網格正確顯示兩個作品連結；縮到 375px 手機寬度後網格降為 3 欄、內容沒有橫向溢出；`browser_console_messages` 確認 0 個錯誤；語言子群組確認沒有圓點/長條，只有檢定文字。

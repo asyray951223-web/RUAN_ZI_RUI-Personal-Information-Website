@@ -1,1 +1,246 @@
-// .skills 專屬樣式放這裡
+@use '../abstracts/variables' as *;
+
+// .skills：跟 #about／#resume 一樣不做成卡片，維持貼齊版面留白；
+// 留白數值直接比照 .about／.resume 的 clamp() 流體留白，維持全站區塊留白節奏統一
+.skills {
+  padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
+}
+
+// .skills__eyebrow：標題列，做法比照 #about／#resume 的 eyebrow（短豎線色塊＋文字），
+// 取代原本毫無樣式的 <h2 class="section__title">，是這次補樣式最先解決的「視覺斷層」問題
+.skills__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.69rem;
+  font-weight: 800;
+  color: $color-deep-space-blue;
+  margin-bottom: 1.6rem;
+
+  // &-bar 會編譯成 .skills__eyebrow-bar：沿用 layout/_header.scss 已定義的全域 @keyframes blink，
+  // 跟 about__eyebrow-bar／resume__eyebrow-bar 用同一組動畫，不用重複定義
+  &-bar {
+    width: 5px;
+    height: 1.5em;
+    background: $color-accent;
+    border-radius: 2px;
+    animation: blink 1s steps(1) infinite;
+  }
+}
+
+// .skills__group：技術／工具／語言三個子群組容器，group 之間用間距分隔，
+// 不需要像 #resume 六組那樣做成手風琴摺疊（這裡只有三組，不需要收合）
+.skills__group {
+  margin-bottom: 2.2rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// .skills__subtitle：子群組標題（技術/工具/語言），比照 resume__subtitle 的顏色/字重，
+// 但拿掉 <summary> 相關的摺疊圖示與 cursor:pointer，因為這裡是普通 <h3> 不是可摺疊面板
+.skills__subtitle {
+  margin: 0 0 1rem;
+  font-size: 1.07rem;
+  font-weight: 700;
+  color: $color-deep-space-blue;
+}
+
+// 加上 max-width：這個區塊沒有像 .about__layout 那樣的雙欄配置能自然限制寬度，
+// 若不設寬度上限，.skills__row1 的 justify-content: space-between 會把熟練度指標
+// 硬推到整個視窗（滿版 padding 內側）的最右邊，跟左邊的標籤中間留下大片不合理的空白
+.skills__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: 640px;
+}
+
+// 同一組內第二筆以後的項目，用細虛線分隔，比照 resume__campus + resume__campus 的做法，
+// 避免多筆資料黏在一起分不清楚
+.skills__item {
+  padding: 0.2rem 0;
+
+  & + & {
+    border-top: 1px dashed #eef0f2;
+    margin-top: 0.9rem;
+    padding-top: 0.9rem;
+  }
+}
+
+// 第一行：技能標籤（左）+ 熟練度指標（右）。語言類只會用到 .skills__name，
+// 不會有 .skills__level，所以這裡的 justify-content: space-between 在語言類項目上
+// 會自動只剩標籤靠左，不需要另外處理
+.skills__row1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.55rem;
+}
+
+// .skills__name：技能標籤，沿用 about__tag／resume__project-tag 已確立的
+// 「# 前綴 + Space Mono 等寬字」chip 樣式，是全站「標籤類資訊」共用的簽名視覺元素；
+// 字級比其他標籤稍大，因為這裡是整個項目的主要識別文字，不是附屬標籤
+.skills__name {
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  background: #eef2f5;
+  color: #3d5566;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.98rem;
+  font-weight: 700;
+
+  &::before {
+    content: '#';
+    color: $color-accent;
+  }
+}
+
+// .skills__level：熟練度圓點量表，只用在技術／工具子群組。
+// 採用 CEFR 歐洲語言框架的六級劃分（入門/基礎/中等/中高/高等/精通），因為技術/工具
+// 沒有官方檢定可佐證，套用一個公認、非隨意發明的分級框架，比純形容詞自評更有可信度。
+// 圓點大小比照 resume__edu-list 時間軸圓點（9px），呼應同一套「圓點」視覺語彙
+.skills__level {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.skills__level-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #e2e6e9; // 未達等級：淺灰空心感
+
+  &--on {
+    background: $color-accent; // 已達等級：磚紅實心
+  }
+}
+
+.skills__level-label {
+  margin-left: 4px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: $color-accent;
+}
+
+// 第二行：年資數字 + 「65 年尺標」長條。只用在技術／工具子群組
+.skills__row2 {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.5rem;
+}
+
+.skills__tenure-num {
+  width: 3.4em; // 固定寬度讓長條起點對齊，比照 about__info-list b 的固定寬度做法
+  flex-shrink: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: $color-deep-space-blue;
+}
+
+.skills__tenure-track {
+  flex: 1;
+  max-width: 280px;
+  height: 5px;
+  background: #eef0f2;
+  border-radius: 3px;
+}
+
+// 長條填色刻意用中性灰藍（不是強調色磚紅），比例是「100% = 65 年」：一般人的正常年資
+// （例如 3～5 年）填色只會佔 5～8% 左右，長條本身故意退居成「背景刻度感」，數字才是主要
+// 資訊，避免長條長短被誤讀成「技術強弱」而不是單純的「接觸時間長短」
+.skills__tenure-fill {
+  height: 100%;
+  background: #9aa8b0;
+  border-radius: 3px;
+}
+
+// 第三行（可選）：作品佐證。用原生 <details>/<summary> 實作，沿用 #resume 手風琴
+// 已確立的「不需要 JavaScript」慣例，不是另外寫一套 JS 展開收合邏輯
+.skills__evidence {
+  margin-top: 0.3rem;
+}
+
+.skills__evidence-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  color: #32424d;
+  cursor: pointer;
+  list-style: none; // Firefox：拿掉預設三角形箭頭
+
+  &::-webkit-details-marker {
+    display: none; // Chrome/Safari：預設箭頭是另一個偽元素，list-style 管不到
+  }
+
+  // 用等寬字的 ▾ 當展開圖示，跟 resume__subtitle::after 的 +/− 做法同一個語彙
+  &::after {
+    content: '▾';
+    color: $color-accent;
+    font-family: 'Space Mono', monospace;
+  }
+}
+
+.skills__evidence-count {
+  font-weight: 700;
+  color: $color-accent;
+}
+
+// 展開後的網格：桌面 6 欄，避免每個作品連結都各佔一整行造成過多空白；
+// 淺色底 + 磚紅系細框呼應 resume__pdf-link 的膠囊外框語彙，視覺上跟「作品集卡片」
+// 明確做出區隔（不用彩色標籤），只當「指標」不當「展示」
+.skills__evidence-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.4rem 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.6rem 0.7rem;
+  background: #fbf1ee;
+  border: 1px solid #f0d3ca;
+  border-radius: 8px;
+}
+
+.skills__evidence-link {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.78rem;
+  color: $color-accent;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(179, 64, 31, 0.4);
+  padding-bottom: 0.1rem;
+}
+
+.skills__evidence-empty {
+  margin: 0.3rem 0 0;
+  font-size: 0.9rem;
+  color: #9aa8b0;
+}
+
+// .skills__cert-meta：語言子群組專用，取代「圓點量表 + 年資長條」。
+// 直接沿用 resume__cert-meta 已確立的顏色/字級數值與「名稱・取得時間」文字語彙，
+// 因為語言能力本來就有 JLPT/TOEIC 等公認外部檢定，比自訂量表更誠實、更具體，
+// 沒有官方檢定時可退回寫「自學・日常對話程度」這類描述文字，一樣套用這個樣式
+.skills__cert-meta {
+  margin: 0.2rem 0 0;
+  font-size: 0.88rem;
+  color: #9aa8b0;
+
+  b {
+    color: $color-deep-space-blue;
+    font-weight: 700;
+  }
+}
+
+// 窄螢幕：6 欄網格太擠，作品連結文字會被壓得只剩省略號，降成 3 欄
+@media (max-width: 600px) {
+  .skills__evidence-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

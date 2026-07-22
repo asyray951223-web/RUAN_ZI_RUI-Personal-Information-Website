@@ -16,11 +16,12 @@
 // .resume__eyebrow：標題列，做法比照 #about 的 about__eyebrow（短豎線色塊＋文字），
 // 取代原本的 section__title
 // 這次全區塊 ×1.25 放大：1.5rem → 1.88rem
+// 本次全區塊 ×0.9 微幅縮小：1.88rem → 1.69rem
 .resume__eyebrow {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  font-size: 1.88rem;
+  font-size: 1.69rem;
   font-weight: 800;
   color: $color-deep-space-blue;
   margin-bottom: 1.4rem;
@@ -40,11 +41,12 @@
 // .resume__pdf-link：膠囊外框樣式，磚紅文字＋磚紅細外框，不做色塊填滿，
 // 維持「次要動作」的視覺份量（跟下面的手風琴主要內容做出層級區隔）
 // 這次全區塊 ×1.25 放大：0.8rem → 1rem
+// 本次全區塊 ×0.9 微幅縮小：1rem → 0.9rem
 .resume__pdf-link {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: $color-accent;
   text-decoration: none;
@@ -62,12 +64,13 @@
 
 // .resume__subtitle：<summary>，拿掉瀏覽器預設的三角形箭頭，改用等寬字的 +/− 當展開/收合圖示
 // 這次全區塊 ×1.25 放大：0.95rem → 1.19rem
+// 本次全區塊 ×0.9 微幅縮小：1.19rem → 1.07rem
 .resume__subtitle {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 1rem 0;
-  font-size: 1.19rem;
+  font-size: 1.07rem;
   font-weight: 700;
   color: $color-deep-space-blue;
   cursor: pointer;
@@ -80,11 +83,12 @@
 
   // 用等寬字的 + 當「展開」圖示，呼應全站終端機語彙（Space Mono）
   // 這次全區塊 ×1.25 放大：1.1rem → 1.38rem
+  // 本次全區塊 ×0.9 微幅縮小：1.38rem → 1.24rem
   &::after {
     content: '+';
     color: $color-accent;
     font-family: 'Space Mono', monospace;
-    font-size: 1.38rem;
+    font-size: 1.24rem;
   }
 }
 
@@ -172,27 +176,30 @@
 // 內容欄位的字級/顏色：h4 名稱用深空藍、meta 用淺灰、desc 類段落用深灰藍，
 // 灰階沿用 #about 已經用過的同一批寫死值，維持全站配色一致，不新增變數
 // 這次全區塊 ×1.25 放大：0.92rem → 1.15rem
+// 本次全區塊 ×0.9 微幅縮小：1.15rem → 1.04rem
 .resume__edu-school,
 .resume__job-title,
 .resume__project-title,
 .resume__cert-name,
 .resume__award-name {
   margin: 0 0 0.2rem;
-  font-size: 1.15rem;
+  font-size: 1.04rem;
   color: $color-deep-space-blue;
 }
 
 // 這次全區塊 ×1.25 放大：0.78rem → 0.98rem
+// 本次全區塊 ×0.9 微幅縮小：0.98rem → 0.88rem
 .resume__edu-meta,
 .resume__job-meta,
 .resume__cert-meta,
 .resume__award-meta {
   margin: 0 0 0.4rem;
-  font-size: 0.98rem;
+  font-size: 0.88rem;
   color: #9aa8b0;
 }
 
 // 這次全區塊 ×1.25 放大：0.86rem → 1.08rem
+// 本次全區塊 ×0.9 微幅縮小：1.08rem → 0.97rem
 .resume__edu-extra,
 .resume__job-desc,
 .resume__job-tools,
@@ -200,7 +207,7 @@
 .resume__project-role,
 .resume__campus {
   margin: 0 0 0.3rem;
-  font-size: 1.08rem;
+  font-size: 0.97rem;
   line-height: 1.7;
   color: #32424d;
 }
@@ -217,8 +224,9 @@
 }
 
 // 這次全區塊 ×1.25 放大：0.72rem → 0.9rem
+// 本次全區塊 ×0.9 微幅縮小：0.9rem → 0.81rem
 .resume__project-tag {
-  font-size: 0.9rem;
+  font-size: 0.81rem;
   padding: 0.2rem 0.55rem;
   border-radius: 6px;
   background: #eef2f5;
@@ -232,8 +240,9 @@
 }
 
 // 這次全區塊 ×1.25 放大：0.82rem → 1.03rem
+// 本次全區塊 ×0.9 微幅縮小：1.03rem → 0.93rem
 .resume__project-link {
-  font-size: 1.03rem;
+  font-size: 0.93rem;
   color: $color-accent;
   display: inline-block;
   margin-top: 0.4rem;
