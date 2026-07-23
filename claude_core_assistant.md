@@ -674,3 +674,56 @@ src/styles/
 - 3 筆佔位的示範數值（日期/角色/標籤等）直接複製第 1 筆，只改名稱編號：沿用全站「佔位期最小改動、之後手動覆蓋」的既有慣例（`#skills`／`#portfolio` 擴充佔位時都是同樣做法）。
 
 **驗證方式**：`./node_modules/.bin/sass` 編譯成功、無錯誤；用 Playwright 開啟本機靜態伺服器截圖確認：桌面寬度（1400px）下三個分組（社團/競賽/志工）各自的 3 筆佔位排成一列 3 欄，版面結構跟 `#skills` 一致；縮到手機寬度（420px）用 `getBoundingClientRect` 逐一核對所有 `.activities__group`／`-list`／`-item` 寬度皆與容器一致（無強制撐寬溢出），格線自然收成單欄；`#portfolio` 篩選器回歸測試確認未受影響（點擊「Side Project」篩選按鈕，只剩對應卡片顯示）。測試用截圖與臨時 HTTP 伺服器、`.playwright-mcp` 暫存資料夾事後已清除，不留在版控中。
+
+### 39. 導入 JSON + 建置時產生靜態 HTML（一）：新增建置基礎設施＋`#resume` 遷移
+
+**背景**：使用者指出網站重複結構的區塊會持續增加，要求改用 JS + JSON 優化，降低 HTML 維護難度、方便新增資料。用 `/plan` 規劃，先讀 `FuturePlan.md`「規劃一」（雙語頁面規劃時已比較過「JS 動態切換」vs「資料驅動+建置時產生靜態頁面」，明確建議後者），確認這次是同一種抉擇；用 AskUserQuestion 確認三個方向：(1) 採建置時產生靜態 HTML（不是瀏覽器端動態渲染），維持上線內容是純 HTML/CSS、不需要 JS 才能看到內容；(2) 一次把 `#resume`／`#skills`／`#portfolio`／`#activities` 四個區塊都改，不分批試點；(3) 不順便處理 `#portfolio` 現有手動複製頁面（`project-1.html`）的技術債，範圍只限這四區塊內部重複資料列表。派 Plan agent 設計具體架構（JSON schema、渲染邏輯、注入機制、package.json、驗收策略、遷移順序），確認後開始依「resume → activities → skills → portfolio」順序遷移（依功能風險排序：resume 無 JS 依賴/無衍生運算，最安全先做）。
+
+**變更**：
+- 新增 `src/data/*.json`（四份資料檔，這輪先建 `resume.json`，其餘三份的資料同時準備好供後續遷移使用）與 `src/build/`（`build.js` 進入點、`inject.js` 標記注入工具、`render/html-utils.js` 共用跳脫函式、`render/resume.js` 履歷渲染邏輯）。`src/build/` 跟 `src/scripts/` 刻意分開資料夾：前者只在開發者機器用 Node 執行（不出貨給瀏覽器），後者是會被 `<script src>` 載入的瀏覽器端 JS。
+- `src/pages/index.html`：`#resume` 的 6 個 `<details class="resume__group">` 面板外圈包上 `<!-- BUILD:resume:start/end -->` 標記註解，供建置腳本原地取代——採用「標記注入」而非「拆成 `index.template.html` + 產生 `index.html`」，因為前者仍然只有一份 `index.html` 是「真的」，開發者可以直接開檔案預覽，跟 `FuturePlan.md` 規劃三批評「兩份手寫檔案不同步」的風險性質不同（這裡永遠只有一份檔案），複雜度也更低。`inject.js` 找不到標記就直接 `throw`，防止標記被誤刪後建置腳本悄悄不生效。
+- `src/package.json`（原本 0 bytes 空檔案）：補上 `build:html`（跑 `node build/build.js`）、`build:css`（`sass styles/main.scss styles/main.css --no-source-map`，沿用全站既有的 `--no-source-map` 慣例）、`build`（合併兩者）三個 scripts。不新增任何 npm 套件，渲染程式碼用 CommonJS。
+
+**取捨說明**：
+- 6 個面板哪些預設展開（open）、標題文字與順序，屬於版面設計決策而非「內容資料」，維持寫死在 `render/resume.js` 裡，不進 JSON，避免 schema 為了遷就固定不變的結構性資訊而變複雜。
+- `resume__edu-extra` 這種選填欄位用「有值才輸出對應段落」處理，不在 JSON 存空字串佔位。
+- 沒有引入任何模板引擎套件（nunjucks/handlebars 等），純用 Node 內建 `fs` + 模板字串，維持全站「零額外依賴」的既有精神。
+
+**驗證方式**：跑 `node build/build.js`，用 `git diff src/pages/index.html` 確認 `BUILD:resume` 範圍內只有註解位置/空行/文字換行風格差異，class 名稱、屬性、文字內容完全一致（DOM 等價）；用 Playwright 截圖確認視覺呈現與遷移前一致；故意把 JSON 裡一筆學校名稱改成測試字串、重跑建置，確認 `index.html` 對應位置真的更新，證明是「資料驅動」而非建置腳本裡不小心寫死字串，驗證完改回原始佔位文字。
+
+### 40. 導入 JSON + 建置時產生靜態 HTML（二）：`#activities` 遷移
+
+**背景**：延續第 39 筆的遷移順序，`#activities` 是第二個遷移對象——驗證「同一 render 函式要吃多種選填欄位組合」（`badge`／`skillTags`／`links`／`audience`／`quantity` 皆選填，依分組類型有不同組合），且目前無運作中的 JS 依賴（篩選器已在第 38 筆拿掉），風險低。
+
+**變更**：
+- `src/build/render/activities.js`：`renderItem()` 用「有值才輸出對應標籤」的方式處理 5 種選填欄位；`renderGroup()` 組出三個分組（社團/競賽/志工）各自的 `<div class="activities__group">`。
+- `src/pages/index.html`：3 個 `.activities__group` 外圈包上 `<!-- BUILD:activities:start/end -->` 標記。
+
+**驗證方式**：同第 39 筆做法，`git diff` 確認 DOM 等價、Playwright 截圖確認 9 筆示範資料（3 組×3 筆）版面與 id（`activities-{slug}`）皆正確輸出。
+
+### 41. 導入 JSON + 建置時產生靜態 HTML（三）：`#skills` 遷移
+
+**背景**：延續遷移順序，`#skills` 是四區塊中結構最複雜的——每筆技術/工具項目有 6 顆圓點重複標記＋65 年尺標長條，這次改成完全由 `level`（1–6 整數）與 `tenureYears`（數字）兩個原始欄位運算推導，JSON 不存已經算好的衍生值。
+
+**變更**：
+- `src/build/render/skills.js`：內建 `LEVEL_LABELS = ['入門','基礎','中等','中高','高等','精通']` 固定對照表（依 `docs/superpowers/specs/2026-07-23-skills-redesign-design.md` 的 CEFR 六級定義），`level` 查表得出圓點 on/off 數量與熟練度文字；`tenureWidthPercent(years) = (years/65*100).toFixed(1)+'%'`，已驗算現有兩筆示範值 3→4.6%、1→1.5%，跟原本手寫的 `width` 完全吻合。`evidence` 陣列有值輸出 `<details>` 展開版本，空值輸出「尚無對應作品連結」。語言類項目（`group.id === 'lang'`）走不同的 `renderLangItem` 分支（無圓點/尺標，只有 `certName`/`certTime` 文字）。
+- `src/data/skills.json`：技術/工具各 4 筆、語言 2 筆，欄位對應現有示範值。
+- `src/pages/index.html`：3 個 `.skills__group` 外圈包上 `<!-- BUILD:skills:start/end -->` 標記。
+
+**取捨說明**：`levelLabel`（如「中高」）不存進 JSON，只存 `level` 數字，靠對照表推導——避免兩處資料源（數字＋文字）不同步的風險（例如手動改了 level 卻忘記改對應文字）。
+
+**驗證方式**：`git diff` 確認 DOM 等價；用 Playwright 檢查每筆項目的 `.skills__level-dot--on` 數量與 `.skills__tenure-fill` 的 `style.width` 是否跟資料吻合（技術類 4 顆/4.6%、工具類 2 顆/1.5%）；展開 `<details class="skills__evidence">` 確認連結數量正確；確認工具類顯示「尚無對應作品連結」、語言類顯示正確的檢定文字。
+
+### 42. 導入 JSON + 建置時產生靜態 HTML（四）：`#portfolio` 遷移，四區塊全數完成
+
+**背景**：`#portfolio` 依計畫放最後遷移——唯一同時具備 (a) 運作中的 JS 篩選器依賴（`data-type`/`data-filter`）(b) `links`／`ndaNote` 互斥欄位 (c) `id` 被範圍外的 `src/pages/portfolio/project-1.html` 外部連結引用，三個風險同時存在。
+
+**變更**：
+- `src/build/render/portfolio.js`：`renderLinksOrNda()` 在渲染前做防呆檢查——`links`／`ndaNote` 必須恰好其中一個有值，兩者同時有值或同時沒值就丟出明確錯誤中止建置（不靜默吃掉），避免未來新增資料漏填造成卡片缺欄位。`id`/`data-type` 由 `slug`/`type` 欄位組出，不重複存整串字串。
+- `src/data/portfolio.json`：2 張示範卡片（一般案例含 `detailLink`；NDA 案例改用 `ndaNote`，不含 `detailLink`），對應現有欄位。
+- `src/pages/index.html`：`.portfolio__filter` + `.portfolio__list` 外圈包上 `<!-- BUILD:portfolio:start/end -->` 標記。
+- 四個區塊全數遷移完成後，跑過一次完整 `npm run build`（`build:html` + `build:css`）確認整條指令鏈可一次執行到底。
+
+**取捨說明**：`links`／`ndaNote` 互斥檢查選擇「直接丟錯中止建置」而非「靜默擇一顯示」：因為這種資料錯誤如果不中止，後果是某張卡片的連結區塊整個消失且不會有任何警示，比建置失敗更難排查。
+
+**驗證方式**：`git diff` 確認 DOM 等價（僅註解位置/換行風格差異）；用 Playwright 點擊全部 6 個 `.portfolio__filter-btn` 確認篩選行為與遷移前一致（`data-type` 正確輸出，固定卡片尺寸未受影響）；用瀏覽器實際點擊「查看完整專案說明 →」確認能正確導向 `src/pages/portfolio/project-1.html`（範圍外、未修改的手寫頁），該頁連結正常；縮到手機寬度（420px）確認無橫向溢出；跑 `npm run build` 確認 `build:html`＋`build:css` 兩步驟都能順利執行；`build:css` 的 sass 指令補上 `--no-source-map`，跟全站既有的手動編譯慣例保持一致（原始 Plan agent 建議的指令沒帶這個旗標，實測發現會多產生 sourcemap 註解，已修正）。測試用截圖與臨時 HTTP 伺服器、`.playwright-mcp` 暫存資料夾事後已清除，不留在版控中。

@@ -1,0 +1,45 @@
+{
+  "filters": [
+    { "value": "all", "label": "全部" },
+    { "value": "course", "label": "課程作業" },
+    { "value": "practice", "label": "自主練習" },
+    { "value": "competition", "label": "專題競賽" },
+    { "value": "intern", "label": "實習成果" },
+    { "value": "side", "label": "Side Project" }
+  ],
+  "items": [
+    {
+      "slug": "project-1",
+      "type": "side",
+      "typeLabel": "Side Project",
+      "cover": { "src": "", "alt": "作品封面圖佔位" },
+      "name": "作品名稱佔位（一）",
+      "summary": "一句話說明佔位",
+      "date": "2025.03–2025.06",
+      "tech": ["技術名稱佔位"],
+      "role": "角色佔位（獨自 / 團隊，負責什麼）",
+      "outcome": "成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）",
+      "links": [
+        { "label": "線上 Demo", "href": "#" },
+        { "label": "GitHub", "href": "#" }
+      ],
+      "ndaNote": null,
+      "detailLink": "portfolio/project-1.html"
+    },
+    {
+      "slug": "project-2",
+      "type": "intern",
+      "typeLabel": "實習成果",
+      "cover": { "src": "", "alt": "作品封面圖佔位" },
+      "name": "作品名稱佔位（二）",
+      "summary": "一句話說明佔位",
+      "date": "2024.07–2024.09",
+      "tech": ["技術名稱佔位"],
+      "role": "角色佔位（獨自 / 團隊，負責什麼）",
+      "outcome": "成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）",
+      "links": null,
+      "ndaNote": "因保密協議無法公開原始碼與畫面，僅能於面談時說明",
+      "detailLink": null
+    }
+  ]
+}

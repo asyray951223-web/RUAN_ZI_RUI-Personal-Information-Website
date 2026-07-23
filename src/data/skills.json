@@ -1,0 +1,64 @@
+{
+  "groups": [
+    {
+      "id": "tech",
+      "title": "技術",
+      "items": [
+        {
+          "name": "技能名稱佔位（一）",
+          "level": 4,
+          "tenureYears": 3,
+          "evidence": [
+            { "name": "作品名稱佔位（一）", "href": "#" },
+            { "name": "作品名稱佔位（二）", "href": "#" }
+          ]
+        },
+        {
+          "name": "技能名稱佔位（二）",
+          "level": 4,
+          "tenureYears": 3,
+          "evidence": [
+            { "name": "作品名稱佔位（一）", "href": "#" },
+            { "name": "作品名稱佔位（二）", "href": "#" }
+          ]
+        },
+        {
+          "name": "技能名稱佔位（三）",
+          "level": 4,
+          "tenureYears": 3,
+          "evidence": [
+            { "name": "作品名稱佔位（一）", "href": "#" },
+            { "name": "作品名稱佔位（二）", "href": "#" }
+          ]
+        },
+        {
+          "name": "技能名稱佔位（四）",
+          "level": 4,
+          "tenureYears": 3,
+          "evidence": [
+            { "name": "作品名稱佔位（一）", "href": "#" },
+            { "name": "作品名稱佔位（二）", "href": "#" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "title": "工具",
+      "items": [
+        { "name": "工具名稱佔位（一）", "level": 2, "tenureYears": 1, "evidence": [] },
+        { "name": "工具名稱佔位（二）", "level": 2, "tenureYears": 1, "evidence": [] },
+        { "name": "工具名稱佔位（三）", "level": 2, "tenureYears": 1, "evidence": [] },
+        { "name": "工具名稱佔位（四）", "level": 2, "tenureYears": 1, "evidence": [] }
+      ]
+    },
+    {
+      "id": "lang",
+      "title": "語言",
+      "items": [
+        { "name": "語言名稱佔位（一）", "certName": "檢定名稱佔位", "certTime": "取得時間佔位" },
+        { "name": "語言名稱佔位（二）", "certName": "檢定名稱佔位", "certTime": "取得時間佔位" }
+      ]
+    }
+  ]
+}

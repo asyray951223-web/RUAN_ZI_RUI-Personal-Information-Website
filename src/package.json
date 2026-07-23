@@ -1,0 +1,9 @@
+{
+  "name": "personal-info-website-src",
+  "private": true,
+  "scripts": {
+    "build:html": "node build/build.js",
+    "build:css": "sass styles/main.scss styles/main.css --no-source-map",
+    "build": "npm run build:html && npm run build:css"
+  }
+}

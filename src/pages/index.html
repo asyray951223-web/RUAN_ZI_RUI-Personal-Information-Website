@@ -137,6 +137,7 @@
         <!-- 完整履歷 PDF 下載，先放連結骨架，href 之後換成真實檔案路徑 -->
         <a class="resume__pdf-link" href="#">下載完整履歷 PDF</a>
 
+        <!-- BUILD:resume:start -->
         <!-- 求職者最想第一眼看到的重點，預設展開（避免忙碌訪客沒點開就漏看關鍵經歷） -->
         <details class="resume__group" open>
           <summary class="resume__subtitle">教育背景</summary>
@@ -145,7 +146,6 @@
               <article>
                 <h4 class="resume__edu-school">學校 / 科系佔位（大學）</h4>
                 <p class="resume__edu-meta">在學期間・相關課程或專題佔位</p>
-                <!-- 擴充欄位：非必要，沒有的話這行可以直接刪掉，不要留佔位字 -->
                 <p class="resume__edu-extra">
                   GPA／輔系或雙主修／交換學生經驗佔位（依個人情況選填）
                 </p>
@@ -159,7 +159,6 @@
             </li>
           </ul>
         </details>
-
         <details class="resume__group" open>
           <summary class="resume__subtitle">實習 / 工讀經歷</summary>
           <ul class="resume__job-list">
@@ -172,7 +171,6 @@
                 <p class="resume__job-desc">
                   負責項目與成果佔位文字（可量化更好）
                 </p>
-                <!-- 擴充欄位：使用的工具/技術，跟下方專案經歷的技術標籤是不同情境，這裡維持文字描述即可 -->
                 <p class="resume__job-tools">使用工具/技術佔位</p>
               </article>
             </li>
@@ -190,7 +188,6 @@
             </li>
           </ul>
         </details>
-
         <details class="resume__group" open>
           <summary class="resume__subtitle">專案經歷</summary>
           <ul class="resume__project-list">
@@ -200,8 +197,6 @@
                 <p class="resume__project-desc">
                   專案簡述佔位（公司內部或 side project）
                 </p>
-                <!-- 擴充欄位：角色/技術標籤/連結，命名對齊下方 #portfolio 已有的 role/tech-list/link-list，
-                     避免同一個網站對同一種資訊取兩套不同的 class 命名 -->
                 <p class="resume__project-role">
                   擔任角色佔位（獨立完成／團隊分工，負責什麼）
                 </p>
@@ -232,7 +227,6 @@
             </li>
           </ul>
         </details>
-
         <!-- 補充性質，不影響核心資訊判讀，預設摺疊 -->
         <details class="resume__group">
           <summary class="resume__subtitle">校園經歷（精簡版）</summary>
@@ -242,7 +236,6 @@
             </li>
           </ul>
         </details>
-
         <!-- 原本「證照 / 獎項」合併一組，這次拆成兩個獨立面板：證照通常是能力佐證、
              獎項是成果佐證，性質不同，分開後各自可以放多筆條目 -->
         <details class="resume__group">
@@ -262,7 +255,6 @@
             </li>
           </ul>
         </details>
-
         <details class="resume__group">
           <summary class="resume__subtitle">獎項</summary>
           <ul class="resume__award-list">
@@ -280,6 +272,7 @@
             </li>
           </ul>
         </details>
+<!-- BUILD:resume:end -->
       </section>
 
       <!-- #skills 依 docs/superpowers/specs/2026-07-23-skills-redesign-design.md 設計文件實作：
@@ -299,13 +292,14 @@
           <span class="skills__eyebrow-bar" aria-hidden="true"></span>技能
         </div>
 
+        <!-- BUILD:skills:start -->
         <div class="skills__group">
           <h3 class="skills__subtitle">技術</h3>
           <ul class="skills__list">
             <li class="skills__item">
               <div class="skills__row1">
                 <span class="skills__name">技能名稱佔位（一）</span>
-                <!-- CEFR 六級量表：4/6 顆填色＝「中高」，佔位示範用 -->
+                <!-- CEFR 六級量表：4/6 顆填色＝「中高」 -->
                 <div class="skills__level" aria-label="熟練度：中高">
                   <span class="skills__level-dot skills__level-dot--on"></span>
                   <span class="skills__level-dot skills__level-dot--on"></span>
@@ -336,6 +330,7 @@
             <li class="skills__item">
               <div class="skills__row1">
                 <span class="skills__name">技能名稱佔位（二）</span>
+                <!-- CEFR 六級量表：4/6 顆填色＝「中高」 -->
                 <div class="skills__level" aria-label="熟練度：中高">
                   <span class="skills__level-dot skills__level-dot--on"></span>
                   <span class="skills__level-dot skills__level-dot--on"></span>
@@ -348,6 +343,7 @@
               </div>
               <div class="skills__row2">
                 <span class="skills__tenure-num">3 年</span>
+                <!-- 65 年尺標：3 / 65 ≈ 4.6% -->
                 <div class="skills__tenure-track">
                   <div class="skills__tenure-fill" style="width: 4.6%;"></div>
                 </div>
@@ -355,6 +351,8 @@
               <details class="skills__evidence">
                 <summary class="skills__evidence-summary">用於 <span class="skills__evidence-count">2</span> 個作品</summary>
                 <div class="skills__evidence-grid">
+                  <!-- title 屬性補上完整文字：格線窄，連結文字會被 ellipsis 截斷，
+                       hover 時靠 title 顯示完整作品名稱，不會因為截斷而看不出是哪個作品 -->
                   <a class="skills__evidence-link" href="#" title="作品名稱佔位（一）">作品名稱佔位（一）</a>
                   <a class="skills__evidence-link" href="#" title="作品名稱佔位（二）">作品名稱佔位（二）</a>
                 </div>
@@ -363,6 +361,7 @@
             <li class="skills__item">
               <div class="skills__row1">
                 <span class="skills__name">技能名稱佔位（三）</span>
+                <!-- CEFR 六級量表：4/6 顆填色＝「中高」 -->
                 <div class="skills__level" aria-label="熟練度：中高">
                   <span class="skills__level-dot skills__level-dot--on"></span>
                   <span class="skills__level-dot skills__level-dot--on"></span>
@@ -375,6 +374,7 @@
               </div>
               <div class="skills__row2">
                 <span class="skills__tenure-num">3 年</span>
+                <!-- 65 年尺標：3 / 65 ≈ 4.6% -->
                 <div class="skills__tenure-track">
                   <div class="skills__tenure-fill" style="width: 4.6%;"></div>
                 </div>
@@ -382,6 +382,8 @@
               <details class="skills__evidence">
                 <summary class="skills__evidence-summary">用於 <span class="skills__evidence-count">2</span> 個作品</summary>
                 <div class="skills__evidence-grid">
+                  <!-- title 屬性補上完整文字：格線窄，連結文字會被 ellipsis 截斷，
+                       hover 時靠 title 顯示完整作品名稱，不會因為截斷而看不出是哪個作品 -->
                   <a class="skills__evidence-link" href="#" title="作品名稱佔位（一）">作品名稱佔位（一）</a>
                   <a class="skills__evidence-link" href="#" title="作品名稱佔位（二）">作品名稱佔位（二）</a>
                 </div>
@@ -390,6 +392,7 @@
             <li class="skills__item">
               <div class="skills__row1">
                 <span class="skills__name">技能名稱佔位（四）</span>
+                <!-- CEFR 六級量表：4/6 顆填色＝「中高」 -->
                 <div class="skills__level" aria-label="熟練度：中高">
                   <span class="skills__level-dot skills__level-dot--on"></span>
                   <span class="skills__level-dot skills__level-dot--on"></span>
@@ -402,6 +405,7 @@
               </div>
               <div class="skills__row2">
                 <span class="skills__tenure-num">3 年</span>
+                <!-- 65 年尺標：3 / 65 ≈ 4.6% -->
                 <div class="skills__tenure-track">
                   <div class="skills__tenure-fill" style="width: 4.6%;"></div>
                 </div>
@@ -409,6 +413,8 @@
               <details class="skills__evidence">
                 <summary class="skills__evidence-summary">用於 <span class="skills__evidence-count">2</span> 個作品</summary>
                 <div class="skills__evidence-grid">
+                  <!-- title 屬性補上完整文字：格線窄，連結文字會被 ellipsis 截斷，
+                       hover 時靠 title 顯示完整作品名稱，不會因為截斷而看不出是哪個作品 -->
                   <a class="skills__evidence-link" href="#" title="作品名稱佔位（一）">作品名稱佔位（一）</a>
                   <a class="skills__evidence-link" href="#" title="作品名稱佔位（二）">作品名稱佔位（二）</a>
                 </div>
@@ -446,6 +452,7 @@
             <li class="skills__item">
               <div class="skills__row1">
                 <span class="skills__name">工具名稱佔位（二）</span>
+                <!-- CEFR 六級量表：2/6 顆填色＝「基礎」 -->
                 <div class="skills__level" aria-label="熟練度：基礎">
                   <span class="skills__level-dot skills__level-dot--on"></span>
                   <span class="skills__level-dot skills__level-dot--on"></span>
@@ -458,6 +465,7 @@
               </div>
               <div class="skills__row2">
                 <span class="skills__tenure-num">1 年</span>
+                <!-- 65 年尺標：1 / 65 ≈ 1.5% -->
                 <div class="skills__tenure-track">
                   <div class="skills__tenure-fill" style="width: 1.5%;"></div>
                 </div>
@@ -467,6 +475,7 @@
             <li class="skills__item">
               <div class="skills__row1">
                 <span class="skills__name">工具名稱佔位（三）</span>
+                <!-- CEFR 六級量表：2/6 顆填色＝「基礎」 -->
                 <div class="skills__level" aria-label="熟練度：基礎">
                   <span class="skills__level-dot skills__level-dot--on"></span>
                   <span class="skills__level-dot skills__level-dot--on"></span>
@@ -479,6 +488,7 @@
               </div>
               <div class="skills__row2">
                 <span class="skills__tenure-num">1 年</span>
+                <!-- 65 年尺標：1 / 65 ≈ 1.5% -->
                 <div class="skills__tenure-track">
                   <div class="skills__tenure-fill" style="width: 1.5%;"></div>
                 </div>
@@ -488,6 +498,7 @@
             <li class="skills__item">
               <div class="skills__row1">
                 <span class="skills__name">工具名稱佔位（四）</span>
+                <!-- CEFR 六級量表：2/6 顆填色＝「基礎」 -->
                 <div class="skills__level" aria-label="熟練度：基礎">
                   <span class="skills__level-dot skills__level-dot--on"></span>
                   <span class="skills__level-dot skills__level-dot--on"></span>
@@ -500,6 +511,7 @@
               </div>
               <div class="skills__row2">
                 <span class="skills__tenure-num">1 年</span>
+                <!-- 65 年尺標：1 / 65 ≈ 1.5% -->
                 <div class="skills__tenure-track">
                   <div class="skills__tenure-fill" style="width: 1.5%;"></div>
                 </div>
@@ -523,10 +535,12 @@
               <div class="skills__row1">
                 <span class="skills__name">語言名稱佔位（二）</span>
               </div>
+              <!-- 語言類不套用 CEFR 圓點，改沿用 resume__cert-meta 的「名稱・取得時間」寫法 -->
               <p class="skills__cert-meta"><b>檢定名稱佔位</b>・取得時間佔位</p>
             </li>
           </ul>
         </div>
+<!-- BUILD:skills:end -->
       </section>
 
       <!-- portfolio 是「作品列表」擴充改名而來（原本 class 是 works），
@@ -552,6 +566,7 @@
           <span class="portfolio__eyebrow-bar" aria-hidden="true"></span>作品集
         </div>
 
+        <!-- BUILD:portfolio:start -->
         <!-- 篩選器：全站第一次引入 JavaScript（src/scripts/filter.js，現已通用化同時服務 #activities），
              其餘區塊的展開/收合都刻意維持原生 <details>，這裡因為需要「點擊切換多張卡片顯示」
              這種純 CSS 較難優雅處理的互動，經使用者確認後選擇用 JS 而非 radio-button 技巧 -->
@@ -605,7 +620,6 @@
             Side Project
           </button>
         </div>
-
         <ul class="portfolio__list">
           <li class="portfolio__item" id="portfolio-project-1" data-type="side">
             <article>
@@ -640,6 +654,7 @@
           <li class="portfolio__item" id="portfolio-project-2" data-type="intern">
             <article>
               <img class="portfolio__cover" src="" alt="作品封面圖佔位" />
+              <!-- 作品類型標籤，方便之後用篩選或視覺區分不同類型的作品 -->
               <p class="portfolio__type">實習成果</p>
               <h3 class="portfolio__name">作品名稱佔位（二）</h3>
               <p class="portfolio__summary">一句話說明佔位</p>
@@ -648,6 +663,7 @@
                 <li class="portfolio__tech">技術名稱佔位</li>
               </ul>
               <p class="portfolio__role">角色佔位（獨自 / 團隊，負責什麼）</p>
+              <!-- 這裡只放單一作品層級的簡短成果，1-2 個最想深談的作品可以另外寫進下方 #casestudy -->
               <p class="portfolio__outcome">
                 成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）
               </p>
@@ -660,6 +676,7 @@
             </article>
           </li>
         </ul>
+<!-- BUILD:portfolio:end -->
       </section>
 
       <!-- activities 依 docs/superpowers/specs/2026-07-23-activities-content-design.md 規劃落地：
@@ -676,11 +693,7 @@
           <span class="activities__eyebrow-bar" aria-hidden="true"></span>課外經歷
         </div>
 
-        <!-- 三個獨立分組（社團/競賽/志工），比照 #skills 的技術/工具/語言做法——
-             分組標題本身就是分類，不需要疊加篩選器。組內資料用 auto-fit 格線排列，
-             同一分組資料變多時會自動排成一列 3 欄，容器變窄時自動收成 2 欄/1 欄
-             （沿用 #skills 已驗證過的 minmax 手法）。每筆資料保留穩定 id
-             （activities-{slug}），供未來 #skills 交叉引用使用 -->
+        <!-- BUILD:activities:start -->
         <div class="activities__group">
           <h3 class="activities__subtitle">社團</h3>
           <ul class="activities__list">
@@ -688,15 +701,9 @@
               <article>
                 <h4 class="activities__name">社團名稱佔位（一）</h4>
                 <p class="activities__date">2024.09–2025.06</p>
-                <p class="activities__role">
-                  角色佔位（例如：活動組長、技術支援、宣傳設計）
-                </p>
-                <p class="activities__desc">
-                  具體參與內容佔位（做了什麼、怎麼參與的）
-                </p>
-                <p class="activities__outcome">
-                  成果與收穫佔位（學到什麼、有沒有具體成果）
-                </p>
+                <p class="activities__role">角色佔位（例如：活動組長、技術支援、宣傳設計）</p>
+                <p class="activities__desc">具體參與內容佔位（做了什麼、怎麼參與的）</p>
+                <p class="activities__outcome">成果與收穫佔位（學到什麼、有沒有具體成果）</p>
                 <!-- 軟實力標籤：自由填寫，不強制標準化分類 -->
                 <div class="activities__skill-tags">
                   <span class="activities__skill-tag">溝通</span>
@@ -713,15 +720,10 @@
               <article>
                 <h4 class="activities__name">社團名稱佔位（二）</h4>
                 <p class="activities__date">2024.09–2025.06</p>
-                <p class="activities__role">
-                  角色佔位（例如：活動組長、技術支援、宣傳設計）
-                </p>
-                <p class="activities__desc">
-                  具體參與內容佔位（做了什麼、怎麼參與的）
-                </p>
-                <p class="activities__outcome">
-                  成果與收穫佔位（學到什麼、有沒有具體成果）
-                </p>
+                <p class="activities__role">角色佔位（例如：活動組長、技術支援、宣傳設計）</p>
+                <p class="activities__desc">具體參與內容佔位（做了什麼、怎麼參與的）</p>
+                <p class="activities__outcome">成果與收穫佔位（學到什麼、有沒有具體成果）</p>
+                <!-- 軟實力標籤：自由填寫，不強制標準化分類 -->
                 <div class="activities__skill-tags">
                   <span class="activities__skill-tag">溝通</span>
                   <span class="activities__skill-tag">領導</span>
@@ -737,15 +739,10 @@
               <article>
                 <h4 class="activities__name">社團名稱佔位（三）</h4>
                 <p class="activities__date">2024.09–2025.06</p>
-                <p class="activities__role">
-                  角色佔位（例如：活動組長、技術支援、宣傳設計）
-                </p>
-                <p class="activities__desc">
-                  具體參與內容佔位（做了什麼、怎麼參與的）
-                </p>
-                <p class="activities__outcome">
-                  成果與收穫佔位（學到什麼、有沒有具體成果）
-                </p>
+                <p class="activities__role">角色佔位（例如：活動組長、技術支援、宣傳設計）</p>
+                <p class="activities__desc">具體參與內容佔位（做了什麼、怎麼參與的）</p>
+                <p class="activities__outcome">成果與收穫佔位（學到什麼、有沒有具體成果）</p>
+                <!-- 軟實力標籤：自由填寫，不強制標準化分類 -->
                 <div class="activities__skill-tags">
                   <span class="activities__skill-tag">溝通</span>
                   <span class="activities__skill-tag">領導</span>
@@ -771,9 +768,8 @@
                 <p class="activities__date">2025.03</p>
                 <p class="activities__role">角色佔位（例如：隊長／組員，負責什麼）</p>
                 <p class="activities__desc">具體參與內容佔位（負責哪個部分）</p>
-                <p class="activities__outcome">
-                  成果與收穫佔位（學到什麼、有沒有具體成果）
-                </p>
+                <p class="activities__outcome">成果與收穫佔位（學到什麼、有沒有具體成果）</p>
+                <!-- 軟實力標籤：自由填寫，不強制標準化分類 -->
                 <div class="activities__skill-tags">
                   <span class="activities__skill-tag">團隊合作</span>
                 </div>
@@ -782,13 +778,13 @@
             <li class="activities__item" id="activities-competition-2">
               <article>
                 <h4 class="activities__name">競賽名稱佔位（二）</h4>
+                <!-- 名次/成果徽章：只有競賽類等有具體名次時才輸出，視覺獨立於敘述文字外，方便快速掃描 -->
                 <p class="activities__badge">全國賽 佳作</p>
                 <p class="activities__date">2025.03</p>
                 <p class="activities__role">角色佔位（例如：隊長／組員，負責什麼）</p>
                 <p class="activities__desc">具體參與內容佔位（負責哪個部分）</p>
-                <p class="activities__outcome">
-                  成果與收穫佔位（學到什麼、有沒有具體成果）
-                </p>
+                <p class="activities__outcome">成果與收穫佔位（學到什麼、有沒有具體成果）</p>
+                <!-- 軟實力標籤：自由填寫，不強制標準化分類 -->
                 <div class="activities__skill-tags">
                   <span class="activities__skill-tag">團隊合作</span>
                 </div>
@@ -797,13 +793,13 @@
             <li class="activities__item" id="activities-competition-3">
               <article>
                 <h4 class="activities__name">競賽名稱佔位（三）</h4>
+                <!-- 名次/成果徽章：只有競賽類等有具體名次時才輸出，視覺獨立於敘述文字外，方便快速掃描 -->
                 <p class="activities__badge">全國賽 佳作</p>
                 <p class="activities__date">2025.03</p>
                 <p class="activities__role">角色佔位（例如：隊長／組員，負責什麼）</p>
                 <p class="activities__desc">具體參與內容佔位（負責哪個部分）</p>
-                <p class="activities__outcome">
-                  成果與收穫佔位（學到什麼、有沒有具體成果）
-                </p>
+                <p class="activities__outcome">成果與收穫佔位（學到什麼、有沒有具體成果）</p>
+                <!-- 軟實力標籤：自由填寫，不強制標準化分類 -->
                 <div class="activities__skill-tags">
                   <span class="activities__skill-tag">團隊合作</span>
                 </div>
@@ -834,6 +830,7 @@
                 <p class="activities__role">角色佔位（例如：陪伴志工、活動帶領）</p>
                 <p class="activities__desc">具體參與內容佔位</p>
                 <p class="activities__outcome">成果與收穫佔位</p>
+                <!-- 服務對象／時數：志工類特有欄位 -->
                 <p class="activities__audience">服務對象：偏鄉兒童</p>
                 <p class="activities__quantity">累計 12 小時</p>
               </article>
@@ -845,12 +842,14 @@
                 <p class="activities__role">角色佔位（例如：陪伴志工、活動帶領）</p>
                 <p class="activities__desc">具體參與內容佔位</p>
                 <p class="activities__outcome">成果與收穫佔位</p>
+                <!-- 服務對象／時數：志工類特有欄位 -->
                 <p class="activities__audience">服務對象：偏鄉兒童</p>
                 <p class="activities__quantity">累計 12 小時</p>
               </article>
             </li>
           </ul>
         </div>
+<!-- BUILD:activities:end -->
       </section>
 
       <!-- casestudy 是從 portfolio 挑 1-2 個最想被看到的作品，做更深入的敘事；
