@@ -1,1 +1,172 @@
-// .activities 專屬樣式放這裡
+@use '../abstracts/variables' as *;
+
+// .activities 專屬樣式放這裡。確認維持「清單式」呈現（不做卡片），跟 #resume／#skills
+// 一致貼版面留白；篩選器視覺沿用 #portfolio 已驗證過的 chip 式按鈕，但清單本身走單欄
+// 堆疊＋虛線分隔（比照 #resume 校園經歷/證照/獎項的既有做法），不是 #portfolio 那種
+// 多欄卡片格線——因為課外經歷比較像「紀錄」而非「展示品」
+
+.activities {
+  padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
+}
+
+// .activities__eyebrow：標題列，比照 #portfolio 這次一起升級的 eyebrow 做法
+// （短豎線色塊＋blink 閃爍動畫＋文字）。全站標題統一為 2rem
+.activities__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: $color-deep-space-blue;
+  margin-bottom: 1.6rem;
+
+  // &-bar 會編譯成 .activities__eyebrow-bar：沿用全域 @keyframes blink，
+  // 跟其他區塊的 eyebrow-bar 用同一組動畫
+  &-bar {
+    width: 5px;
+    height: 1.5em;
+    background: $color-accent;
+    border-radius: 2px;
+    animation: blink 1s steps(1) infinite;
+  }
+}
+
+// 篩選器：跟 .portfolio__filter 視覺一致（沿用同一套 chip 語彙），互動邏輯共用
+// src/scripts/filter.js（依 [data-filter]/[data-type] 屬性運作，不限定 class 名稱）
+.activities__filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.8rem;
+}
+
+.activities__filter-btn {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid #d8dee2;
+  border-radius: 999px;
+  background: #fff;
+  color: #3d5566;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    border-color: $color-accent;
+  }
+
+  &.is-active {
+    background: $color-accent;
+    border-color: $color-accent;
+    color: #fff;
+  }
+}
+
+// 清單：單欄堆疊＋虛線分隔，比照 #resume 校園經歷/證照/獎項已驗證過的做法；
+// max-width 限制單行文字長度，改善長段落（內容/成果）的可讀性
+.activities__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: 720px;
+}
+
+.activities__item {
+  padding: 1.1rem 0;
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  & + & {
+    border-top: 1px dashed #eef0f2;
+  }
+}
+
+.activities__type {
+  margin: 0 0 0.3rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: $color-accent;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.activities__name {
+  margin: 0 0 0.3rem;
+  font-size: 1.04rem;
+  font-weight: 700;
+  color: $color-deep-space-blue;
+}
+
+// 名次/成果徽章：只有競賽類等有具體名次時才輸出，獨立於敘述文字外，方便快速掃描，
+// 視覺沿用 skills__evidence-grid 的淺色底+磚紅細框語彙
+.activities__badge {
+  display: inline-block;
+  margin: 0 0 0.5rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 6px;
+  background: #fbf1ee;
+  border: 1px solid #f0d3ca;
+  color: $color-accent;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.activities__date {
+  margin: 0 0 0.4rem;
+  font-size: 0.88rem;
+  color: #9aa8b0;
+}
+
+.activities__role,
+.activities__desc,
+.activities__outcome,
+.activities__audience,
+.activities__quantity {
+  margin: 0 0 0.3rem;
+  font-size: 0.97rem;
+  line-height: 1.7;
+  color: #32424d;
+}
+
+// 軟實力標籤：自由填寫，不強制標準化分類詞彙表，沿用 # + Space Mono chip 語彙
+// （跟 about__tag／skills__name／portfolio__tech 同一套視覺簽名）
+.activities__skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.4rem 0;
+}
+
+.activities__skill-tag {
+  font-size: 0.81rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  background: #eef2f5;
+  color: #3d5566;
+  font-family: 'Space Mono', monospace;
+
+  &::before {
+    content: '#';
+    color: $color-accent;
+  }
+}
+
+.activities__link-list {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+}
+
+.activities__link {
+  font-size: 0.88rem;
+  color: $color-accent;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(179, 64, 31, 0.4);
+  padding-bottom: 0.1rem;
+}

@@ -8,11 +8,12 @@
 
 // .skills__eyebrow：標題列，做法比照 #about／#resume 的 eyebrow（短豎線色塊＋文字），
 // 取代原本毫無樣式的 <h2 class="section__title">，是這次補樣式最先解決的「視覺斷層」問題
+// 全站標題統一為 2rem：1.69rem → 2rem
 .skills__eyebrow {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  font-size: 1.69rem;
+  font-size: 2rem;
   font-weight: 800;
   color: $color-deep-space-blue;
   margin-bottom: 1.6rem;
@@ -42,7 +43,7 @@
 // 但拿掉 <summary> 相關的摺疊圖示與 cursor:pointer，因為這裡是普通 <h3> 不是可摺疊面板
 .skills__subtitle {
   margin: 0 0 1rem;
-  font-size: 1.07rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: $color-deep-space-blue;
 }

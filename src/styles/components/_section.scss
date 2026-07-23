@@ -1,4 +1,6 @@
 // .section 共用樣式放這裡（about / works / contact 三個區塊共用的部分）
+@use '../abstracts/variables' as *;
+
 // 這裡先只定義一個可重複使用的 mixin，不直接套用在 .section class 上，
 // 避免還沒設計好樣式的其他區塊被迫一起變成白底卡片；
 // 哪個區塊要用這種卡片視覺，自己在對應的 pages/_xxx.scss 裡 @include section-card 就好
@@ -9,4 +11,25 @@
   border-radius: 14px;
   padding: 2.4rem 2.6rem;
   box-shadow: 0 4px 20px rgba(13, 50, 77, 0.08); // 陰影帶一點本站主色調（深空藍），取代預設的純黑陰影
+}
+
+// .js-filter-hidden：共用的「被篩選器隱藏」class，服務 src/scripts/filter.js。
+// #portfolio、#activities 都用同一個 class（原本 #portfolio 自己有一個
+// .portfolio__item--hidden，這次 #activities 也要用同一種篩選互動，改成共用一份，
+// 不重複寫兩個內容一樣的 class）
+.js-filter-hidden {
+  display: none;
+}
+
+// .section__title：#about／#resume／#skills／#portfolio／#activities 都已經升級成
+// 專屬的「eyebrow」樣式（短豎線色塊＋blink 閃爍動畫），#casestudy／#notes／#goals／
+// #contact 目前還是原生 <h2 class="section__title">、完全吃瀏覽器預設樣式。
+// 這裡先補上跟其他標題一致的字級（全站標題統一 2rem）與顏色/字重，讓這四個區塊的
+// 標題至少跟其他區塊有基本一致的份量，但先不加短豎線色塊/閃爍效果（這次沒有被要求，
+// 留給之後升級 eyebrow 樣式時再處理）
+.section__title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: $color-deep-space-blue;
+  margin: 0 0 1.6rem;
 }

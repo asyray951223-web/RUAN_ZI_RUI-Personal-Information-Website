@@ -108,6 +108,17 @@ body {
   padding-top: 4rem;
 }
 
+.js-filter-hidden {
+  display: none;
+}
+
+.section__title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: rgb(13, 50, 77);
+  margin: 0 0 1.6rem;
+}
+
 .about {
   padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
 }
@@ -116,7 +127,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  font-size: 1.69rem;
+  font-size: 2rem;
   font-weight: 800;
   color: rgb(13, 50, 77);
   margin-bottom: 1.6rem;
@@ -239,7 +250,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  font-size: 1.69rem;
+  font-size: 2rem;
   font-weight: 800;
   color: rgb(13, 50, 77);
   margin-bottom: 1.4rem;
@@ -275,7 +286,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 1rem 0;
-  font-size: 1.07rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: rgb(13, 50, 77);
   cursor: pointer;
@@ -418,8 +429,173 @@ body {
   margin-top: 0.4rem;
 }
 
+.activities {
+  padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
+}
+
+.activities__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: rgb(13, 50, 77);
+  margin-bottom: 1.6rem;
+}
+.activities__eyebrow-bar {
+  width: 5px;
+  height: 1.5em;
+  background: #b3401f;
+  border-radius: 2px;
+  animation: blink 1s steps(1) infinite;
+}
+
+.activities__filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.8rem;
+}
+
+.activities__filter-btn {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid #d8dee2;
+  border-radius: 999px;
+  background: #fff;
+  color: #3d5566;
+  font-family: "Space Mono", monospace;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.activities__filter-btn:hover {
+  border-color: #b3401f;
+}
+.activities__filter-btn.is-active {
+  background: #b3401f;
+  border-color: #b3401f;
+  color: #fff;
+}
+
+.activities__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: 720px;
+}
+
+.activities__item {
+  padding: 1.1rem 0;
+}
+.activities__item:first-child {
+  padding-top: 0;
+}
+.activities__item + .activities__item {
+  border-top: 1px dashed #eef0f2;
+}
+
+.activities__type {
+  margin: 0 0 0.3rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #b3401f;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.activities__name {
+  margin: 0 0 0.3rem;
+  font-size: 1.04rem;
+  font-weight: 700;
+  color: rgb(13, 50, 77);
+}
+
+.activities__badge {
+  display: inline-block;
+  margin: 0 0 0.5rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 6px;
+  background: #fbf1ee;
+  border: 1px solid #f0d3ca;
+  color: #b3401f;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.activities__date {
+  margin: 0 0 0.4rem;
+  font-size: 0.88rem;
+  color: #9aa8b0;
+}
+
+.activities__role,
+.activities__desc,
+.activities__outcome,
+.activities__audience,
+.activities__quantity {
+  margin: 0 0 0.3rem;
+  font-size: 0.97rem;
+  line-height: 1.7;
+  color: #32424d;
+}
+
+.activities__skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.4rem 0;
+}
+
+.activities__skill-tag {
+  font-size: 0.81rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  background: #eef2f5;
+  color: #3d5566;
+  font-family: "Space Mono", monospace;
+}
+.activities__skill-tag::before {
+  content: "#";
+  color: #b3401f;
+}
+
+.activities__link-list {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+}
+
+.activities__link {
+  font-size: 0.88rem;
+  color: #b3401f;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(179, 64, 31, 0.4);
+  padding-bottom: 0.1rem;
+}
+
 .portfolio {
   padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
+}
+
+.portfolio__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: rgb(13, 50, 77);
+  margin-bottom: 1.6rem;
+}
+.portfolio__eyebrow-bar {
+  width: 5px;
+  height: 1.5em;
+  background: #b3401f;
+  border-radius: 2px;
+  animation: blink 1s steps(1) infinite;
 }
 
 .portfolio__filter {
@@ -474,10 +650,6 @@ body {
 }
 .portfolio__item article > :last-child {
   margin-top: auto;
-}
-
-.portfolio__item--hidden {
-  display: none;
 }
 
 .portfolio__cover {
@@ -617,7 +789,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  font-size: 1.69rem;
+  font-size: 2rem;
   font-weight: 800;
   color: rgb(13, 50, 77);
   margin-bottom: 1.6rem;
@@ -639,7 +811,7 @@ body {
 
 .skills__subtitle {
   margin: 0 0 1rem;
-  font-size: 1.07rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: rgb(13, 50, 77);
 }

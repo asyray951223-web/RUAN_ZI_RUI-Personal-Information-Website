@@ -8,6 +8,30 @@
   padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
 }
 
+// .portfolio__eyebrow：標題列，做法比照 #about／#resume／#skills 已確立的 eyebrow
+// （短豎線色塊＋blink 閃爍動畫＋文字），取代原本毫無樣式的 <h2 class="section__title">。
+// 全站標題統一為 2rem
+.portfolio__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: $color-deep-space-blue;
+  margin-bottom: 1.6rem;
+
+  // &-bar 會編譯成 .portfolio__eyebrow-bar：沿用 layout/_header.scss 已定義的全域
+  // @keyframes blink，跟 about__eyebrow-bar／resume__eyebrow-bar／skills__eyebrow-bar
+  // 用同一組動畫，不用重複定義
+  &-bar {
+    width: 5px;
+    height: 1.5em;
+    background: $color-accent;
+    border-radius: 2px;
+    animation: blink 1s steps(1) infinite;
+  }
+}
+
 // 篩選器：一排 chip 式按鈕，比照 skills__name/resume__project-tag 的等寬字標籤語彙，
 // 但這裡是「可點擊互動」的按鈕，不是純顯示用標籤，用 <button> 而非 <span>
 .portfolio__filter {
@@ -80,10 +104,8 @@
   }
 }
 
-// 篩選器切換用的隱藏 class：用 class 而不是 inline style，方便之後疊加淡入/淡出動畫
-.portfolio__item--hidden {
-  display: none;
-}
+// 篩選器切換用的隱藏 class 已改成共用的 .js-filter-hidden（見 components/_section.scss），
+// 跟 #activities 共用同一份，這裡不再重複定義 .portfolio__item--hidden
 
 .portfolio__cover {
   aspect-ratio: 16 / 9;

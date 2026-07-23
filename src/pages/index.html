@@ -546,9 +546,13 @@
              之後要加時，分類篩選標籤建議另開一個獨立於 data-type 的 data-category 屬性＋第二排篩選按鈕，
              不要跟作品類型合併成同一組標籤（兩者回答不同問題，見規格文件說明）。 -->
       <section id="portfolio" class="section portfolio">
-        <h2 class="section__title">作品集</h2>
+        <!-- 標題改用 eyebrow 樣式（短豎線色塊＋閃爍動畫＋文字），比照 #about／#resume／#skills
+             已確立的做法，取代原本毫無樣式的 <h2 class="section__title"> -->
+        <div class="portfolio__eyebrow">
+          <span class="portfolio__eyebrow-bar" aria-hidden="true"></span>作品集
+        </div>
 
-        <!-- 篩選器：全站第一次引入 JavaScript（src/scripts/portfolio-filter.js），
+        <!-- 篩選器：全站第一次引入 JavaScript（src/scripts/filter.js，現已通用化同時服務 #activities），
              其餘區塊的展開/收合都刻意維持原生 <details>，這裡因為需要「點擊切換多張卡片顯示」
              這種純 CSS 較難優雅處理的互動，經使用者確認後選擇用 JS 而非 radio-button 技巧 -->
         <div class="portfolio__filter" role="group" aria-label="依作品類型篩選">
@@ -617,8 +621,7 @@
               <p class="portfolio__role">角色佔位（獨自 / 團隊，負責什麼）</p>
               <!-- 這裡只放單一作品層級的簡短成果，1-2 個最想深談的作品可以另外寫進下方 #casestudy -->
               <p class="portfolio__outcome">
-                成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次)
-                ，成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）
+                成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）
               </p>
               <ul class="portfolio__link-list">
                 <li class="portfolio__link-item">
@@ -659,45 +662,123 @@
         </ul>
       </section>
 
-      <!-- activities 是全新章節，完整呈現社團／競賽／志工經歷，
-           跟上面 resume 裡的「校園經歷（精簡版）」互相對應但不重複打字內容 -->
+      <!-- activities 依 docs/superpowers/specs/2026-07-23-activities-content-design.md 規劃落地：
+           跟上面 resume 裡的「校園經歷（精簡版）」互相對應但不重複打字內容，兩者是同一份
+           資料的詳略版本。三個類型（社團/競賽/志工）原本各自獨立群組、欄位也不統一，這次
+           合併成同一份清單＋篩選器（跟 #portfolio 同構，共用 src/scripts/filter.js），
+           統一欄位為：類型/名稱/期間/角色/內容/成果，其餘依類型才有的欄位（志工的服務對象、
+           時數；競賽的名次徽章）維持各自選填。每筆加上穩定 id（activities-{slug}），
+           供未來 #skills「透過 N 個經歷習得」交叉引用使用（這輪不做，留待下一輪）。
+           軟實力標籤（activities__skill-tag）刻意不做標準化分類，自由填寫即可。 -->
       <section id="activities" class="section activities">
-        <h2 class="section__title">課外經歷</h2>
-
-        <div class="activities__group">
-          <h3 class="activities__subtitle">社團</h3>
-          <ul class="activities__club-list">
-            <li class="activities__club">
-              <article>
-                <h4 class="activities__club-name">社團名稱佔位</h4>
-                <p class="activities__club-role">
-                  角色佔位（例如：活動組長、技術支援、宣傳設計）
-                </p>
-              </article>
-            </li>
-          </ul>
+        <!-- 標題改用 eyebrow 樣式，比照 #portfolio 這次一起升級的做法 -->
+        <div class="activities__eyebrow">
+          <span class="activities__eyebrow-bar" aria-hidden="true"></span>課外經歷
         </div>
 
-        <div class="activities__group">
-          <h3 class="activities__subtitle">競賽</h3>
-          <ul class="activities__competition-list">
-            <li class="activities__competition">
-              <article>
-                <h4 class="activities__competition-name">競賽名稱佔位</h4>
-                <p class="activities__competition-desc">
-                  競賽成果／參與內容佔位
-                </p>
-              </article>
-            </li>
-          </ul>
+        <div class="activities__filter" role="group" aria-label="依類型篩選">
+          <button
+            type="button"
+            class="activities__filter-btn is-active"
+            data-filter="all"
+            aria-pressed="true"
+          >
+            全部
+          </button>
+          <button
+            type="button"
+            class="activities__filter-btn"
+            data-filter="club"
+            aria-pressed="false"
+          >
+            社團
+          </button>
+          <button
+            type="button"
+            class="activities__filter-btn"
+            data-filter="competition"
+            aria-pressed="false"
+          >
+            競賽
+          </button>
+          <button
+            type="button"
+            class="activities__filter-btn"
+            data-filter="volunteer"
+            aria-pressed="false"
+          >
+            志工
+          </button>
         </div>
 
-        <div class="activities__group">
-          <h3 class="activities__subtitle">志工 / 服務學習</h3>
-          <ul class="activities__volunteer-list">
-            <li class="activities__volunteer">志工／服務學習經歷佔位</li>
-          </ul>
-        </div>
+        <ul class="activities__list">
+          <li class="activities__item" id="activities-club-1" data-type="club">
+            <article>
+              <p class="activities__type">社團</p>
+              <h3 class="activities__name">社團名稱佔位</h3>
+              <p class="activities__date">2024.09–2025.06</p>
+              <p class="activities__role">
+                角色佔位（例如：活動組長、技術支援、宣傳設計）
+              </p>
+              <p class="activities__desc">
+                具體參與內容佔位（做了什麼、怎麼參與的）
+              </p>
+              <p class="activities__outcome">
+                成果與收穫佔位（學到什麼、有沒有具體成果）
+              </p>
+              <!-- 軟實力標籤：自由填寫，不強制標準化分類 -->
+              <div class="activities__skill-tags">
+                <span class="activities__skill-tag">溝通</span>
+                <span class="activities__skill-tag">領導</span>
+              </div>
+              <ul class="activities__link-list">
+                <li class="activities__link-item">
+                  <a class="activities__link" href="#">活動照片</a>
+                </li>
+              </ul>
+            </article>
+          </li>
+
+          <li
+            class="activities__item"
+            id="activities-competition-1"
+            data-type="competition"
+          >
+            <article>
+              <p class="activities__type">競賽</p>
+              <h3 class="activities__name">競賽名稱佔位</h3>
+              <!-- 名次/成果徽章：只有競賽類等有具體名次時才輸出，視覺獨立於敘述文字外，方便快速掃描 -->
+              <p class="activities__badge">全國賽 佳作</p>
+              <p class="activities__date">2025.03</p>
+              <p class="activities__role">角色佔位（例如：隊長／組員，負責什麼）</p>
+              <p class="activities__desc">具體參與內容佔位（負責哪個部分）</p>
+              <p class="activities__outcome">
+                成果與收穫佔位（學到什麼、有沒有具體成果）
+              </p>
+              <div class="activities__skill-tags">
+                <span class="activities__skill-tag">團隊合作</span>
+              </div>
+            </article>
+          </li>
+
+          <li
+            class="activities__item"
+            id="activities-volunteer-1"
+            data-type="volunteer"
+          >
+            <article>
+              <p class="activities__type">志工</p>
+              <h3 class="activities__name">志工服務名稱佔位</h3>
+              <p class="activities__date">2024.07</p>
+              <p class="activities__role">角色佔位（例如：陪伴志工、活動帶領）</p>
+              <p class="activities__desc">具體參與內容佔位</p>
+              <p class="activities__outcome">成果與收穫佔位</p>
+              <!-- 服務對象／時數：志工類特有欄位 -->
+              <p class="activities__audience">服務對象：偏鄉兒童</p>
+              <p class="activities__quantity">累計 12 小時</p>
+            </article>
+          </li>
+        </ul>
       </section>
 
       <!-- casestudy 是從 portfolio 挑 1-2 個最想被看到的作品，做更深入的敘事；
@@ -845,8 +926,9 @@
       <p class="site-footer__text">&copy; 2026 你的名字</p>
     </footer>
 
-    <!-- 全站第一支 JavaScript：只做 #portfolio 篩選器的顯示/隱藏切換，
+    <!-- 全站唯一的 JavaScript：通用的「依類型篩選」互動邏輯，同時服務 #portfolio 與
+         #activities（原本只服務 #portfolio，這次改寫成通用版本共用同一份邏輯）。
          其餘區塊（#resume、#skills 的展開收合）刻意維持原生 <details>，不受這裡影響 -->
-    <script src="/src/scripts/portfolio-filter.js" defer></script>
+    <script src="/src/scripts/filter.js" defer></script>
   </body>
 </html>
