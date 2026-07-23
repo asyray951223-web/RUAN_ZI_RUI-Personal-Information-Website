@@ -676,109 +676,181 @@
           <span class="activities__eyebrow-bar" aria-hidden="true"></span>課外經歷
         </div>
 
-        <div class="activities__filter" role="group" aria-label="依類型篩選">
-          <button
-            type="button"
-            class="activities__filter-btn is-active"
-            data-filter="all"
-            aria-pressed="true"
-          >
-            全部
-          </button>
-          <button
-            type="button"
-            class="activities__filter-btn"
-            data-filter="club"
-            aria-pressed="false"
-          >
-            社團
-          </button>
-          <button
-            type="button"
-            class="activities__filter-btn"
-            data-filter="competition"
-            aria-pressed="false"
-          >
-            競賽
-          </button>
-          <button
-            type="button"
-            class="activities__filter-btn"
-            data-filter="volunteer"
-            aria-pressed="false"
-          >
-            志工
-          </button>
+        <!-- 三個獨立分組（社團/競賽/志工），比照 #skills 的技術/工具/語言做法——
+             分組標題本身就是分類，不需要疊加篩選器。組內資料用 auto-fit 格線排列，
+             同一分組資料變多時會自動排成一列 3 欄，容器變窄時自動收成 2 欄/1 欄
+             （沿用 #skills 已驗證過的 minmax 手法）。每筆資料保留穩定 id
+             （activities-{slug}），供未來 #skills 交叉引用使用 -->
+        <div class="activities__group">
+          <h3 class="activities__subtitle">社團</h3>
+          <ul class="activities__list">
+            <li class="activities__item" id="activities-club-1">
+              <article>
+                <h4 class="activities__name">社團名稱佔位（一）</h4>
+                <p class="activities__date">2024.09–2025.06</p>
+                <p class="activities__role">
+                  角色佔位（例如：活動組長、技術支援、宣傳設計）
+                </p>
+                <p class="activities__desc">
+                  具體參與內容佔位（做了什麼、怎麼參與的）
+                </p>
+                <p class="activities__outcome">
+                  成果與收穫佔位（學到什麼、有沒有具體成果）
+                </p>
+                <!-- 軟實力標籤：自由填寫，不強制標準化分類 -->
+                <div class="activities__skill-tags">
+                  <span class="activities__skill-tag">溝通</span>
+                  <span class="activities__skill-tag">領導</span>
+                </div>
+                <ul class="activities__link-list">
+                  <li class="activities__link-item">
+                    <a class="activities__link" href="#">活動照片</a>
+                  </li>
+                </ul>
+              </article>
+            </li>
+            <li class="activities__item" id="activities-club-2">
+              <article>
+                <h4 class="activities__name">社團名稱佔位（二）</h4>
+                <p class="activities__date">2024.09–2025.06</p>
+                <p class="activities__role">
+                  角色佔位（例如：活動組長、技術支援、宣傳設計）
+                </p>
+                <p class="activities__desc">
+                  具體參與內容佔位（做了什麼、怎麼參與的）
+                </p>
+                <p class="activities__outcome">
+                  成果與收穫佔位（學到什麼、有沒有具體成果）
+                </p>
+                <div class="activities__skill-tags">
+                  <span class="activities__skill-tag">溝通</span>
+                  <span class="activities__skill-tag">領導</span>
+                </div>
+                <ul class="activities__link-list">
+                  <li class="activities__link-item">
+                    <a class="activities__link" href="#">活動照片</a>
+                  </li>
+                </ul>
+              </article>
+            </li>
+            <li class="activities__item" id="activities-club-3">
+              <article>
+                <h4 class="activities__name">社團名稱佔位（三）</h4>
+                <p class="activities__date">2024.09–2025.06</p>
+                <p class="activities__role">
+                  角色佔位（例如：活動組長、技術支援、宣傳設計）
+                </p>
+                <p class="activities__desc">
+                  具體參與內容佔位（做了什麼、怎麼參與的）
+                </p>
+                <p class="activities__outcome">
+                  成果與收穫佔位（學到什麼、有沒有具體成果）
+                </p>
+                <div class="activities__skill-tags">
+                  <span class="activities__skill-tag">溝通</span>
+                  <span class="activities__skill-tag">領導</span>
+                </div>
+                <ul class="activities__link-list">
+                  <li class="activities__link-item">
+                    <a class="activities__link" href="#">活動照片</a>
+                  </li>
+                </ul>
+              </article>
+            </li>
+          </ul>
         </div>
 
-        <ul class="activities__list">
-          <li class="activities__item" id="activities-club-1" data-type="club">
-            <article>
-              <p class="activities__type">社團</p>
-              <h3 class="activities__name">社團名稱佔位</h3>
-              <p class="activities__date">2024.09–2025.06</p>
-              <p class="activities__role">
-                角色佔位（例如：活動組長、技術支援、宣傳設計）
-              </p>
-              <p class="activities__desc">
-                具體參與內容佔位（做了什麼、怎麼參與的）
-              </p>
-              <p class="activities__outcome">
-                成果與收穫佔位（學到什麼、有沒有具體成果）
-              </p>
-              <!-- 軟實力標籤：自由填寫，不強制標準化分類 -->
-              <div class="activities__skill-tags">
-                <span class="activities__skill-tag">溝通</span>
-                <span class="activities__skill-tag">領導</span>
-              </div>
-              <ul class="activities__link-list">
-                <li class="activities__link-item">
-                  <a class="activities__link" href="#">活動照片</a>
-                </li>
-              </ul>
-            </article>
-          </li>
+        <div class="activities__group">
+          <h3 class="activities__subtitle">競賽</h3>
+          <ul class="activities__list">
+            <li class="activities__item" id="activities-competition-1">
+              <article>
+                <h4 class="activities__name">競賽名稱佔位（一）</h4>
+                <!-- 名次/成果徽章：只有競賽類等有具體名次時才輸出，視覺獨立於敘述文字外，方便快速掃描 -->
+                <p class="activities__badge">全國賽 佳作</p>
+                <p class="activities__date">2025.03</p>
+                <p class="activities__role">角色佔位（例如：隊長／組員，負責什麼）</p>
+                <p class="activities__desc">具體參與內容佔位（負責哪個部分）</p>
+                <p class="activities__outcome">
+                  成果與收穫佔位（學到什麼、有沒有具體成果）
+                </p>
+                <div class="activities__skill-tags">
+                  <span class="activities__skill-tag">團隊合作</span>
+                </div>
+              </article>
+            </li>
+            <li class="activities__item" id="activities-competition-2">
+              <article>
+                <h4 class="activities__name">競賽名稱佔位（二）</h4>
+                <p class="activities__badge">全國賽 佳作</p>
+                <p class="activities__date">2025.03</p>
+                <p class="activities__role">角色佔位（例如：隊長／組員，負責什麼）</p>
+                <p class="activities__desc">具體參與內容佔位（負責哪個部分）</p>
+                <p class="activities__outcome">
+                  成果與收穫佔位（學到什麼、有沒有具體成果）
+                </p>
+                <div class="activities__skill-tags">
+                  <span class="activities__skill-tag">團隊合作</span>
+                </div>
+              </article>
+            </li>
+            <li class="activities__item" id="activities-competition-3">
+              <article>
+                <h4 class="activities__name">競賽名稱佔位（三）</h4>
+                <p class="activities__badge">全國賽 佳作</p>
+                <p class="activities__date">2025.03</p>
+                <p class="activities__role">角色佔位（例如：隊長／組員，負責什麼）</p>
+                <p class="activities__desc">具體參與內容佔位（負責哪個部分）</p>
+                <p class="activities__outcome">
+                  成果與收穫佔位（學到什麼、有沒有具體成果）
+                </p>
+                <div class="activities__skill-tags">
+                  <span class="activities__skill-tag">團隊合作</span>
+                </div>
+              </article>
+            </li>
+          </ul>
+        </div>
 
-          <li
-            class="activities__item"
-            id="activities-competition-1"
-            data-type="competition"
-          >
-            <article>
-              <p class="activities__type">競賽</p>
-              <h3 class="activities__name">競賽名稱佔位</h3>
-              <!-- 名次/成果徽章：只有競賽類等有具體名次時才輸出，視覺獨立於敘述文字外，方便快速掃描 -->
-              <p class="activities__badge">全國賽 佳作</p>
-              <p class="activities__date">2025.03</p>
-              <p class="activities__role">角色佔位（例如：隊長／組員，負責什麼）</p>
-              <p class="activities__desc">具體參與內容佔位（負責哪個部分）</p>
-              <p class="activities__outcome">
-                成果與收穫佔位（學到什麼、有沒有具體成果）
-              </p>
-              <div class="activities__skill-tags">
-                <span class="activities__skill-tag">團隊合作</span>
-              </div>
-            </article>
-          </li>
-
-          <li
-            class="activities__item"
-            id="activities-volunteer-1"
-            data-type="volunteer"
-          >
-            <article>
-              <p class="activities__type">志工</p>
-              <h3 class="activities__name">志工服務名稱佔位</h3>
-              <p class="activities__date">2024.07</p>
-              <p class="activities__role">角色佔位（例如：陪伴志工、活動帶領）</p>
-              <p class="activities__desc">具體參與內容佔位</p>
-              <p class="activities__outcome">成果與收穫佔位</p>
-              <!-- 服務對象／時數：志工類特有欄位 -->
-              <p class="activities__audience">服務對象：偏鄉兒童</p>
-              <p class="activities__quantity">累計 12 小時</p>
-            </article>
-          </li>
-        </ul>
+        <div class="activities__group">
+          <h3 class="activities__subtitle">志工 / 服務學習</h3>
+          <ul class="activities__list">
+            <li class="activities__item" id="activities-volunteer-1">
+              <article>
+                <h4 class="activities__name">志工服務名稱佔位（一）</h4>
+                <p class="activities__date">2024.07</p>
+                <p class="activities__role">角色佔位（例如：陪伴志工、活動帶領）</p>
+                <p class="activities__desc">具體參與內容佔位</p>
+                <p class="activities__outcome">成果與收穫佔位</p>
+                <!-- 服務對象／時數：志工類特有欄位 -->
+                <p class="activities__audience">服務對象：偏鄉兒童</p>
+                <p class="activities__quantity">累計 12 小時</p>
+              </article>
+            </li>
+            <li class="activities__item" id="activities-volunteer-2">
+              <article>
+                <h4 class="activities__name">志工服務名稱佔位（二）</h4>
+                <p class="activities__date">2024.07</p>
+                <p class="activities__role">角色佔位（例如：陪伴志工、活動帶領）</p>
+                <p class="activities__desc">具體參與內容佔位</p>
+                <p class="activities__outcome">成果與收穫佔位</p>
+                <p class="activities__audience">服務對象：偏鄉兒童</p>
+                <p class="activities__quantity">累計 12 小時</p>
+              </article>
+            </li>
+            <li class="activities__item" id="activities-volunteer-3">
+              <article>
+                <h4 class="activities__name">志工服務名稱佔位（三）</h4>
+                <p class="activities__date">2024.07</p>
+                <p class="activities__role">角色佔位（例如：陪伴志工、活動帶領）</p>
+                <p class="activities__desc">具體參與內容佔位</p>
+                <p class="activities__outcome">成果與收穫佔位</p>
+                <p class="activities__audience">服務對象：偏鄉兒童</p>
+                <p class="activities__quantity">累計 12 小時</p>
+              </article>
+            </li>
+          </ul>
+        </div>
       </section>
 
       <!-- casestudy 是從 portfolio 挑 1-2 個最想被看到的作品，做更深入的敘事；

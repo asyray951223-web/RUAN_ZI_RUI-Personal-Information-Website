@@ -1,9 +1,10 @@
 @use '../abstracts/variables' as *;
 
-// .activities 專屬樣式放這裡。確認維持「清單式」呈現（不做卡片），跟 #resume／#skills
-// 一致貼版面留白；篩選器視覺沿用 #portfolio 已驗證過的 chip 式按鈕，但清單本身走單欄
-// 堆疊＋虛線分隔（比照 #resume 校園經歷/證照/獎項的既有做法），不是 #portfolio 那種
-// 多欄卡片格線——因為課外經歷比較像「紀錄」而非「展示品」
+// .activities 專屬樣式放這裡。改回三個獨立分組（社團/競賽/志工），比照 #skills
+// 的技術/工具/語言做法——分組標題本身就是分類，不需要疊加篩選器（不套用
+// #portfolio 那種篩選器＋合併清單的做法）。組內資料維持「清單式」（不做卡片外框/
+// 陰影），改用 auto-fit 格線排列，同一分組資料變多時自動排成一列 3 欄，沿用
+// #skills 已驗證過的 auto-fit + minmax 手法，容器變窄時自動收成 2 欄/1 欄
 
 .activities {
   padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
@@ -31,66 +32,42 @@
   }
 }
 
-// 篩選器：跟 .portfolio__filter 視覺一致（沿用同一套 chip 語彙），互動邏輯共用
-// src/scripts/filter.js（依 [data-filter]/[data-type] 屬性運作，不限定 class 名稱）
-.activities__filter {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-bottom: 1.8rem;
+// .activities__group：社團／競賽／志工三個分組容器，比照 .skills__group 的做法，
+// group 之間用間距分隔
+.activities__group {
+  margin-bottom: 2.2rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
-.activities__filter-btn {
-  padding: 0.4rem 0.9rem;
-  border: 1px solid #d8dee2;
-  border-radius: 999px;
-  background: #fff;
-  color: #3d5566;
-  font-family: 'Space Mono', monospace;
-  font-size: 0.86rem;
+// .activities__subtitle：分組標題（社團/競賽/志工），比照 .skills__subtitle 的
+// 顏色/字重，分組標題本身已經是分類，組內資料不需要再疊加篩選器
+.activities__subtitle {
+  margin: 0 0 1rem;
+  font-size: 1.35rem;
   font-weight: 700;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-
-  &:hover {
-    border-color: $color-accent;
-  }
-
-  &.is-active {
-    background: $color-accent;
-    border-color: $color-accent;
-    color: #fff;
-  }
+  color: $color-deep-space-blue;
 }
 
-// 清單：單欄堆疊＋虛線分隔，比照 #resume 校園經歷/證照/獎項已驗證過的做法；
-// max-width 限制單行文字長度，改善長段落（內容/成果）的可讀性
+// 組內格線：minmax(min(380px, 100%), 1fr) 在典型桌面可用寬度下可以排成一列 3 欄，
+// 容器變窄或同組資料筆數不足 3 筆時，auto-fit 自動收成 2 欄/1 欄。
+// 用 min(380px, 100%) 而不是單純 380px：容器本身窄於 380px 時（例如手機寬度），
+// 讓欄寬上限跟著縮小到 100% 撐滿容器，避免欄位被強制撐到比容器還寬造成溢出
 .activities__list {
   list-style: none;
   margin: 0;
   padding: 0;
-  max-width: 720px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr));
+  gap: 1.8rem;
 }
 
+// 格線排列後，項目彼此不再單純是「上下相鄰」，不用虛線 border-top 分隔，
+// 改靠 grid 的 gap 留白區分（比照 #skills 多欄格線化時的相同處理）
 .activities__item {
-  padding: 1.1rem 0;
-
-  &:first-child {
-    padding-top: 0;
-  }
-
-  & + & {
-    border-top: 1px dashed #eef0f2;
-  }
-}
-
-.activities__type {
-  margin: 0 0 0.3rem;
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: $color-accent;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  padding: 0;
 }
 
 .activities__name {

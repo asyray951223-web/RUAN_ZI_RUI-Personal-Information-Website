@@ -658,3 +658,19 @@ src/styles/
 - `.section__title` 規則放在 `components/_section.scss`（共用元件樣式檔）而非個別 page scss：因為這個 class 同時被 4 個不同區塊共用，符合這個檔案原本「共用樣式放這裡」的定位。
 
 **驗證方式**：`./node_modules/.bin/sass` 編譯成功、無錯誤；用 Playwright 檢查 `getComputedStyle` 確認 `.about__eyebrow`／`.resume__eyebrow`／`.skills__eyebrow`／`.portfolio__eyebrow`／`.activities__eyebrow`／`#casestudy`／`#notes`／`#goals`／`#contact` 的 `.section__title` 字級皆為 32px（2rem），且 `.portfolio__eyebrow-bar`／`.activities__eyebrow-bar` 的 `animation-name` 皆為 `blink`；截圖確認桌面（1400px）與手機（420px）寬度下標題排版正常、無破版；順手發現並修正的 `portfolio__outcome` 重複文字問題也已截圖確認復原正常。測試用截圖與臨時 HTTP 伺服器、`.playwright-mcp` 暫存資料夾事後已清除，不留在版控中。
+
+### 38. `#activities` 改回三個獨立分組＋組內 3 欄格線（比照 #skills），並補齊示範佔位
+
+**背景**：上一輪（commit `30c1eaf`）落地的是「合併成一個清單＋篩選器」版本。使用者看過後回覆「我是指類似技能那樣，而不是分類並排」，要求改回三個獨立分組；當時已經做出對應修正，但使用者接著要求「回到上一個commit」，把這個修正連同其他未提交變更一起丟棄（已用 AskUserQuestion 確認過這是使用者明確要的操作，且清楚說明這會復原成使用者不滿意的合併版本）。這次使用者重新提出同樣的需求——「課外資料中同一分組資料變多時會自動排成一列 3 欄，順便幫我新增佔位」——等於是重做上次被丟棄的修正，這次額外要求補上更多示範佔位資料，讓「資料變多時自動排成 3 欄」的效果真正可見（先前每組只有 1 筆佔位，格線效果看不出來）。
+
+**變更**：
+- `src/pages/index.html`：`#activities` 拿掉合併後的 `.activities__filter` 篩選列與單一 `.activities__list`，改回三個獨立 `.activities__group`（社團/競賽/志工），各自 `<h3 class="activities__subtitle">` 標題 + 自己的 `.activities__list`。拿掉不再需要的 `data-type` 屬性與重複標示分類的 `.activities__type` 標籤，名稱從 `<h3 class="activities__name">` 改成 `<h4>`（正確巢狀在分組 `<h3>` 標題之下）。**每組從 1 筆佔位擴充為 3 筆**（社團/競賽/志工各補 2 筆，命名比照全站既有的「（一）（二）（三）」編號慣例，圓點/日期/標籤等示範值複製第 1 筆），讓 3 欄格線有實際內容可以展示。穩定 id（`activities-{slug}`）維持不變。
+- `src/styles/pages/_activities.scss`：拿掉 `.activities__filter`／`-filter-btn`；新增 `.activities__group`／`-subtitle`（比照 `.skills__group`／`-subtitle`）；`.activities__list` 改成組內 auto-fit 格線 `grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr))`——用 `min(380px, 100%)` 而不是單純 `380px`，預防容器窄於 380px 時（例如手機寬度）欄位被強制撐寬溢出（這是先前同一份修正就已經抓到並修過的既有 bug 類型，這次直接沿用修正版寫法，不重蹈覆轍）。
+- `src/styles/main.css`：執行 `./node_modules/.bin/sass styles/main.scss styles/main.css` 重新編譯。
+
+**取捨說明**：
+- 拿掉篩選器：分組標題本身已經是分類區隔，跟上次的判斷一致——只是這次是使用者主動要求的方向，不需要再用 AskUserQuestion 確認。
+- 佔位資料統一補到每組 3 筆：3 筆剛好能展示「一列 3 欄」的完整效果，比補到 4 筆（會多出一個只有 1 個項目的第二列）更乾淨地示範這個版面規則。
+- 3 筆佔位的示範數值（日期/角色/標籤等）直接複製第 1 筆，只改名稱編號：沿用全站「佔位期最小改動、之後手動覆蓋」的既有慣例（`#skills`／`#portfolio` 擴充佔位時都是同樣做法）。
+
+**驗證方式**：`./node_modules/.bin/sass` 編譯成功、無錯誤；用 Playwright 開啟本機靜態伺服器截圖確認：桌面寬度（1400px）下三個分組（社團/競賽/志工）各自的 3 筆佔位排成一列 3 欄，版面結構跟 `#skills` 一致；縮到手機寬度（420px）用 `getBoundingClientRect` 逐一核對所有 `.activities__group`／`-list`／`-item` 寬度皆與容器一致（無強制撐寬溢出），格線自然收成單欄；`#portfolio` 篩選器回歸測試確認未受影響（點擊「Side Project」篩選按鈕，只剩對應卡片顯示）。測試用截圖與臨時 HTTP 伺服器、`.playwright-mcp` 暫存資料夾事後已清除，不留在版控中。
