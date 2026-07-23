@@ -1,19 +1,225 @@
 @use '../abstracts/variables' as *;
 
-// .casestudy 專屬樣式放這裡（內文排版這輪還沒規劃，維持跟首頁 #casestudy 一致的未上樣狀態，
-// 不在 #portfolio 卡片集這輪順便補齊，避免範圍失控）。
-// 只補上跟其他 section 一致的 padding，因為這次新增的 portfolio/*.html 詳細頁面完全依賴
-// 這個 class 當作頁面留白，沒有留白會整頁內容貼齊視窗邊緣，示範效果太差
+// .casestudy 排版方向定案為「Pull Request 框架」（依 docs/superpowers/specs/
+// 2026-07-23-casestudy-content-design.md 確認）：MERGED 徽章／描述／過程／挑戰
+// （審查意見樣式）／成果（合併摘要），「查看關聯作品」連結套用誠實圓點。
+// 只補上跟其他 section 一致的 padding，因為 portfolio/*.html 詳細頁面也依賴這個
+// class 當作頁面留白
 .casestudy {
   padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
 }
 
-// .casestudy__back-link 是這輪新增（給 src/pages/portfolio/*.html 詳細頁面用的返回連結），
-// 沿用全站連結的 dashed underline 語彙，是這輪唯一需要的 .casestudy__* 樣式
+// .casestudy__eyebrow：標題列，比照 #portfolio／#activities 這次一起升級的 eyebrow
+// 做法（短豎線色塊＋blink 閃爍動畫＋文字）。全站標題統一為 2rem
+.casestudy__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: $color-deep-space-blue;
+  margin-bottom: 1.6rem;
+
+  // &-bar 會編譯成 .casestudy__eyebrow-bar：沿用全域 @keyframes blink，
+  // 跟其他區塊的 eyebrow-bar 用同一組動畫
+  &-bar {
+    width: 5px;
+    height: 1.5em;
+    background: $color-accent;
+    border-radius: 2px;
+    animation: blink 1s steps(1) infinite;
+  }
+}
+
+// .casestudy__back-link 是給 src/pages/portfolio/*.html 詳細頁面用的返回連結，
+// 沿用全站連結的 dashed underline 語彙，跟下面 .casestudy__item 的內文樣式各自獨立
 .casestudy__back-link {
   display: inline-block;
   margin-bottom: 1.2rem;
   font-size: 0.9rem;
+  color: $color-accent;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(179, 64, 31, 0.4);
+  padding-bottom: 0.1rem;
+}
+
+// 清單：改成 2 欄格線（拿掉「過程」的圖片佔位框後，卡片單欄堆疊會顯得又高又空）。
+// minmax(min(520px, 100%), 1fr)：520px 基準在典型桌面可用寬度下剛好排成 2 欄，
+// 容器變窄時 auto-fit 自動收成 1 欄；用 min(520px, 100%) 避免容器窄於 520px 時
+// （例如手機寬度）欄位被強制撐寬溢出，沿用 #activities 已經驗證過的同一種寫法
+.casestudy__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(520px, 100%), 1fr));
+  gap: 1.8rem;
+}
+
+.casestudy__item {
+  background: #fff;
+  border: 1px solid #f0d3ca;
+  border-radius: 12px;
+  padding: 1.6rem 1.8rem;
+}
+
+// 頭部：MERGED 徽章 + 案例名稱 + 序號（真實的第幾篇精選案例，不是虛構數字）
+.casestudy__head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.casestudy__badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: $color-accent;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+}
+
+.casestudy__name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: $color-deep-space-blue;
+  margin: 0;
+}
+
+.casestudy__num {
+  font-family: 'Space Mono', monospace;
+  color: #9aa8b0;
+  font-size: 0.9rem;
+}
+
+// 一句話亮點摘要：規格文件新增欄位，比照 portfolio__summary 的電梯簡報角色
+.casestudy__summary {
+  font-size: 0.98rem;
+  color: #32424d;
+  margin: 0 0 1.2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eef0f2;
+}
+
+// 每個敘事段落
+.casestudy__block {
+  margin-bottom: 1.2rem;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.casestudy__block-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #9aa8b0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.4rem;
+
+  // ▸ 前綴呼應 PR 框架「一個一個變更區塊」的語感
+  &::before {
+    content: '▸ ';
+    color: $color-accent;
+  }
+}
+
+.casestudy__block-text {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: #32424d;
+}
+
+// 段落圖片佐證：選填，只有真的有素材時才輸出，沿用全站淺色佔位框語彙
+.casestudy__block-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: #eef2f5;
+  border-radius: 8px;
+  margin-bottom: 0.6rem;
+  color: #9aa8b0;
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+// 挑戰：審查意見（review comment）樣式的強調框
+.casestudy__review {
+  border-left: 3px solid #f0d3ca;
+  background: #fbf1ee;
+  border-radius: 0 8px 8px 0;
+  padding: 0.8rem 1rem;
+
+  .casestudy__block-text {
+    color: #32424d;
+  }
+}
+
+// 成果：可選配量化成果標註，呼應全站「陳姐不信自誇形容詞」的誠實感原則，
+// 只有真的有具體數字/名次時才輸出
+.casestudy__metric {
+  display: inline-block;
+  margin: 0 0 0.5rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 6px;
+  background: #fbf1ee;
+  border: 1px solid #f0d3ca;
+  color: $color-accent;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+// 底部：誠實圓點（代表幾個階段附有圖片佐證，會隨真實資料變動，不是固定滿分裝飾）
+// ＋連回對應 #portfolio 項目的連結
+.casestudy__footer {
+  margin-top: 1.4rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eef0f2;
+  font-size: 0.85rem;
+  color: #9aa8b0;
+}
+
+.casestudy__footer-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+
+  & + & {
+    margin-top: 0.5rem;
+  }
+}
+
+.casestudy__footer-status {
+  display: flex;
+  gap: 4px;
+}
+
+.casestudy__footer-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #e2e6e9; // 未附圖：淺灰空心感，沿用 skills__level-dot 語彙
+
+  &.is-on {
+    background: $color-accent; // 已附圖：磚紅實心
+  }
+}
+
+.casestudy__footer-accent {
+  color: $color-accent;
+  font-weight: 700;
+}
+
+.casestudy__portfolio-link {
   color: $color-accent;
   text-decoration: none;
   border-bottom: 1px dashed rgba(179, 64, 31, 0.4);

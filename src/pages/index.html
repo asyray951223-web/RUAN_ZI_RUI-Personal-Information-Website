@@ -855,49 +855,233 @@
       <!-- casestudy 是從 portfolio 挑 1-2 個最想被看到的作品，做更深入的敘事；
            每則案例用 <article> 包裹五段式結構（背景/目標/過程/挑戰/成果），跟 portfolio 的簡短資訊分開放，
            之後要新增第二個案例故事只要照抄同一個 <li class="casestudy__item"><article>...</article></li> 結構 -->
+      <!-- #casestudy 依 docs/superpowers/specs/2026-07-23-casestudy-content-design.md 規劃落地：
+           視覺方向選定「Pull Request 框架」——MERGED 徽章／描述／過程／挑戰（審查意見樣式）／
+           成果（合併摘要），「查看關聯作品」連結套用誠實圓點（代表幾個階段有圖片佐證，不是
+           固定滿分裝飾數字，呼應全站「陳姐不信自誇形容詞」的誠實感原則）。每篇案例連結回對應
+           #portfolio 項目（比照 #resume/#portfolio 已有的詳略版本治理），不重複打字名稱/技術
+           標籤。資料改由 src/data/casestudy.json 驅動，這裡不再手寫逐筆內容。 -->
       <section id="casestudy" class="section casestudy">
-        <h2 class="section__title">案例故事</h2>
+        <div class="casestudy__eyebrow">
+          <span class="casestudy__eyebrow-bar" aria-hidden="true"></span>案例故事
+        </div>
 
+        <!-- BUILD:casestudy:start -->
         <ul class="casestudy__list">
-          <li class="casestudy__item">
+          <li class="casestudy__item" id="casestudy-project-1">
             <article>
-              <h3 class="casestudy__name">案例作品名稱佔位</h3>
-
-              <div class="casestudy__block">
-                <h4 class="casestudy__block-title">背景</h4>
-                <p class="casestudy__block-text">
-                  背景佔位（為什麼要做？課程作業／競賽／自己想解決的問題？）
-                </p>
+              <div class="casestudy__head">
+                <span class="casestudy__badge">MERGED</span>
+                <h3 class="casestudy__name">案例作品名稱佔位（一）</h3>
+                <span class="casestudy__num">#01</span>
               </div>
+              <p class="casestudy__summary">亮點摘要佔位（例如：三週內把手動流程做成自動化工具，節省 80% 處理時間）</p>
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">背景</h4>
+                  <p class="casestudy__block-text">背景佔位（為什麼要做？課程作業／競賽／自己想解決的問題？）</p>
+                </div>
 
-              <div class="casestudy__block">
-                <h4 class="casestudy__block-title">目標</h4>
-                <p class="casestudy__block-text">目標佔位（想達成什麼？）</p>
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">目標</h4>
+                  <p class="casestudy__block-text">目標佔位（想達成什麼？）</p>
+                </div>
+
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">過程</h4>
+                  <p class="casestudy__block-text">過程佔位（怎麼規劃？設計 → 實作 → 測試）</p>
+                </div>
+
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">挑戰</h4>
+                  <div class="casestudy__review">
+                  <p class="casestudy__block-text">挑戰佔位（遇到什麼困難？怎麼解決？）</p>
+                  </div>
+                </div>
+
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">成果與收穫</h4>
+                  <p class="casestudy__metric">使用人數／效能提升／得獎名次佔位</p>
+                  <p class="casestudy__block-text">成果與收穫佔位（最後做出來是什麼樣子？學到什麼？下次會怎麼改進？）</p>
+                </div>
+              <div class="casestudy__footer">
+                <div class="casestudy__footer-row">
+                  <span class="casestudy__footer-status" aria-label="0 / 5 個階段附有圖片佐證">
+                    <span class="casestudy__footer-dot"></span>
+                    <span class="casestudy__footer-dot"></span>
+                    <span class="casestudy__footer-dot"></span>
+                    <span class="casestudy__footer-dot"></span>
+                    <span class="casestudy__footer-dot"></span>
+                  </span>
+                  <span>0 / 5 個階段附圖片佐證</span>
+                </div>
+                <div class="casestudy__footer-row">
+                  Merged by <span class="casestudy__footer-accent">ruan_zi_rui</span> ·
+                  <a class="casestudy__portfolio-link" href="#portfolio-project-1">查看關聯作品 portfolio/project-1 →</a>
+                </div>
               </div>
-
-              <div class="casestudy__block">
-                <h4 class="casestudy__block-title">過程</h4>
-                <p class="casestudy__block-text">
-                  過程佔位（怎麼規劃？設計 → 實作 → 測試）
-                </p>
+            </article>
+          </li>
+          <li class="casestudy__item" id="casestudy-project-2">
+            <article>
+              <div class="casestudy__head">
+                <span class="casestudy__badge">MERGED</span>
+                <h3 class="casestudy__name">案例作品名稱佔位（二）</h3>
+                <span class="casestudy__num">#02</span>
               </div>
+              <p class="casestudy__summary">亮點摘要佔位（例如：三週內把手動流程做成自動化工具，節省 80% 處理時間）</p>
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">背景</h4>
+                  <p class="casestudy__block-text">背景佔位（為什麼要做？課程作業／競賽／自己想解決的問題？）</p>
+                </div>
 
-              <div class="casestudy__block">
-                <h4 class="casestudy__block-title">挑戰</h4>
-                <p class="casestudy__block-text">
-                  挑戰佔位（遇到什麼困難？怎麼解決？）
-                </p>
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">目標</h4>
+                  <p class="casestudy__block-text">目標佔位（想達成什麼？）</p>
+                </div>
+
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">過程</h4>
+                  <p class="casestudy__block-text">過程佔位（怎麼規劃？設計 → 實作 → 測試）</p>
+                </div>
+
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">挑戰</h4>
+                  <div class="casestudy__review">
+                  <p class="casestudy__block-text">挑戰佔位（遇到什麼困難？怎麼解決？）</p>
+                  </div>
+                </div>
+
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">成果與收穫</h4>
+                  <p class="casestudy__metric">使用人數／效能提升／得獎名次佔位</p>
+                  <p class="casestudy__block-text">成果與收穫佔位（最後做出來是什麼樣子？學到什麼？下次會怎麼改進？）</p>
+                </div>
+              <div class="casestudy__footer">
+                <div class="casestudy__footer-row">
+                  <span class="casestudy__footer-status" aria-label="0 / 5 個階段附有圖片佐證">
+                    <span class="casestudy__footer-dot"></span>
+                    <span class="casestudy__footer-dot"></span>
+                    <span class="casestudy__footer-dot"></span>
+                    <span class="casestudy__footer-dot"></span>
+                    <span class="casestudy__footer-dot"></span>
+                  </span>
+                  <span>0 / 5 個階段附圖片佐證</span>
+                </div>
+                <div class="casestudy__footer-row">
+                  Merged by <span class="casestudy__footer-accent">ruan_zi_rui</span> ·
+                  <a class="casestudy__portfolio-link" href="#portfolio-project-2">查看關聯作品 portfolio/project-2 →</a>
+                </div>
               </div>
+            </article>
+          </li>
+          <li class="casestudy__item" id="casestudy-project-3">
+            <article>
+              <div class="casestudy__head">
+                <span class="casestudy__badge">MERGED</span>
+                <h3 class="casestudy__name">案例作品名稱佔位（三）</h3>
+                <span class="casestudy__num">#03</span>
+              </div>
+              <p class="casestudy__summary">亮點摘要佔位（例如：三週內把手動流程做成自動化工具，節省 80% 處理時間）</p>
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">背景</h4>
+                  <p class="casestudy__block-text">背景佔位（為什麼要做？課程作業／競賽／自己想解決的問題？）</p>
+                </div>
 
-              <div class="casestudy__block">
-                <h4 class="casestudy__block-title">成果與收穫</h4>
-                <p class="casestudy__block-text">
-                  成果與收穫佔位（最後做出來是什麼樣子？學到什麼？下次會怎麼改進？）
-                </p>
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">目標</h4>
+                  <p class="casestudy__block-text">目標佔位（想達成什麼？）</p>
+                </div>
+
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">過程</h4>
+                  <p class="casestudy__block-text">過程佔位（怎麼規劃？設計 → 實作 → 測試）</p>
+                </div>
+
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">挑戰</h4>
+                  <div class="casestudy__review">
+                  <p class="casestudy__block-text">挑戰佔位（遇到什麼困難？怎麼解決？）</p>
+                  </div>
+                </div>
+
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">成果與收穫</h4>
+                  <p class="casestudy__metric">使用人數／效能提升／得獎名次佔位</p>
+                  <p class="casestudy__block-text">成果與收穫佔位（最後做出來是什麼樣子？學到什麼？下次會怎麼改進？）</p>
+                </div>
+              <div class="casestudy__footer">
+                <div class="casestudy__footer-row">
+                  <span class="casestudy__footer-status" aria-label="0 / 5 個階段附有圖片佐證">
+                    <span class="casestudy__footer-dot"></span>
+                    <span class="casestudy__footer-dot"></span>
+                    <span class="casestudy__footer-dot"></span>
+                    <span class="casestudy__footer-dot"></span>
+                    <span class="casestudy__footer-dot"></span>
+                  </span>
+                  <span>0 / 5 個階段附圖片佐證</span>
+                </div>
+                <div class="casestudy__footer-row">
+                  Merged by <span class="casestudy__footer-accent">ruan_zi_rui</span> ·
+                  <a class="casestudy__portfolio-link" href="#portfolio-project-1">查看關聯作品 portfolio/project-1 →</a>
+                </div>
+              </div>
+            </article>
+          </li>
+          <li class="casestudy__item" id="casestudy-project-4">
+            <article>
+              <div class="casestudy__head">
+                <span class="casestudy__badge">MERGED</span>
+                <h3 class="casestudy__name">案例作品名稱佔位（四）</h3>
+                <span class="casestudy__num">#04</span>
+              </div>
+              <p class="casestudy__summary">亮點摘要佔位（例如：三週內把手動流程做成自動化工具，節省 80% 處理時間）</p>
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">背景</h4>
+                  <p class="casestudy__block-text">背景佔位（為什麼要做？課程作業／競賽／自己想解決的問題？）</p>
+                </div>
+
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">目標</h4>
+                  <p class="casestudy__block-text">目標佔位（想達成什麼？）</p>
+                </div>
+
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">過程</h4>
+                  <p class="casestudy__block-text">過程佔位（怎麼規劃？設計 → 實作 → 測試）</p>
+                </div>
+
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">挑戰</h4>
+                  <div class="casestudy__review">
+                  <p class="casestudy__block-text">挑戰佔位（遇到什麼困難？怎麼解決？）</p>
+                  </div>
+                </div>
+
+                <div class="casestudy__block">
+                  <h4 class="casestudy__block-label">成果與收穫</h4>
+                  <p class="casestudy__metric">使用人數／效能提升／得獎名次佔位</p>
+                  <p class="casestudy__block-text">成果與收穫佔位（最後做出來是什麼樣子？學到什麼？下次會怎麼改進？）</p>
+                </div>
+              <div class="casestudy__footer">
+                <div class="casestudy__footer-row">
+                  <span class="casestudy__footer-status" aria-label="0 / 5 個階段附有圖片佐證">
+                    <span class="casestudy__footer-dot"></span>
+                    <span class="casestudy__footer-dot"></span>
+                    <span class="casestudy__footer-dot"></span>
+                    <span class="casestudy__footer-dot"></span>
+                    <span class="casestudy__footer-dot"></span>
+                  </span>
+                  <span>0 / 5 個階段附圖片佐證</span>
+                </div>
+                <div class="casestudy__footer-row">
+                  Merged by <span class="casestudy__footer-accent">ruan_zi_rui</span> ·
+                  <a class="casestudy__portfolio-link" href="#portfolio-project-2">查看關聯作品 portfolio/project-2 →</a>
+                </div>
               </div>
             </article>
           </li>
         </ul>
+<!-- BUILD:casestudy:end -->
       </section>
 
       <!-- notes 是學習紀錄／筆記清單，每篇用 <article> 包裹，之後可能會連到獨立的文章頁面，先用 # 佔位連結 -->
