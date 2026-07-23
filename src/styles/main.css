@@ -418,6 +418,197 @@ body {
   margin-top: 0.4rem;
 }
 
+.portfolio {
+  padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
+}
+
+.portfolio__filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.8rem;
+}
+
+.portfolio__filter-btn {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid #d8dee2;
+  border-radius: 999px;
+  background: #fff;
+  color: #3d5566;
+  font-family: "Space Mono", monospace;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.portfolio__filter-btn:hover {
+  border-color: #b3401f;
+}
+.portfolio__filter-btn.is-active {
+  background: #b3401f;
+  border-color: #b3401f;
+  color: #fff;
+}
+
+.portfolio__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 300px));
+  gap: 1.8rem;
+}
+
+.portfolio__item {
+  height: 560px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(13, 50, 77, 0.08);
+  overflow: hidden;
+}
+.portfolio__item article {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0 1.4rem 1.4rem;
+}
+.portfolio__item article > :last-child {
+  margin-top: auto;
+}
+
+.portfolio__item--hidden {
+  display: none;
+}
+
+.portfolio__cover {
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  background: #eef2f5;
+  margin: 0 -1.4rem 1rem;
+  width: calc(100% + 2.8rem);
+}
+
+.portfolio__type {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #b3401f;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.portfolio__name {
+  margin: 0 0 0.4rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: rgb(13, 50, 77);
+}
+
+.portfolio__summary {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #32424d;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.portfolio__date {
+  margin: 0 0 0.7rem;
+  font-size: 0.82rem;
+  color: #9aa8b0;
+}
+
+.portfolio__tech-list {
+  list-style: none;
+  margin: 0 0 0.7rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.portfolio__tech {
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  background: #eef2f5;
+  color: #3d5566;
+  font-family: "Space Mono", monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.portfolio__tech::before {
+  content: "#";
+  color: #b3401f;
+}
+
+.portfolio__role {
+  margin: 0 0 0.6rem;
+  font-size: 0.9rem;
+  color: #32424d;
+}
+
+.portfolio__outcome {
+  margin: 0 0 0.6rem;
+  font-size: 0.9rem;
+  color: #32424d;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+.portfolio__link-list {
+  list-style: none;
+  margin: 0.2rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+}
+
+.portfolio__link {
+  font-size: 0.88rem;
+  color: #b3401f;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(179, 64, 31, 0.4);
+  padding-bottom: 0.1rem;
+}
+
+.portfolio__detail-link {
+  display: inline-block;
+  margin-top: 0.7rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #b3401f;
+  text-decoration: none;
+}
+.portfolio__detail-link:hover {
+  text-decoration: underline;
+}
+
+.portfolio__nda-note {
+  margin: 0.2rem 0 0;
+  font-size: 0.86rem;
+  color: #9aa8b0;
+  font-style: italic;
+}
+
+.casestudy {
+  padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
+}
+
+.casestudy__back-link {
+  display: inline-block;
+  margin-bottom: 1.2rem;
+  font-size: 0.9rem;
+  color: #b3401f;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(179, 64, 31, 0.4);
+  padding-bottom: 0.1rem;
+}
+
 .skills {
   padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
 }
@@ -457,16 +648,13 @@ body {
   list-style: none;
   margin: 0;
   padding: 0;
-  max-width: 640px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+  gap: 0.9rem 2.4rem;
 }
 
 .skills__item {
   padding: 0.2rem 0;
-}
-.skills__item + .skills__item {
-  border-top: 1px dashed #eef0f2;
-  margin-top: 0.9rem;
-  padding-top: 0.9rem;
 }
 
 .skills__row1 {
@@ -608,11 +796,3 @@ body {
   color: rgb(13, 50, 77);
   font-weight: 700;
 }
-
-@media (max-width: 600px) {
-  .skills__evidence-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-/*# sourceMappingURL=main.css.map */

@@ -47,26 +47,27 @@
   color: $color-deep-space-blue;
 }
 
-// 加上 max-width：這個區塊沒有像 .about__layout 那樣的雙欄配置能自然限制寬度，
-// 若不設寬度上限，.skills__row1 的 justify-content: space-between 會把熟練度指標
-// 硬推到整個視窗（滿版 padding 內側）的最右邊，跟左邊的標籤中間留下大片不合理的空白
+// 改為多欄格線：同分類底下的佔位卡片（技術/工具各 4 張、語言 2 張）左右並排，
+// 利用原本單欄堆疊時卡片右側的大片空白。minmax 基準（600px）貼近改版前單欄設計
+// 的舒適寬度（舊版 .skills__list 曾用 max-width:640px），刻意不另外設 max-width
+// 上限，讓 grid 撐滿 .skills 的完整可用寬度（視窗寬度－左右 padding）：
+// 曾經加過 max-width:960px 想避免超寬螢幕拉太開，但那樣兩欄反而被壓縮到比原本
+// 單欄卡片還窄，右側留下大片沒利用到的空白，所以拿掉，改成夠寬時讓 1fr 自然撐滿。
+// auto-fit 讓欄數依容器寬度自動收斂（變窄到塞不下 600px 一欄時收成單欄），比照
+// 全站唯一的多欄慣例 .about__layout（flex-wrap 靠內容自然換行）精神
 .skills__list {
   list-style: none;
   margin: 0;
   padding: 0;
-  max-width: 640px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+  gap: 0.9rem 2.4rem;
 }
 
-// 同一組內第二筆以後的項目，用細虛線分隔，比照 resume__campus + resume__campus 的做法，
-// 避免多筆資料黏在一起分不清楚
+// 格線排列後，卡片彼此的關係不再是「上下相鄰」（可能是左右相鄰），原本用來分隔
+// 單欄堆疊卡片的虛線 border-top 不再適用，改靠 grid 的 gap 留白區分即可
 .skills__item {
   padding: 0.2rem 0;
-
-  & + & {
-    border-top: 1px dashed #eef0f2;
-    margin-top: 0.9rem;
-    padding-top: 0.9rem;
-  }
 }
 
 // 第一行：技能標籤（左）+ 熟練度指標（右）。語言類只會用到 .skills__name，
@@ -192,9 +193,10 @@
   color: $color-accent;
 }
 
-// 展開後的網格：桌面 6 欄，避免每個作品連結都各佔一整行造成過多空白；
+// 展開後的網格：6 欄，避免每個作品連結都各佔一整行造成過多空白；
 // 淺色底 + 磚紅系細框呼應 resume__pdf-link 的膠囊外框語彙，視覺上跟「作品集卡片」
-// 明確做出區隔（不用彩色標籤），只當「指標」不當「展示」
+// 明確做出區隔（不用彩色標籤），只當「指標」不當「展示」。
+// 卡片欄寬已改回貼近原本單欄設計的 ~600px+，維持 6 欄不會太擠
 .skills__evidence-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -235,12 +237,5 @@
   b {
     color: $color-deep-space-blue;
     font-weight: 700;
-  }
-}
-
-// 窄螢幕：6 欄網格太擠，作品連結文字會被壓得只剩省略號，降成 3 欄
-@media (max-width: 600px) {
-  .skills__evidence-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

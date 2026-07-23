@@ -501,4 +501,92 @@ src/styles/
 - 6 欄網格在只有 1–2 個作品時，仍會保留 6 欄的網格容器寬度，右側留白看起來稍微空——這是使用者兩輪確認過的「6 欄」設計本身的已知取捨（原本設計是為了容納「未來作品很多」的情境），這次沒有另外加邏輯讓網格寬度隨項目數量收縮，避免為了稀疏情境的美觀，讓「多筆作品要換行」的核心情境變複雜。
 - 沒有引入任何 JavaScript：作品佐證展開/收合完全靠原生 `<details>/<summary>`，跟 `#resume` 手風琴一致，維持全站「不需要 JS」的慣例。
 
+### 29. `#skills` 各分類卡片改多欄格線排列、佔位卡片擴充為 4／4／2 個
+
+**背景**：第 28 筆實作完成後，技術/工具/語言三個分類都各只有 1 個佔位卡片、`.skills__list` 是單欄堆疊（`max-width:640px`），使用者截圖指出卡片右側留有大片空白，要求把同分類底下的卡片並排利用這塊空白，技術/工具各給 4 個佔位、語言給 2 個。過程中一度誤解成「技術＋工具兩個分類左右配對成兩欄」，經使用者澄清「技術、工具、語言是三個分類，各自內部給 4／4／2 個佔位」後修正方向：改動的是**同一分類內部**的多欄排列，不是跨分類配對。
+
+**變更**：
+- `src/pages/index.html`（`#skills` 區塊）：技術組 `.skills__item` 從 1 個擴充為 4 個「技能名稱佔位（一）～（四）」，圓點/年資/evidence 內容複製第 1 項示範值；工具組同樣擴充為 4 個「工具名稱佔位（一）～（四）」；語言組擴充為 2 個「語言名稱佔位（一）／（二）」。命名比照檔案內既有的 `resume__award-name`／`skills__evidence-link` 編號慣例。
+- `src/styles/pages/_skills.scss`：`.skills__list` 從「單欄 block 清單＋`max-width:640px`」改成 `display:grid; grid-template-columns: repeat(auto-fit, minmax(320px,1fr)); gap:0.9rem 2.4rem; max-width:960px`，讓同分類卡片依容器寬度自動排成多欄，變窄時自動收成單欄（比照全站唯一的多欄慣例 `.about__layout` 的 `flex-wrap` 精神，不寫死 `@media` 斷點）。`.skills__item + .skills__item` 的虛線上框分隔線移除（格線排列後卡片不再單純是「上下相鄰」關係，改靠 grid 的 `gap` 留白區分）。`.skills__evidence-grid` 從 6 欄改為 3 欄（卡片欄寬縮到約 320px 後 6 欄太擠），連帶移除原本重複做同一件事的 `@media (max-width:600px)` 降欄規則。
+- `src/styles/main.css`：執行 `./node_modules/.bin/sass styles/main.scss styles/main.css` 重新編譯。
+
+**取捨說明**：
+- 欄數用 `auto-fit, minmax(320px, 1fr)` 讓瀏覽器依寬度自動決定（寬螢幕下技術/工具會是 2 欄 2x2、語言 2 欄 1 列），沒有寫死 `repeat(2, ...)`，理由是沿用全站「不寫死斷點、靠內容自然收斂」的既有手法；若之後使用者期望的是「無論多寬都固定 2 欄」而非「夠寬時可能撐到 3 欄」，可以再改成寫死欄數。
+- 4 個技術/工具佔位卡片的圓點填色數量、年資數字、evidence 內容都先完整複製第 1 項的示範值，只改名稱編號，不刻意做假的視覺差異化——這些本來就是要手動覆蓋的佔位值，之後填真資料時逐一取代即可，改動範圍最小、最好找。
+- 移除 `.skills__item + .skills__item` 虛線分隔線後，格線本身的 `gap` 留白已足夠區分卡片，沒有另外設計「同列」vs「換列」的差異化間距。
+
+**驗證方式**：`./node_modules/.bin/sass styles/main.scss styles/main.css` 編譯成功、無錯誤；用 Playwright 開啟本機靜態伺服器（從專案根目錄 `python -m http.server` 啟動，因為 `index.html` 的 CSS/資源路徑是 `/src/...` 絕對路徑，需從專案根目錄而非 `src/pages/` 起服務）截圖確認：桌面寬度（1400px）下技術/工具皆呈現 2x2 格線、語言 2 張並排；展開技術組任一張卡片的 `<details>`，3 欄 evidence-grid 排版正常；縮到手機寬度（420px）確認格線自然收成單欄、卡片沒有被擠壓變形。測試用截圖與臨時起的 HTTP 伺服器、`.playwright-mcp` 暫存資料夾事後已清除，不留在版控中。
+
 **驗證方式**：`npx sass` 重新編譯成功、無錯誤；用 Playwright 開啟本機靜態伺服器截圖確認：桌面寬度下標籤、六點量表、年資長條、展開式作品佐證排版正常且彼此距離合理（修正 `max-width` 後）；點擊展開 `<details>` 後 6 欄網格正確顯示兩個作品連結；縮到 375px 手機寬度後網格降為 3 欄、內容沒有橫向溢出；`browser_console_messages` 確認 0 個錯誤；語言子群組確認沒有圓點/長條，只有檢定文字。
+
+### 30. `#skills` 多欄卡片寬度修正：拿掉人為的 960px 壓縮
+
+**背景**：第 29 筆改成多欄格線後，使用者截圖指出兩欄並排的卡片沒有剛好佔滿螢幕可用寬度，右側仍留有明顯空白，懷疑寬度被壓縮了。用 Grep 核對 `.section` class 並沒有套用 `components/_section.scss` 裡定義的 `section-card` mixin（該 mixin 只定義未套用），確認 `#skills` 本身沒有其他寬度限制，可用內容寬度＝視窗寬度－`.skills` 左右 padding（寬螢幕下頂到 `3.5rem`＝56px，兩側共 112px）。回頭檢查第 29 筆加的 `.skills__list { grid-template-columns: repeat(auto-fit, minmax(320px,1fr)); max-width:960px; }`，`max-width:960px` 是人為上限，兩欄各自被壓到約 461px，比改版前單欄卡片原本的 640px 還窄，右側自然留下空白，確認是這行造成的。
+
+**變更**：
+- `src/styles/pages/_skills.scss`：`.skills__list` 拿掉 `max-width: 960px`，`minmax` 基準從 `320px` 提高到 `600px`（貼近改版前單欄設計的舒適寬度），讓 grid 撐滿 `.skills__group`（無寬度限制）的可用寬度，而不是被塞進一個比原本單欄還窄的框裡。
+- `.skills__evidence-grid` 從 3 欄改回原設計的 6 欄——3 欄是配合上一輪「欄寬縮到 320px」才降的，欄寬改回 ~600px+ 後 6 欄不會太擠，跟著改回去。
+- `src/styles/main.css`：執行 `./node_modules/.bin/sass styles/main.scss styles/main.css` 重新編譯。
+
+**取捨說明**：
+- 只拿掉 `max-width` 上限、提高 `minmax` 基準，沒有改成寫死的 `repeat(2, 1fr)`：`auto-fit` 讓瀏覽器依實際可用寬度自動決定夠不夠放 2 欄，比寫死欄數更能對應「螢幕變窄時自然收成單欄」的既有設計慣例，不需要額外的 `@media` 判斷。
+- `minmax` 基準選 `600px` 而非精確的 `640px`：略為保守一點，避免兩欄總寬度（含 gap）在部分螢幕寬度下剛好卡在收成單欄的臨界點，實際渲染時兩欄仍會被 `1fr` 撐開到接近原本 640px 的觀感。
+
+**驗證方式**：`./node_modules/.bin/sass` 重新編譯成功、無錯誤；用 Playwright 開啟本機靜態伺服器（`python -m http.server`，從專案根目錄啟動），桌面寬度（1400px）截圖確認技術/工具兩欄卡片的右邊界貼齊 section 可用寬度右緣（跟上方 `#resume` 內容右邊界對齊），不再有大片空白；展開技術組任一張卡片確認 6 欄 evidence-grid 排版正常；縮到手機寬度（420px）確認格線仍自然收成單欄、沒有擠壓變形。測試用截圖與臨時 HTTP 伺服器、`.playwright-mcp` 暫存資料夾事後已清除，不留在版控中。
+
+### 31. `#portfolio`／`#casestudy` 內容架構分析（`/plan` 模式，未動程式碼）
+
+**背景**：`#portfolio`（作品集）與 `#casestudy`（案例故事）從網站建立以來一直維持最初的最小佔位結構（各 1 筆佔位、對應 `_portfolio.scss`／`_casestudy.scss` 都是空檔案），從未像 `#skills` 一樣被認真盤點過內容欄位。使用者要求比照 `#skills` 當初的 brainstorming 流程，規劃作品集需要哪些必要資訊、哪些是可補充資訊，盡可能詳細。這次使用者是透過 Claude Code 原生 `/plan`（`EnterPlanMode`/`ExitPlanMode`）流程提出，而非 `/brainstorming` skill。先派 Explore agent 盤點 `#portfolio`／`#casestudy`／`#resume` 專案經歷／`#skills` evidence link 四處的現況與彼此關係，並讀取 `FuturePlan.md` 確認「作品集是否拆頁」的既有決策（已確認暫不拆頁，維持單頁錨點架構）。用 AskUserQuestion 確認三個方向：(1) 這次只出規格文件不動程式碼；(2) `#resume` 專案經歷與 `#portfolio` 視為同一份專案清單的詳略版本；(3) 使用者表示長期會有大量作品、作品集是本站重點內容，因此分類篩選／精選標記／穩定錨點 ID 這類支援規模化的欄位現在就該定案命名。
+
+**產出**：`docs/superpowers/specs/2026-07-23-portfolio-casestudy-content-design.md`（規格文件，比照 `2026-07-23-skills-redesign-design.md` 的文件風格，尚未修改 `index.html`／`_portfolio.scss`／`_casestudy.scss` 任何程式碼）。重點決定：
+- 必要資訊：封面圖、名稱、一句話摘要、作品類型、技術標籤、角色與分工、成果與收穫、對外連結或不可公開原因（NDA，從補充資訊提升為必要）、完成期間（新欄位）、穩定錨點 ID（新欄位，基礎建設用）。
+- 補充資訊分兩層：Tier 1（分類篩選標籤、精選代表作標記、案例故事雙向連結、NDA 標註——因為長期作品量大，現在就該定案命名）；Tier 2（更新日期、團隊規模、結構化量化指標、影音動圖 demo——等實際素材多了再加）。
+- Governance：`#resume`／`#portfolio` 視為同一份專案清單的詳略版本；`#skills` 的「用於 N 個作品」連結要等 `.portfolio__item` 有穩定 id 後才能真正指向具體項目。
+
+**取捨說明**：
+- 沒有把「分類篩選標籤」跟現有「作品類型」標籤合併，因為兩者回答不同問題（「這是什麼場合做的」vs「這是哪個技術領域的」），合併會讓之後做篩選 UI 時語意互相干擾。
+- NDA／無法公開標註被提升為必要資訊而非停留在補充資訊，因為資訊管理/全端開發學生常見有實習專案不能公開，缺席這個欄位會讓讀者誤以為忘記放連結，影響專業印象；建議實作時與「對外連結」欄位合併處理，而非兩個並存的獨立欄位。
+- 穩定錨點 ID 定調為「基礎建設現在就該定案命名，但視覺/篩選 UI 可以晚點做」，因為 `#skills` evidence link／`#resume`／`#casestudy` 都已經預留了要指向具體作品的設計意圖，只是目前 `.portfolio__item` 沒有 id 可以指，越晚補這個 id 越麻煩（要回頭處理已經寫好的一堆佔位資料）。
+- 延續 `#skills` 規劃時「陳姐不信自誇形容詞」的原則：精選標記建議走安靜的差異化（小徽章/排序），NDA 標註建議用中性專業語氣，避免整體風格落入自我宣傳感。
+
+**驗證方式**：這次是內容架構分析階段，沒有程式碼可驗證；規格文件本身經過欄位前後矛盾、必要/補充分級、命名是否沿用現有 BEM 慣例的自我檢查後才交付，等使用者確認規格文件內容後才會另開一輪請求進入 HTML/SCSS 實作。
+
+### 32. `#portfolio` 落地實作：卡片集＋篩選器＋獨立詳細頁面（全站首次引入 JS 與多頁）
+
+**背景**：使用者確認第 31 筆規格文件後，接續請 Claude 規劃並落地 `#portfolio` 的實際版型，想法是卡片集＋篩選器，卡片可點擊跳轉到「同一網站、不同 HTML 檔案」的詳細專案說明頁（如果該作品需要）。這次用 Claude Code 原生 `/plan` 流程，用 AskUserQuestion 確認三個關鍵分歧：(1)「跳轉到分頁」是真的另開一支 HTML 檔案，不是頁內錨點跳到 `#casestudy`；(2) 篩選器「大量應用 JS」，不侷限於純 CSS 技巧；(3) 這輪先做核心版型（必要資訊欄位＋篩選器＋1 個詳細頁示範），規格文件裡的 Tier 1 補充欄位（分類篩選標籤、精選標記、案例故事雙向連結）留到之後擴充。這是全站首次出現：卡片視覺、JavaScript、`index.html` 以外的第二個網頁。
+
+**變更**：
+- `src/pages/index.html`（`#portfolio` 區塊）：新增 `.portfolio__filter` 篩選按鈕列（全部＋5 種作品類型，對應 `data-filter` slug：課程作業=course／自主練習=practice／專題競賽=competition／實習成果=intern／Side Project=side）；`.portfolio__list` 從 1 筆佔位擴充為 2 筆示範卡片——卡片 A（一般案例，`id="portfolio-project-1"`，有 `.portfolio__detail-link` 連到詳細頁）、卡片 B（NDA 案例，`id="portfolio-project-2"`，連結區改用 `.portfolio__nda-note` 說明無法公開原因，且不提供詳細頁連結，示範「不是每個作品都需要深度版」）。兩張卡片都新增 `.portfolio__date`（完成期間）與 `data-type` 屬性（供 JS 篩選比對）。`</body>` 前加入全站第一個 `<script src="/src/scripts/portfolio-filter.js" defer>`。
+- `src/styles/pages/_portfolio.scss`（原本只有 1 行註解，整份撰寫）：`.portfolio__filter`／`-filter-btn`（is-active 用磚紅底反白）、`.portfolio__list`（`display:grid; auto-fit minmax(320px,1fr)`，沿用 `#skills` 已驗證的自動收欄手法）、`.portfolio__item`（這次明確做成卡片：白底/圓角/輕量陰影，數值參考但不直接沿用 `_section.scss` 的 `section-card` mixin，因為那是給整個 section 用的固定寬度）、`.portfolio__cover`（16:9 佔位框）、`.portfolio__tech`（沿用 `skills__name` 的 # + Space Mono chip）、`.portfolio__date`／`-detail-link`／`-nda-note`。
+- `src/scripts/portfolio-filter.js`（新檔案，全站第一支 JS）：原生 vanilla JS，不引入框架/建置工具，監聽篩選按鈕點擊，用 `data-filter`/`data-type` 比對，切換 `.portfolio__item--hidden`（`display:none`）class。
+- `src/pages/portfolio/project-1.html`（新檔案，第一個 `index.html` 以外的網頁）：手動複製 `index.html` 的 head/header/nav/footer；nav 錨點連結改成 `/src/pages/index.html#xxx` 絕對路徑（因為裸 `#about` 在子頁面裡找不到對應區塊）；加上「← 回作品集」返回連結；主要內容沿用 `#casestudy` 已設計好的五段式敘事 class（`casestudy__block`/`-block-title`/`-block-text`），不另外發明新 class。
+- `src/styles/pages/_casestudy.scss`：新增 `.casestudy__back-link`（返回連結樣式）與 `.casestudy` 的 section padding（原本完全空白/無留白，這次補上跟其他 section 一致的 `clamp()` padding，因為新的詳細頁面完全依賴這個 class 當版面留白；`casestudy__name`/`-block-title`/`-block-text` 等內文排版這輪仍維持不動，保持跟首頁 `#casestudy` 一致的未上樣狀態）。
+- `FuturePlan.md`「規劃三」章節補記：使用者這次決定不等建置工具、直接手動拆出詳細頁面，接受「header/nav/footer 需手動同步維護」的已知風險，並記錄目前只有 1 支手動頁面，供之後若要導入建置工具時參考遷移範圍。
+- `src/styles/main.css`：執行 `./node_modules/.bin/sass styles/main.scss styles/main.css` 重新編譯。
+
+**取捨說明**：
+- 篩選器選擇原生 vanilla JS、不引入框架或打包工具：跟全站目前「無建置工具、純靜態 HTML/CSS」的技術選型一致，避免為了一個篩選功能就改變整個專案的技術棧。
+- 篩選只做「作品類型」單一維度（既有欄位），沒有一併做規格文件提過的「分類篩選標籤」第二維度：使用者確認這輪先做核心版型，避免範圍一次擴太大；未來要加時，建議另開 `data-category` 屬性＋第二排按鈕，不要跟 `data-type` 合併。
+- 詳細頁面用手動複製而非等待建置工具：這是使用者在權衡過已知維護風險（`FuturePlan.md` 先前已分析過）後的明確選擇，這次只做 1 支示範頁而非大量套用，降低「之後要回頭改很多份」的風險。
+- 詳細頁面重用 `#casestudy` 的五段式敘事 class 而非另創新 class：因為「作品的深度說明」本來就是 `casestudy__block` 這套視覺語彙要處理的事，沒有理由為了「換了個容器（獨立頁面 vs 頁內錨點）」就重新設計一套內容結構。
+- 只幫 `.casestudy` 補上 section padding，沒有連帶補齊 `casestudy__name`/`-block-*` 的內文排版：因為這輪範圍是 `#portfolio`，`#casestudy` 本身的完整視覺設計是另一個獨立任務，只補了「詳細頁面離不開的最小留白」，避免範圍蔓延。
+
+**驗證方式**：`./node_modules/.bin/sass` 編譯成功、無錯誤；用 Playwright 開啟本機靜態伺服器（`python -m http.server`，從專案根目錄啟動）驗證：桌面寬度下篩選列與 2 張卡片版面正常；點擊「Side Project」篩選按鈕後只剩卡片 A 顯示（用 DOM 查詢確認可見卡片數為 1），點回「全部」恢復兩張；點擊卡片 A 的「查看完整專案說明 →」正確導向 `src/pages/portfolio/project-1.html` 且該頁 header/nav/footer/五段式敘事正常顯示；點擊該頁「← 回作品集」正確導回 `index.html#portfolio`；確認卡片 B 沒有詳細頁連結、改顯示 NDA 說明文字；縮到手機寬度（420px）確認卡片格線自然收成單欄、篩選按鈕列換行不溢出；`browser_console_messages` 確認除了無關的 favicon 404 外沒有其他錯誤（JS 執行正常無例外）。測試用截圖與臨時 HTTP 伺服器、`.playwright-mcp` 暫存資料夾事後已清除，不留在版控中。
+
+### 33. `#portfolio` 卡片改成固定大小（寬高皆固定，不隨內容/欄數彈性伸縮）
+
+**背景**：第 32 筆用 `grid-template-columns: repeat(auto-fit, minmax(320px, 1fr))` 讓卡片寬度用 `1fr` 彈性撐滿欄位，且卡片高度純粹由內容決定——這導致卡片 A（有 Demo/GitHub 連結＋深度連結）跟卡片 B（NDA 說明，內容較短）兩張卡片明顯不等高、單張卡片被篩選出來時會被拉伸撐滿整列寬度。使用者要求「固定作品集卡片大小」，即卡片寬高都應該是固定值，不因為同列卡片數量或內容長短而改變。
+
+**變更**：
+- `src/styles/pages/_portfolio.scss`：
+  - `.portfolio__list`：`grid-template-columns` 從 `repeat(auto-fit, minmax(320px, 1fr))` 改成 `repeat(auto-fill, minmax(300px, 300px))`——`minmax(300px, 300px)` 是固定 300px 欄寬（不用 `1fr` 彈性拉伸），`auto-fill` 讓容器依可用寬度自動決定塞得下幾欄固定寬度的卡片，欄位不足 300px 時一樣自然收成單欄。
+  - `.portfolio__item`：新增固定 `height: 560px`；`article` 改成 `height:100%` 的 flex column，並用 `> :last-child { margin-top: auto; }` 把卡片最後一個可見欄位（連結列／深度連結／NDA 說明三者之一，一定是各卡片最後一個子元素）推到卡片底部，讓卡片不論內容多寡都維持同一個高度、且底部元素對齊。
+  - `.portfolio__summary`／`.portfolio__outcome`：新增 `-webkit-line-clamp`（分別限制 2/3 行）＋ `overflow:hidden`，因為卡片高度固定後，之後填入較長的真實文字可能撐破固定高度，用截斷＋ellipsis 處理，跟全站既有的 `evidence-link` `text-overflow` 慣例一致（寧可截斷也不要破版）。
+- `src/styles/main.css`：執行 `./node_modules/.bin/sass styles/main.scss styles/main.css` 重新編譯。
+
+**取捨說明**：
+- 固定寬度選 `auto-fill` 而非 `auto-fit`：兩者在欄位「塞得滿」時行為相同，差異只在欄數不足以塞滿一整列時——`auto-fill` 會保留空的軌道（卡片靠左对齊，不會被拉伸），`auto-fit` 則會把僅有的欄位拉伸填滿剩餘空間；這次要的正是「固定大小、不被拉伸」，所以選 `auto-fill`。
+- 用 `margin-top:auto` 對齊底部而非幫每個欄位都設固定高度：因為卡片內部欄位數量/型態本來就會因作品而異（有沒有深度連結、是否為 NDA），只固定「卡片外框高度」＋「最後一項貼齊底部」是最小改動就能達到視覺對齊效果的做法，不需要對每個內部欄位分別訂高度。
+- `line-clamp` 只加在 summary／outcome 這兩個「長度會因真實內容而變化較大」的欄位，其餘欄位（名稱、日期、標籤、角色）維持原樣不截斷，因為這些欄位在設計時就預期是短文字，沒有必要為了尚未發生的情況加防禦。
+
+**驗證方式**：`./node_modules/.bin/sass` 編譯成功、無錯誤；用 Playwright 開啟本機靜態伺服器截圖確認：桌面寬度下兩張卡片寬（300px）高（560px）完全一致，連結列/NDA 說明都對齊卡片底部；篩選到只剩 1 張卡片時，該卡片維持 300px 寬、不會被拉伸撐滿整列；縮到手機寬度（420px）確認卡片本身未造成任何橫向溢出（用 `getBoundingClientRect` 逐一檢查 `.portfolio__filter`／`.portfolio__list`／`.portfolio__item` 皆未超出視窗寬度）。驗證過程中意外發現 `#skills`（跟這次改動無關的既有區塊）在 420px 窄螢幕下因為 `.skills__list` 的 `minmax(600px, 1fr)` 導致橫向溢出（`.skills__item` 寬度被強制撐到 600px，超出容器與視窗寬度）——這是第 30 筆遺留的既有問題，不在這次「固定作品集卡片大小」的範圍內，已回報給使用者但未在這次一併修改。測試用截圖與臨時 HTTP 伺服器、`.playwright-mcp` 暫存資料夾事後已清除，不留在版控中。

@@ -290,7 +290,10 @@
            讀成技術強弱；作品佐證用原生 <details>/<summary> 展開，沿用 #resume 手風琴已確立的
            「不用 JavaScript」慣例。圓點填色數量／長條 width 百分比都是手動寫死的 HTML（本站無
            JS/模板引擎），之後填真實資料時記得手動調整這兩處數值；順序對齊上方 nav（履歷之
-           後、作品集之前） -->
+           後、作品集之前）。
+           2026-07-23 補充：技術／工具各擴充為 4 個佔位卡片、語言擴充為 2 個，.skills__list
+           改為多欄格線（見 _skills.scss），讓同分類卡片並排利用版面空間；4 個技術/工具佔位卡
+           片的圓點數／年資數值先複製第 1 項示範值，僅名稱編號不同，之後填真資料時逐一覆蓋 -->
       <section id="skills" class="section skills">
         <div class="skills__eyebrow">
           <span class="skills__eyebrow-bar" aria-hidden="true"></span>技能
@@ -301,7 +304,7 @@
           <ul class="skills__list">
             <li class="skills__item">
               <div class="skills__row1">
-                <span class="skills__name">技能名稱佔位</span>
+                <span class="skills__name">技能名稱佔位（一）</span>
                 <!-- CEFR 六級量表：4/6 顆填色＝「中高」，佔位示範用 -->
                 <div class="skills__level" aria-label="熟練度：中高">
                   <span class="skills__level-dot skills__level-dot--on"></span>
@@ -323,8 +326,89 @@
               <details class="skills__evidence">
                 <summary class="skills__evidence-summary">用於 <span class="skills__evidence-count">2</span> 個作品</summary>
                 <div class="skills__evidence-grid">
-                  <!-- title 屬性補上完整文字：6 欄網格窄，連結文字會被 ellipsis 截斷，
+                  <!-- title 屬性補上完整文字：格線窄，連結文字會被 ellipsis 截斷，
                        hover 時靠 title 顯示完整作品名稱，不會因為截斷而看不出是哪個作品 -->
+                  <a class="skills__evidence-link" href="#" title="作品名稱佔位（一）">作品名稱佔位（一）</a>
+                  <a class="skills__evidence-link" href="#" title="作品名稱佔位（二）">作品名稱佔位（二）</a>
+                </div>
+              </details>
+            </li>
+            <li class="skills__item">
+              <div class="skills__row1">
+                <span class="skills__name">技能名稱佔位（二）</span>
+                <div class="skills__level" aria-label="熟練度：中高">
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-label">中高</span>
+                </div>
+              </div>
+              <div class="skills__row2">
+                <span class="skills__tenure-num">3 年</span>
+                <div class="skills__tenure-track">
+                  <div class="skills__tenure-fill" style="width: 4.6%;"></div>
+                </div>
+              </div>
+              <details class="skills__evidence">
+                <summary class="skills__evidence-summary">用於 <span class="skills__evidence-count">2</span> 個作品</summary>
+                <div class="skills__evidence-grid">
+                  <a class="skills__evidence-link" href="#" title="作品名稱佔位（一）">作品名稱佔位（一）</a>
+                  <a class="skills__evidence-link" href="#" title="作品名稱佔位（二）">作品名稱佔位（二）</a>
+                </div>
+              </details>
+            </li>
+            <li class="skills__item">
+              <div class="skills__row1">
+                <span class="skills__name">技能名稱佔位（三）</span>
+                <div class="skills__level" aria-label="熟練度：中高">
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-label">中高</span>
+                </div>
+              </div>
+              <div class="skills__row2">
+                <span class="skills__tenure-num">3 年</span>
+                <div class="skills__tenure-track">
+                  <div class="skills__tenure-fill" style="width: 4.6%;"></div>
+                </div>
+              </div>
+              <details class="skills__evidence">
+                <summary class="skills__evidence-summary">用於 <span class="skills__evidence-count">2</span> 個作品</summary>
+                <div class="skills__evidence-grid">
+                  <a class="skills__evidence-link" href="#" title="作品名稱佔位（一）">作品名稱佔位（一）</a>
+                  <a class="skills__evidence-link" href="#" title="作品名稱佔位（二）">作品名稱佔位（二）</a>
+                </div>
+              </details>
+            </li>
+            <li class="skills__item">
+              <div class="skills__row1">
+                <span class="skills__name">技能名稱佔位（四）</span>
+                <div class="skills__level" aria-label="熟練度：中高">
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-label">中高</span>
+                </div>
+              </div>
+              <div class="skills__row2">
+                <span class="skills__tenure-num">3 年</span>
+                <div class="skills__tenure-track">
+                  <div class="skills__tenure-fill" style="width: 4.6%;"></div>
+                </div>
+              </div>
+              <details class="skills__evidence">
+                <summary class="skills__evidence-summary">用於 <span class="skills__evidence-count">2</span> 個作品</summary>
+                <div class="skills__evidence-grid">
                   <a class="skills__evidence-link" href="#" title="作品名稱佔位（一）">作品名稱佔位（一）</a>
                   <a class="skills__evidence-link" href="#" title="作品名稱佔位（二）">作品名稱佔位（二）</a>
                 </div>
@@ -338,7 +422,7 @@
           <ul class="skills__list">
             <li class="skills__item">
               <div class="skills__row1">
-                <span class="skills__name">工具名稱佔位</span>
+                <span class="skills__name">工具名稱佔位（一）</span>
                 <!-- CEFR 六級量表：2/6 顆填色＝「基礎」 -->
                 <div class="skills__level" aria-label="熟練度：基礎">
                   <span class="skills__level-dot skills__level-dot--on"></span>
@@ -359,6 +443,69 @@
               </div>
               <p class="skills__evidence-empty">尚無對應作品連結</p>
             </li>
+            <li class="skills__item">
+              <div class="skills__row1">
+                <span class="skills__name">工具名稱佔位（二）</span>
+                <div class="skills__level" aria-label="熟練度：基礎">
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-label">基礎</span>
+                </div>
+              </div>
+              <div class="skills__row2">
+                <span class="skills__tenure-num">1 年</span>
+                <div class="skills__tenure-track">
+                  <div class="skills__tenure-fill" style="width: 1.5%;"></div>
+                </div>
+              </div>
+              <p class="skills__evidence-empty">尚無對應作品連結</p>
+            </li>
+            <li class="skills__item">
+              <div class="skills__row1">
+                <span class="skills__name">工具名稱佔位（三）</span>
+                <div class="skills__level" aria-label="熟練度：基礎">
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-label">基礎</span>
+                </div>
+              </div>
+              <div class="skills__row2">
+                <span class="skills__tenure-num">1 年</span>
+                <div class="skills__tenure-track">
+                  <div class="skills__tenure-fill" style="width: 1.5%;"></div>
+                </div>
+              </div>
+              <p class="skills__evidence-empty">尚無對應作品連結</p>
+            </li>
+            <li class="skills__item">
+              <div class="skills__row1">
+                <span class="skills__name">工具名稱佔位（四）</span>
+                <div class="skills__level" aria-label="熟練度：基礎">
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot skills__level-dot--on"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-dot"></span>
+                  <span class="skills__level-label">基礎</span>
+                </div>
+              </div>
+              <div class="skills__row2">
+                <span class="skills__tenure-num">1 年</span>
+                <div class="skills__tenure-track">
+                  <div class="skills__tenure-fill" style="width: 1.5%;"></div>
+                </div>
+              </div>
+              <p class="skills__evidence-empty">尚無對應作品連結</p>
+            </li>
           </ul>
         </div>
 
@@ -367,9 +514,15 @@
           <ul class="skills__list">
             <li class="skills__item skills__item--lang">
               <div class="skills__row1">
-                <span class="skills__name">語言名稱佔位</span>
+                <span class="skills__name">語言名稱佔位（一）</span>
               </div>
               <!-- 語言類不套用 CEFR 圓點，改沿用 resume__cert-meta 的「名稱・取得時間」寫法 -->
+              <p class="skills__cert-meta"><b>檢定名稱佔位</b>・取得時間佔位</p>
+            </li>
+            <li class="skills__item skills__item--lang">
+              <div class="skills__row1">
+                <span class="skills__name">語言名稱佔位（二）</span>
+              </div>
               <p class="skills__cert-meta"><b>檢定名稱佔位</b>・取得時間佔位</p>
             </li>
           </ul>
@@ -378,26 +531,94 @@
 
       <!-- portfolio 是「作品列表」擴充改名而來（原本 class 是 works），
            每個作品用 <article> 包裹一整組資訊（封面圖／類型／技術／角色／成果與收穫／連結），
-           之後新增作品只要照抄同一個 <li class="portfolio__item"><article>...</article></li> 結構 -->
+           之後新增作品只要照抄同一個 <li class="portfolio__item"><article>...</article></li> 結構。
+
+           2026-07-23 補充（依 docs/superpowers/specs/2026-07-23-portfolio-casestudy-content-design.md
+           的必要資訊清單落地第一版）：
+           - 篩選器依「作品類型」欄位單選篩選，type 顯示文字對應 data-type slug：
+             課程作業=course／自主練習=practice／專題競賽=competition／實習成果=intern／Side Project=side。
+           - 每個 .portfolio__item 加上穩定錨點 id（portfolio-{slug}）、.portfolio__date（完成期間），
+             供之後 #skills 的「用於 N 個作品」連結、#resume 專案經歷互相對應時使用。
+           - .portfolio__detail-link：只有「需要深度說明」的作品才會有，連到 portfolio/{slug}.html
+             獨立頁面（示範見 portfolio/project-1.html）；沒有的作品維持只有 .portfolio__link-list。
+           - .portfolio__nda-note：跟 .portfolio__link-list 二擇一顯示，作品因保密協議無法公開連結時使用。
+           - 規格文件裡的 Tier 1 補充資訊（分類篩選標籤、精選代表作標記、案例故事雙向連結）這輪還沒做，
+             之後要加時，分類篩選標籤建議另開一個獨立於 data-type 的 data-category 屬性＋第二排篩選按鈕，
+             不要跟作品類型合併成同一組標籤（兩者回答不同問題，見規格文件說明）。 -->
       <section id="portfolio" class="section portfolio">
         <h2 class="section__title">作品集</h2>
+
+        <!-- 篩選器：全站第一次引入 JavaScript（src/scripts/portfolio-filter.js），
+             其餘區塊的展開/收合都刻意維持原生 <details>，這裡因為需要「點擊切換多張卡片顯示」
+             這種純 CSS 較難優雅處理的互動，經使用者確認後選擇用 JS 而非 radio-button 技巧 -->
+        <div class="portfolio__filter" role="group" aria-label="依作品類型篩選">
+          <button
+            type="button"
+            class="portfolio__filter-btn is-active"
+            data-filter="all"
+            aria-pressed="true"
+          >
+            全部
+          </button>
+          <button
+            type="button"
+            class="portfolio__filter-btn"
+            data-filter="course"
+            aria-pressed="false"
+          >
+            課程作業
+          </button>
+          <button
+            type="button"
+            class="portfolio__filter-btn"
+            data-filter="practice"
+            aria-pressed="false"
+          >
+            自主練習
+          </button>
+          <button
+            type="button"
+            class="portfolio__filter-btn"
+            data-filter="competition"
+            aria-pressed="false"
+          >
+            專題競賽
+          </button>
+          <button
+            type="button"
+            class="portfolio__filter-btn"
+            data-filter="intern"
+            aria-pressed="false"
+          >
+            實習成果
+          </button>
+          <button
+            type="button"
+            class="portfolio__filter-btn"
+            data-filter="side"
+            aria-pressed="false"
+          >
+            Side Project
+          </button>
+        </div>
+
         <ul class="portfolio__list">
-          <li class="portfolio__item">
+          <li class="portfolio__item" id="portfolio-project-1" data-type="side">
             <article>
               <img class="portfolio__cover" src="" alt="作品封面圖佔位" />
               <!-- 作品類型標籤，方便之後用篩選或視覺區分不同類型的作品 -->
-              <p class="portfolio__type">
-                作品類型佔位（例如：課程作業／自主練習／專題競賽／Side Project）
-              </p>
-              <h3 class="portfolio__name">作品名稱佔位</h3>
+              <p class="portfolio__type">Side Project</p>
+              <h3 class="portfolio__name">作品名稱佔位（一）</h3>
               <p class="portfolio__summary">一句話說明佔位</p>
+              <p class="portfolio__date">2025.03–2025.06</p>
               <ul class="portfolio__tech-list">
                 <li class="portfolio__tech">技術名稱佔位</li>
               </ul>
               <p class="portfolio__role">角色佔位（獨自 / 團隊，負責什麼）</p>
               <!-- 這裡只放單一作品層級的簡短成果，1-2 個最想深談的作品可以另外寫進下方 #casestudy -->
               <p class="portfolio__outcome">
-                成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）
+                成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次)
+                ，成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）
               </p>
               <ul class="portfolio__link-list">
                 <li class="portfolio__link-item">
@@ -407,6 +628,32 @@
                   <a class="portfolio__link" href="#">GitHub</a>
                 </li>
               </ul>
+              <!-- 這件作品「需要」深度說明，連到獨立詳細頁面示範 -->
+              <a class="portfolio__detail-link" href="portfolio/project-1.html">
+                查看完整專案說明 →
+              </a>
+            </article>
+          </li>
+          <li class="portfolio__item" id="portfolio-project-2" data-type="intern">
+            <article>
+              <img class="portfolio__cover" src="" alt="作品封面圖佔位" />
+              <p class="portfolio__type">實習成果</p>
+              <h3 class="portfolio__name">作品名稱佔位（二）</h3>
+              <p class="portfolio__summary">一句話說明佔位</p>
+              <p class="portfolio__date">2024.07–2024.09</p>
+              <ul class="portfolio__tech-list">
+                <li class="portfolio__tech">技術名稱佔位</li>
+              </ul>
+              <p class="portfolio__role">角色佔位（獨自 / 團隊，負責什麼）</p>
+              <p class="portfolio__outcome">
+                成果與收穫佔位（學到什麼、有沒有具體成果，例如系上專題展展出、競賽名次）
+              </p>
+              <!-- 實習/公司內部專案常見無法公開連結的情況：跟 .portfolio__link-list 二擇一顯示，
+                   讓讀者知道「不是忘記放連結」而不是留空或整段消失 -->
+              <p class="portfolio__nda-note">
+                因保密協議無法公開原始碼與畫面，僅能於面談時說明
+              </p>
+              <!-- 這件作品「不需要」獨立詳細頁，示範不是每個作品都要有 .portfolio__detail-link -->
             </article>
           </li>
         </ul>
@@ -597,5 +844,9 @@
     <footer class="site-footer">
       <p class="site-footer__text">&copy; 2026 你的名字</p>
     </footer>
+
+    <!-- 全站第一支 JavaScript：只做 #portfolio 篩選器的顯示/隱藏切換，
+         其餘區塊（#resume、#skills 的展開收合）刻意維持原生 <details>，不受這裡影響 -->
+    <script src="/src/scripts/portfolio-filter.js" defer></script>
   </body>
 </html>

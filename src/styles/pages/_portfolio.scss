@@ -1,1 +1,211 @@
+@use '../abstracts/variables' as *;
+
 // .portfolio 專屬樣式放這裡（原 .works，隨 HTML 區塊改名同步更新）
+// 這是全站唯一「明確做成卡片」的區塊：其餘 section（about/resume/skills）依專案慣例
+// 維持貼版面不做卡片，但作品集本身就是要給人「一張一張瀏覽」的視覺任務，
+// 使用者也明確要求卡片集，所以刻意跟其他區塊的視覺語彙不同
+.portfolio {
+  padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
+}
+
+// 篩選器：一排 chip 式按鈕，比照 skills__name/resume__project-tag 的等寬字標籤語彙，
+// 但這裡是「可點擊互動」的按鈕，不是純顯示用標籤，用 <button> 而非 <span>
+.portfolio__filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.8rem;
+}
+
+.portfolio__filter-btn {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid #d8dee2;
+  border-radius: 999px;
+  background: #fff;
+  color: #3d5566;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    border-color: $color-accent;
+  }
+
+  // 目前選中的篩選條件：磚紅底反白字，跟 skills__level-dot--on 的「實心＝已達成」語彙一致
+  &.is-active {
+    background: $color-accent;
+    border-color: $color-accent;
+    color: #fff;
+  }
+}
+
+// 卡片格線：固定欄寬（不是 auto-fit + 1fr 彈性拉伸），讓每張卡片維持固定大小，
+// 不會因為同一列卡片數量或視窗寬度不同而忽寬忽窄；auto-fill 讓容器依可用寬度
+// 自動決定塞得下幾欄固定寬度的卡片，容器變窄時一樣會自然收成單欄，不需要 @media
+.portfolio__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 300px));
+  gap: 1.8rem;
+}
+
+// 卡片本體：固定高度＋圓角＋輕量陰影，數值參考 components/_section.scss 的
+// section-card mixin（同樣的圓角/陰影色調），但不直接 @include 那個 mixin——它是
+// 設計給整個 section 用的固定寬度（920px），不適合套在 grid 內的固定寬度卡片上，
+// 所以獨立寫一組卡片專屬數值。
+// 固定 height + flex column：讓每張卡片不論內容長短都維持一致高度，
+// article 用 flex:1 撐滿卡片剩餘高度，最後一個可見欄位（連結列/深度連結/NDA 說明，
+// 三者其中一個一定是卡片最後一個子元素）用 margin-top:auto 推到卡片底部對齊，
+// 避免卡片因為連結數量／有無深度連結不同而長短不一
+.portfolio__item {
+  height: 560px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(13, 50, 77, 0.08);
+  overflow: hidden; // 讓封面圖的直角被卡片的圓角裁切
+
+  article {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0 1.4rem 1.4rem;
+
+    > :last-child {
+      margin-top: auto;
+    }
+  }
+}
+
+// 篩選器切換用的隱藏 class：用 class 而不是 inline style，方便之後疊加淡入/淡出動畫
+.portfolio__item--hidden {
+  display: none;
+}
+
+.portfolio__cover {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: #eef2f5; // 佔位色，跟 about__avatar 佔位框同一色調
+  // article 有左右 1.4rem 內距，這裡用負 margin 把圖片撐滿到卡片左右上邊緣
+  margin: 0 -1.4rem 1rem;
+  width: calc(100% + 2.8rem);
+}
+
+.portfolio__type {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: $color-accent;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.portfolio__name {
+  margin: 0 0 0.4rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: $color-deep-space-blue;
+}
+
+// 卡片高度固定後，文字欄位改用 line-clamp 限制行數，避免之後填入真實資料時
+// 較長的文字把固定高度的卡片撐破（截斷後用 ellipsis，跟 evidence-link 的
+// text-overflow 慣例一致：寧可截斷也不要破版）
+.portfolio__summary {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #32424d;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.portfolio__date {
+  margin: 0 0 0.7rem;
+  font-size: 0.82rem;
+  color: #9aa8b0;
+}
+
+// 技術標籤：沿用 skills__name 的「# + Space Mono」chip 語彙，維持全站標籤類資訊統一視覺
+.portfolio__tech-list {
+  list-style: none;
+  margin: 0 0 0.7rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.portfolio__tech {
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  background: #eef2f5;
+  color: #3d5566;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+
+  &::before {
+    content: '#';
+    color: $color-accent;
+  }
+}
+
+.portfolio__role {
+  margin: 0 0 0.6rem;
+  font-size: 0.9rem;
+  color: #32424d;
+}
+
+.portfolio__outcome {
+  margin: 0 0 0.6rem;
+  font-size: 0.9rem;
+  color: #32424d;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+.portfolio__link-list {
+  list-style: none;
+  margin: 0.2rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+}
+
+.portfolio__link {
+  font-size: 0.88rem;
+  color: $color-accent;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(179, 64, 31, 0.4);
+  padding-bottom: 0.1rem;
+}
+
+// 深度說明連結：不是每個作品都有，只有「需要」的作品才會輸出這個元素
+.portfolio__detail-link {
+  display: inline-block;
+  margin-top: 0.7rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: $color-accent;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// NDA 說明文字：跟 .portfolio__link-list 二擇一顯示，視覺沿用 skills__evidence-empty
+// 的灰階語彙——讓讀者知道「不是忘記放連結」而不是留空
+.portfolio__nda-note {
+  margin: 0.2rem 0 0;
+  font-size: 0.86rem;
+  color: #9aa8b0;
+  font-style: italic;
+}

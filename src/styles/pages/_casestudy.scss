@@ -1,1 +1,21 @@
-// .casestudy 專屬樣式放這裡
+@use '../abstracts/variables' as *;
+
+// .casestudy 專屬樣式放這裡（內文排版這輪還沒規劃，維持跟首頁 #casestudy 一致的未上樣狀態，
+// 不在 #portfolio 卡片集這輪順便補齊，避免範圍失控）。
+// 只補上跟其他 section 一致的 padding，因為這次新增的 portfolio/*.html 詳細頁面完全依賴
+// 這個 class 當作頁面留白，沒有留白會整頁內容貼齊視窗邊緣，示範效果太差
+.casestudy {
+  padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
+}
+
+// .casestudy__back-link 是這輪新增（給 src/pages/portfolio/*.html 詳細頁面用的返回連結），
+// 沿用全站連結的 dashed underline 語彙，是這輪唯一需要的 .casestudy__* 樣式
+.casestudy__back-link {
+  display: inline-block;
+  margin-bottom: 1.2rem;
+  font-size: 0.9rem;
+  color: $color-accent;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(179, 64, 31, 0.4);
+  padding-bottom: 0.1rem;
+}
