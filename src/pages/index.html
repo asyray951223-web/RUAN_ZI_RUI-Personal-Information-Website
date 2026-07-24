@@ -134,8 +134,13 @@
           經歷
         </div>
 
-        <!-- 完整履歷 PDF 下載，先放連結骨架，href 之後換成真實檔案路徑 -->
-        <a class="resume__pdf-link" href="#">下載完整履歷 PDF</a>
+        <!-- 完整履歷 PDF 下載，先放連結骨架，之後真的有檔案時再補上 href。
+             adversarial-ux-test 發現：原本 href="#" 點下去會把使用者彈回頁面最頂端
+             （看起來像網站壞掉），且文字沒有像 GitHub/LinkedIn 佔位連結一樣誠實標註
+             「佔位」——這裡拿掉 href（沒有 href 的 <a> 不會觸發任何跳轉，游標也會
+             變回預設樣式而不是手指，視覺上就先誠實地告訴使用者「還不能點」），
+             文字也比照全站慣例補上「佔位連結」 -->
+        <a class="resume__pdf-link">下載完整履歷 PDF（佔位連結）</a>
 
         <!-- BUILD:resume:start -->
         <!-- 求職者最想第一眼看到的重點，預設展開（避免忙碌訪客沒點開就漏看關鍵經歷） -->
@@ -203,7 +208,7 @@
                 <ul class="resume__project-tags">
                   <li class="resume__project-tag">技術名稱佔位</li>
                 </ul>
-                <a class="resume__project-link" href="#"
+                <a class="resume__project-link"
                   >GitHub / Demo 連結佔位</a
                 >
               </article>
@@ -220,7 +225,7 @@
                 <ul class="resume__project-tags">
                   <li class="resume__project-tag">技術名稱佔位</li>
                 </ul>
-                <a class="resume__project-link" href="#"
+                <a class="resume__project-link"
                   >GitHub / Demo 連結佔位</a
                 >
               </article>
@@ -322,8 +327,8 @@
                 <div class="skills__evidence-grid">
                   <!-- title 屬性補上完整文字：格線窄，連結文字會被 ellipsis 截斷，
                        hover 時靠 title 顯示完整作品名稱，不會因為截斷而看不出是哪個作品 -->
-                  <a class="skills__evidence-link" href="#" title="作品名稱佔位（一）">作品名稱佔位（一）</a>
-                  <a class="skills__evidence-link" href="#" title="作品名稱佔位（二）">作品名稱佔位（二）</a>
+                  <a class="skills__evidence-link" title="作品名稱佔位（一）">作品名稱佔位（一）</a>
+                  <a class="skills__evidence-link" title="作品名稱佔位（二）">作品名稱佔位（二）</a>
                 </div>
               </details>
             </li>
@@ -353,8 +358,8 @@
                 <div class="skills__evidence-grid">
                   <!-- title 屬性補上完整文字：格線窄，連結文字會被 ellipsis 截斷，
                        hover 時靠 title 顯示完整作品名稱，不會因為截斷而看不出是哪個作品 -->
-                  <a class="skills__evidence-link" href="#" title="作品名稱佔位（一）">作品名稱佔位（一）</a>
-                  <a class="skills__evidence-link" href="#" title="作品名稱佔位（二）">作品名稱佔位（二）</a>
+                  <a class="skills__evidence-link" title="作品名稱佔位（一）">作品名稱佔位（一）</a>
+                  <a class="skills__evidence-link" title="作品名稱佔位（二）">作品名稱佔位（二）</a>
                 </div>
               </details>
             </li>
@@ -384,8 +389,8 @@
                 <div class="skills__evidence-grid">
                   <!-- title 屬性補上完整文字：格線窄，連結文字會被 ellipsis 截斷，
                        hover 時靠 title 顯示完整作品名稱，不會因為截斷而看不出是哪個作品 -->
-                  <a class="skills__evidence-link" href="#" title="作品名稱佔位（一）">作品名稱佔位（一）</a>
-                  <a class="skills__evidence-link" href="#" title="作品名稱佔位（二）">作品名稱佔位（二）</a>
+                  <a class="skills__evidence-link" title="作品名稱佔位（一）">作品名稱佔位（一）</a>
+                  <a class="skills__evidence-link" title="作品名稱佔位（二）">作品名稱佔位（二）</a>
                 </div>
               </details>
             </li>
@@ -415,8 +420,8 @@
                 <div class="skills__evidence-grid">
                   <!-- title 屬性補上完整文字：格線窄，連結文字會被 ellipsis 截斷，
                        hover 時靠 title 顯示完整作品名稱，不會因為截斷而看不出是哪個作品 -->
-                  <a class="skills__evidence-link" href="#" title="作品名稱佔位（一）">作品名稱佔位（一）</a>
-                  <a class="skills__evidence-link" href="#" title="作品名稱佔位（二）">作品名稱佔位（二）</a>
+                  <a class="skills__evidence-link" title="作品名稱佔位（一）">作品名稱佔位（一）</a>
+                  <a class="skills__evidence-link" title="作品名稱佔位（二）">作品名稱佔位（二）</a>
                 </div>
               </details>
             </li>
@@ -639,10 +644,10 @@
               </p>
               <ul class="portfolio__link-list">
                 <li class="portfolio__link-item">
-                  <a class="portfolio__link" href="#">線上 Demo</a>
+                  <a class="portfolio__link">線上 Demo</a>
                 </li>
                 <li class="portfolio__link-item">
-                  <a class="portfolio__link" href="#">GitHub</a>
+                  <a class="portfolio__link">GitHub</a>
                 </li>
               </ul>
               <!-- 這件作品「需要」深度說明，連到獨立詳細頁面示範 -->
@@ -711,7 +716,7 @@
                 </div>
                 <ul class="activities__link-list">
                   <li class="activities__link-item">
-                    <a class="activities__link" href="#">活動照片</a>
+                    <a class="activities__link">活動照片</a>
                   </li>
                 </ul>
               </article>
@@ -730,7 +735,7 @@
                 </div>
                 <ul class="activities__link-list">
                   <li class="activities__link-item">
-                    <a class="activities__link" href="#">活動照片</a>
+                    <a class="activities__link">活動照片</a>
                   </li>
                 </ul>
               </article>
@@ -749,7 +754,7 @@
                 </div>
                 <ul class="activities__link-list">
                   <li class="activities__link-item">
-                    <a class="activities__link" href="#">活動照片</a>
+                    <a class="activities__link">活動照片</a>
                   </li>
                 </ul>
               </article>
@@ -1107,7 +1112,7 @@
                   <span class="notes__date">日期佔位</span>
                 </div>
                 <h3 class="notes__title">
-                  <a class="notes__link" href="#">筆記標題佔位（例如：30 天學 JavaScript 心得）</a>
+                  <a class="notes__link">筆記標題佔位（例如：30 天學 JavaScript 心得）</a>
                 </h3>
                 <p class="notes__excerpt">摘要佔位（課程筆記／技術學習／讀書或課程心得）</p>
                 <!-- 外部連結視覺提示只加箭頭符號（↗），不寫完整句子，維持簡潔 -->
@@ -1124,7 +1129,7 @@
                   <span class="notes__date">日期佔位</span>
                 </div>
                 <h3 class="notes__title">
-                  <a class="notes__link" href="#">筆記標題佔位（例如：資料庫正規化整理）</a>
+                  <a class="notes__link">筆記標題佔位（例如：資料庫正規化整理）</a>
                 </h3>
                 <p class="notes__excerpt">摘要佔位（課程筆記／技術學習／讀書或課程心得）</p>
                 <!-- 外部連結視覺提示只加箭頭符號（↗），不寫完整句子，維持簡潔 -->
@@ -1141,7 +1146,7 @@
                   <span class="notes__date">日期佔位</span>
                 </div>
                 <h3 class="notes__title">
-                  <a class="notes__link" href="#">筆記標題佔位（例如：《人月神話》讀後感）</a>
+                  <a class="notes__link">筆記標題佔位（例如：《人月神話》讀後感）</a>
                 </h3>
                 <p class="notes__excerpt">摘要佔位（課程筆記／技術學習／讀書或課程心得）</p>
                 <!-- 外部連結視覺提示只加箭頭符號（↗），不寫完整句子，維持簡潔 -->
@@ -1188,7 +1193,7 @@
                   <p><b>完成定義：</b>完成定義佔位（例如：完成度 100%、手機瀏覽正常、至少 1 位朋友實際測試過）</p>
                 </div>
               </details>
-                <a class="goals__link" href="#">↗ 查看作品：個人資訊網站</a>
+                <a class="goals__link">↗ 查看作品：個人資訊網站</a>
               </div>
             </div>
           </li>
@@ -1211,7 +1216,7 @@
                   <p><b>完成定義：</b>完成定義佔位（例如：能獨立完成一個含表單與 API 串接的小專案）</p>
                 </div>
               </details>
-                <a class="goals__link" href="#">↗ 查看技能：React</a>
+                <a class="goals__link">↗ 查看技能：React</a>
               </div>
             </div>
           </li>
@@ -1240,7 +1245,7 @@
                   <p><b>完成定義：</b>完成定義佔位（例如：能獨立負責一個中型專案的前端架構規劃）</p>
                 </div>
               </details>
-                <a class="goals__link" href="#">↗ 查看作品集</a>
+                <a class="goals__link">↗ 查看作品集</a>
               </div>
             </div>
           </li>
@@ -1263,7 +1268,7 @@
                   <p><b>完成定義：</b>完成定義佔位（例如：平均每月至少 1 篇技術筆記，累積至少 1 個 open source PR）</p>
                 </div>
               </details>
-                <a class="goals__link" href="#">↗ 查看學習筆記</a>
+                <a class="goals__link">↗ 查看學習筆記</a>
               </div>
             </div>
           </li>
@@ -1334,22 +1339,22 @@
         <!-- BUILD:contact-social:start -->
         <ul class="contact__social-list">
           <li class="contact__social-item">
-            <a class="contact__social-link" href="#" title="GitHub">
+            <a class="contact__social-link" title="GitHub">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg>
             </a>
           </li>
           <li class="contact__social-item">
-            <a class="contact__social-link" href="#" title="LinkedIn">
+            <a class="contact__social-link" title="LinkedIn">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>
             </a>
           </li>
           <li class="contact__social-item">
-            <a class="contact__social-link" href="#" title="Discord 或 LINE">
+            <a class="contact__social-link" title="Discord 或 LINE">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.317 4.37a19.79 19.79 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.865-.608 1.25-1.845-.276-3.68-.276-5.487 0-.164-.393-.406-.874-.618-1.25a.077.077 0 00-.079-.037A19.736 19.736 0 002.6 4.37a.07.07 0 00-.032.028C.533 7.046-.319 9.58.099 12.058a.082.082 0 00.031.056c2.053 1.508 4.041 2.423 5.993 3.03a.078.078 0 00.084-.028c.462-.63.873-1.295 1.226-1.994a.076.076 0 00-.042-.106 12.3 12.3 0 01-1.872-.892.077.077 0 01-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 01.078-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 01.079.01c.12.099.246.198.373.292a.077.077 0 01-.007.128 11.6 11.6 0 01-1.873.891.076.076 0 00-.041.107c.36.698.772 1.363 1.225 1.993a.076.076 0 00.084.029c1.961-.607 3.95-1.522 6.002-3.03a.077.077 0 00.031-.055c.5-5.177-.838-9.674-3.548-13.66a.061.061 0 00-.031-.029zM8.02 15.33c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.175 1.095 2.156 2.419 0 1.333-.955 2.419-2.156 2.419zm7.975 0c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.175 1.095 2.156 2.419 0 1.333-.946 2.419-2.156 2.419z"></path></svg>
             </a>
           </li>
           <li class="contact__social-item">
-            <a class="contact__social-link" href="#" title="Instagram">
+            <a class="contact__social-link" title="Instagram">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path></svg>
             </a>
           </li>

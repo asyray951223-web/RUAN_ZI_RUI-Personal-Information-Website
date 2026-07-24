@@ -16,6 +16,16 @@ document.addEventListener('DOMContentLoaded', () => {
     return header.offsetHeight;
   }
 
+  // header 現在會因為導覽列換行而變高（手機寬度常見），把實際高度同步寫進
+  // --header-height 讓 .site-main 的 padding-top／.section 的 scroll-margin-top
+  // 跟著調整，避免固定 header 蓋住內容。resize 時（例如手機轉橫向）重新量一次。
+  function syncHeaderHeightVar() {
+    document.documentElement.style.setProperty('--header-height', `${getHeaderHeight()}px`);
+  }
+
+  syncHeaderHeightVar();
+  window.addEventListener('resize', syncHeaderHeightVar);
+
   // ---- 平滑捲動：點擊導覽連結時攔截預設的瞬間跳轉，改成自訂緩動動畫 ----
   function easeInOutCubic(t) {
     return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;

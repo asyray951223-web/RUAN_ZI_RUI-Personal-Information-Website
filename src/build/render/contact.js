@@ -4,7 +4,7 @@
 // 標誌（不是文字連結、也不是 Google Material Symbols 通用圖示——後者沒有品牌專屬圖示，
 // 不適合代表 GitHub/LinkedIn 等平台），圖示本身由 platform 欄位查表產生，不存進 JSON，
 // 避免 SVG path 資料跟著內容資料重複維護。
-const { escapeHtml, joinLines } = require('./html-utils');
+const { escapeHtml, joinLines, hrefAttr } = require('./html-utils');
 
 // 品牌 SVG 標誌對照表（Simple Icons 標準 path data，viewBox 0 0 24 24）
 const BRAND_ICONS = {
@@ -23,7 +23,7 @@ function renderSocialLink(item) {
   if (!path) return '';
   return joinLines([
     '          <li class="contact__social-item">',
-    `            <a class="contact__social-link" href="${escapeHtml(item.href)}" title="${escapeHtml(item.label)}">`,
+    `            <a class="contact__social-link"${hrefAttr(item.href)} title="${escapeHtml(item.label)}">`,
     `              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="${path}"></path></svg>`,
     '            </a>',
     '          </li>',

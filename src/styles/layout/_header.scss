@@ -7,10 +7,19 @@
   left: 0;
   width: 100%; // 撐滿整個視窗寬度
   display: flex; // 標題與導覽列同一行水平排列
+  flex-wrap: wrap; // 容器窄到標題+導覽列塞不下同一行時，讓導覽列自然換到第二行，
+  // 不會逼標題/連結文字被壓縮到逐字換行、疊到下方內容上——adversarial-ux-test
+  // 在手機寬度（390px）發現「個人梓介紹睿」這種文字互疊的問題，根源就是這裡原本
+  // 用固定 height（擠不下時文字被迫在原本那一行內換行，溢出到 header 高度之外）
   align-items: center; // 垂直置中對齊
   justify-content: space-between; // 標題靠左、導覽列靠右，兩端對齊
-  height: $header-height; // 固定高度，對應 .site-main 的 padding-top
-  padding: 0 2rem; // 左右留白，避免內容貼邊
+  row-gap: 0.4rem; // 換成兩行時，標題列跟導覽列之間留一點呼吸空間
+  min-height: $header-height; // 改成 min-height（原本是固定 height）：一般寬度維持
+  // 單行高度，換行時允許長高；.site-main 的 padding-top 跟 .section 的
+  // scroll-margin-top 改讀 nav-scroll.js 同步寫入的 --header-height 變數，
+  // 不再假設 header 永遠是固定的 $header-height
+  padding: 0.6rem 2rem; // 原本 0 2rem 搭配固定 height 靠 align-items 置中；
+  // 現在 height 會變動，改用上下 padding 撐出留白，兩種情況都好看
   background: transparent; // 透明背景，可看到底下內容
   z-index: 100; // 確保 header 疊在其他內容之上
   box-sizing: border-box; // padding 不撐大整體寬高
@@ -82,8 +91,10 @@
   // &__list 會編譯成 .site-nav__list
   &__list {
     display: flex; // 導覽項目橫向排列
+    flex-wrap: wrap; // 容器不夠寬時，讓連結一個個換行排列，而不是被壓縮到文字重疊
     align-items: center; // 垂直置中
-    gap: 1.5rem; // 項目間距
+    justify-content: flex-end; // 換行時每一行都靠右對齊，跟 header 右側對齊的視覺慣例一致
+    gap: 0.5rem 1.5rem; // 分開設定行距/欄距：換行後上下行距不用跟左右項目間距一樣寬
     margin: 0;
     padding: 0;
     list-style: none; // 去掉 ul 預設項目符號
@@ -125,5 +136,8 @@
 }
 
 .site-main {
-  padding-top: $header-height; // 幫內容往下推，避免被固定 header 蓋住
+  // header 現在會依內容換行變高（見上面 .site-header 的 flex-wrap），固定的
+  // $header-height 不再準確，改讀 nav-scroll.js 動態寫入的 --header-height 變數；
+  // var() 的第二個參數是 JS 還沒執行前（或關閉 JS）的備援值，維持原本的固定尺寸
+  padding-top: var(--header-height, #{$header-height});
 }

@@ -148,7 +148,9 @@
   border-radius: 6px;
   padding: 0.6rem 0.7rem;
   font-family: inherit;
-  font-size: 0.94rem;
+  // 原本 0.94rem（≈15px）低於 16px，iOS Safari 對 <16px 的表單欄位聚焦時會自動
+  // 放大畫面（adversarial-ux-test 找到的真實手機體驗問題，不是刁鑽持人才會遇到）
+  font-size: 1rem;
   color: #32424d;
 }
 

@@ -2,7 +2,7 @@
 // 確認為「RSS 訂閱源」：每篇筆記是指向外部平台的一筆索引，不是站內全文。
 // data-type/typeLabel 這輪先定義好命名，篩選器 UI 留到筆記數量真的累積到一定程度再做
 // （見規格文件技術選型清單），因此這裡不輸出篩選按鈕，只在每筆項目上保留 data-type 屬性。
-const { escapeHtml } = require('./html-utils');
+const { escapeHtml, hrefAttr } = require('./html-utils');
 
 function renderIcon(platform) {
   // 圖示直接取平台名稱的第一個字，不另外在 JSON 存一個 icon 欄位——
@@ -20,7 +20,7 @@ function renderItem(item) {
                   <span class="notes__date">${escapeHtml(item.date)}</span>
                 </div>
                 <h3 class="notes__title">
-                  <a class="notes__link" href="${escapeHtml(item.href)}">${escapeHtml(item.title)}</a>
+                  <a class="notes__link"${hrefAttr(item.href)}>${escapeHtml(item.title)}</a>
                 </h3>
                 <p class="notes__excerpt">${escapeHtml(item.excerpt)}</p>
                 <!-- 外部連結視覺提示只加箭頭符號（↗），不寫完整句子，維持簡潔 -->

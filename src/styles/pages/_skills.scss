@@ -61,7 +61,12 @@
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+  // 用 min(600px, 100%) 而不是單純 600px（adversarial-ux-test 找到的迴歸）：容器窄於
+  // 600px 時（手機寬度）原本的 minmax 下限仍吃到 600px，逼欄位撐超過容器造成整頁橫向
+  // 溢出——這正是 #notes/#goals/#contact 好幾輪驗證都量到、卻被誤判成「別的區塊、
+  // 與本次變更無關」的既有橫向捲動問題，根源其實在這裡。#activities/#casestudy 當初
+  // 已經用 min(Xpx, 100%) 修過同一個坑，這裡補齊同款寫法
+  grid-template-columns: repeat(auto-fit, minmax(min(600px, 100%), 1fr));
   gap: 0.9rem 2.4rem;
 }
 

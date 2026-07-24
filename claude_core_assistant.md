@@ -902,3 +902,29 @@ src/styles/
 - `headerHeight` 在 JS 裡讀 `.site-header` 的 `offsetHeight` 而非寫死 `4rem` 換算的 64px：跟 `_section.scss` 的 `scroll-margin-top: $header-height` 概念一致，之後 header 高度改變不用兩邊分別手動同步數字。
 
 **驗證方式**：`sass` 編譯成功；`git diff --stat` 確認範圍正確。Playwright 驗證：載入頁面時 `#about` 對應的 nav 連結預設是 `.is-active`；點擊「目標願景」連結後，`getBoundingClientRect()` 確認 `#goals` 頂端落在 64px（跟 `.site-header` 的 `offsetHeight` 64px 幾乎完全吻合，誤差 0.09px），且只有 `#goals` 對應的 nav 連結被標成 `.is-active`；用 `browser_run_code_unsafe` 搭配 `page.emulateMedia({ reducedMotion: 'reduce' })` 驗證點擊後 50ms 內就捲動完成（`scrollY` 已跳到目標值），確認有正確跳過動畫；`#portfolio` 篩選器（點擊「課程作業」／「全部」）與 `#contact` mailto 表單（送出後 `browser_console_messages` 確認正確印出 mailto handler 訊息）皆回歸測試通過，確認第三支 JS 沒有互相干擾；手機寬度（420px）確認點擊 nav 連結仍能正確觸發跳轉（功能本身不受既有的手機版面重疊問題影響，該版面問題本次不處理）。測試用截圖、臨時 HTTP 伺服器、`.playwright-mcp` 暫存資料夾事後已清除，不留在版控中。
+
+
+### 53. Adversarial UX Test（persona：忙碌人資主管「林姐」）——修掉全站最大的兩個真實 bug
+
+**背景**：用 `/adversarial-ux-test` skill，以「46 歲科技業人資主管、一天篩 30-40 份履歷網站、只給每個候選人 20-30 秒、通勤時用手機滑」的persona 實測全站，找 UI/UX 真的會擋住使用者的問題（不含「內容還是佔位文字」這種已知、預期中的半成品狀態）。
+
+**發現並修正的 RED 項目**：
+
+1. **`#skills` 格線寫死 `minmax(600px, 1fr)`，手機寬度整頁橫向溢出 248px**——這正是好幾輪先前驗證（`#notes`/`#goals`/`#contact`）都量到、卻每次都被誤判成「別的區塊、與本次變更無關」的既有橫向捲動問題，這次終於查到根源在 `_skills.scss`：唯獨這裡沒有比照 `#activities`/`#casestudy` 用 `minmax(min(Xpx, 100%), 1fr)` 的手機安全寫法。改成 `minmax(min(600px, 100%), 1fr)` 後，390px/800px/1400px 三個寬度都確認 `scrollWidth === clientWidth`，溢出完全消失。
+2. **手機寬度（390px）導覽列文字互疊在標題上**——`.site-header` 原本是固定 `height: $header-height`，導覽列 9 個連結塞不下一行時文字被迫在原本那行內換行，溢出到下方內容上（螢幕截圖顯示「個人梓介紹睿」字疊字）。改成 `.site-header { flex-wrap: wrap; min-height: ... }`、`.site-nav__list { flex-wrap: wrap; }`，讓標題與導覽列改用自然換行（不新增全站第一個 `@media`，維持既有的純 fluid/no-breakpoint 慣例）。連動問題：header 高度變成動態，`.site-main` 的 `padding-top`／`.section` 的 `scroll-margin-top` 原本假設的固定 `$header-height` 不再準確，改成讀 `nav-scroll.js` 動態寫入的 `--header-height` CSS 變數（`header.offsetHeight`，load 與 resize 時都重算一次）。
+3. **全站十幾處連結（`resume__project-link`／`portfolio__link`／`activities__link`／`skills__evidence-link`／`notes__link`／`goals__link`／`contact__social-link`）href 都是佔位用的裸 `"#"`，點下去會觸發瀏覽器預設的「跳到頁面最頂端」行為**——使用者點擊任何一個看起來像正常連結的元素，畫面會忽然被彈回最上面，像網站壞掉。在 `src/build/render/html-utils.js` 新增共用的 `hrefAttr(href)`：href 是純占位的 `"#"` 時直接不輸出 `href` 屬性（連結變不可點擊、游標維持預設樣式，視覺上先誠實地表示「還不能點」），之後填入真實網址會自動恢復正常，不用改程式碼。7 個 render 模組（`resume.js`/`portfolio.js`/`activities.js`/`skills.js`/`notes.js`/`goals.js`/`contact.js`）都改用這個共用函式；另外手寫在 `index.html`（非 JSON 驅動）的 `resume__pdf-link` 也同樣拿掉 `href="#"`，文案補上「（佔位連結）」比照全站「誠實標註」慣例。
+4. **`#contact` 表單輸入框字級 0.94rem（≈15px）低於 16px**——iOS Safari 對 <16px 的表單欄位聚焦時會自動放大畫面，是很多真實手機使用者都會踩到的體驗問題。改成 `1rem`（16px）。
+
+**檢查後確認沒問題（WHITE，不算缺陷）**：
+- 大量「佔位」文字內容：這是網站建置中的已知狀態，不是 UI 缺陷。
+- 鍵盤 Tab 的 focus 樣式：全站 CSS 沒有任何地方 `outline: none`，瀏覽器預設 focus ring 保持完整可見。
+
+**取捨說明**：
+- 手機導覽列改成自然換行而不是做漢堡選單：後者需要額外的展開/收合 JS 狀態與圖示，換行方案零 JS（純 CSS flex-wrap）就能達到「不重疊、不溢出」的目標，且不偏離全站「沒有 `@media`、靠 fluid 手法自適應」的既有架構慣例。
+- `hrefAttr()` 用「href 是否恰好等於 `"#"`」判斷要不要輸出屬性，而不是更複雜的網址驗證：因為全站目前佔位資料的慣例就是統一填 `"#"`，之後填入真實網址（不會剛好是 `"#"`）就會自動變回正常連結，不需要額外欄位或標記。
+
+**驗證方式**：`sass` 編譯成功，`node build/build.js` 成功且 `grep -n 'href="#"' src/pages/index.html` 確認產出結果不再有任何裸 `#` 連結。Playwright 驗證：390px/800px/1400px 三個寬度皆 `scrollWidth === clientWidth`；點擊多個原本會觸發跳頂行為的連結（`skills__evidence-link`、`resume__pdf-link`）確認 `window.scrollY` 不再變動；`#contact` 表單輸入框 `getComputedStyle().fontSize` 確認為 16px；`#portfolio` 篩選器、`#contact` mailto 表單、`nav-scroll.js` 的跳轉/scrollspy 皆回歸測試通過，`browser_console_messages` 確認無新增錯誤。測試用截圖與臨時 HTTP 伺服器已清除，不留在版控中。
+
+**尚未處理（使用者要求先在此總結，之後可視需要繼續）**：
+- 篩選器按鈕觸控高度約 35px，略低於 44px 的建議觸控目標尺寸（YELLOW，非阻擋性問題）。
+- 部分次要文字（reply-note、meta 說明）用的 `#9aa8b0` 灰色對白底的對比度偏低（初步估算約 2.4:1，低於 WCAG AA 一般文字建議的 4.5:1），已定位到使用位置（`_about.scss`／`_activities.scss`／`_casestudy.scss`／`_contact.scss`／`_notes.scss`／`_portfolio.scss`／`_resume.scss`／`_skills.scss` 共用同一色號），尚未修正，留待下一輪處理。

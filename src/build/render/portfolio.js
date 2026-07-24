@@ -3,7 +3,7 @@
 // (b) links／ndaNote 互斥二選一欄位
 // (c) id 被範圍外的 src/pages/portfolio/project-1.html 手寫頁面外部連結引用
 // 三者同時存在，遷移時要格外小心不要破壞這些依賴。
-const { escapeHtml, joinLines } = require('./html-utils');
+const { escapeHtml, joinLines, hrefAttr } = require('./html-utils');
 
 function renderFilterButtons(filters) {
   return filters
@@ -47,9 +47,9 @@ function renderLinksOrNda(item) {
     const items = item.links
       .map(
         (link) =>
-          `                <li class="portfolio__link-item">\n                  <a class="portfolio__link" href="${escapeHtml(
+          `                <li class="portfolio__link-item">\n                  <a class="portfolio__link"${hrefAttr(
             link.href
-          )}">${escapeHtml(link.label)}</a>\n                </li>`
+          )}>${escapeHtml(link.label)}</a>\n                </li>`
       )
       .join('\n');
     return joinLines(['              <ul class="portfolio__link-list">', items, '              </ul>']);

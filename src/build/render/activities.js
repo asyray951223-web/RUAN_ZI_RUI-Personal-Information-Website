@@ -1,7 +1,7 @@
 // #activities 區塊渲染邏輯。三個分組（社團/競賽/志工）各自的欄位組合不同
 // （badge 只有競賽類有、audience/quantity 只有志工類有、links 目前只有社團類有），
 // 統一用「有值才輸出對應標籤」的方式處理，不用幫每個分組寫專屬的 render 函式。
-const { escapeHtml, joinLines } = require('./html-utils');
+const { escapeHtml, joinLines, hrefAttr } = require('./html-utils');
 
 function renderSkillTags(skillTags) {
   if (!skillTags || !skillTags.length) return '';
@@ -19,9 +19,9 @@ function renderLinkList(links) {
   const items = links
     .map(
       (link) =>
-        `                  <li class="activities__link-item">\n                    <a class="activities__link" href="${escapeHtml(
+        `                  <li class="activities__link-item">\n                    <a class="activities__link"${hrefAttr(
           link.href
-        )}">${escapeHtml(link.label)}</a>\n                  </li>`
+        )}>${escapeHtml(link.label)}</a>\n                  </li>`
     )
     .join('\n');
   return joinLines(['                <ul class="activities__link-list">', items, '                </ul>']);

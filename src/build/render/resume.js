@@ -1,7 +1,7 @@
 // #resume 區塊渲染邏輯。6 個手風琴面板哪些預設展開（open）、標題文字與順序，
 // 屬於版面設計決策而非「內容資料」，維持寫死在這裡，不進 src/data/resume.json，
 // 避免 JSON schema 為了遷就固定不變的結構性資訊而變複雜。
-const { escapeHtml, joinLines } = require('./html-utils');
+const { escapeHtml, joinLines, hrefAttr } = require('./html-utils');
 
 function renderEducationItem(item) {
   return joinLines([
@@ -42,7 +42,7 @@ function renderProjectItem(item) {
     '                <ul class="resume__project-tags">',
     tags,
     '                </ul>',
-    `                <a class="resume__project-link" href="${escapeHtml(item.link)}"\n                  >${escapeHtml(item.linkLabel)}</a\n                >`,
+    `                <a class="resume__project-link"${hrefAttr(item.link)}\n                  >${escapeHtml(item.linkLabel)}</a\n                >`,
     '              </article>',
     '            </li>',
   ]);

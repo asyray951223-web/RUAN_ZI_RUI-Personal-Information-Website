@@ -23,10 +23,11 @@
 
 // scroll-margin-top：header 是 position: fixed，錨點跳轉（不管是點導覽列、瀏覽器
 // 上一頁/下一頁、還是直接帶 #hash 開啟頁面）預設會讓區塊頂端貼齊視窗頂端、被固定
-// header 蓋住一截。這條規則是不依賴 JS 的安全網，nav-scroll.js 的平滑捲動計算
-// 也會參照同一個 $header-height，兩邊維持一致
+// header 蓋住一截。header 現在會因為導覽列換行而變高（見 layout/_header.scss），
+// 改讀 nav-scroll.js 動態寫入的 --header-height 變數，跟 .site-main 的
+// padding-top 用同一個數字來源，避免兩邊各自假設一個固定值而兜不起來
 .section {
-  scroll-margin-top: $header-height;
+  scroll-margin-top: var(--header-height, #{$header-height});
 }
 
 // .section__title：#about／#resume／#skills／#portfolio／#activities 都已經升級成

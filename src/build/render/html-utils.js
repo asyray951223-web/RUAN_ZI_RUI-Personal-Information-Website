@@ -20,4 +20,15 @@ function joinLines(parts) {
   return parts.filter(Boolean).join('\n');
 }
 
-module.exports = { escapeHtml, joinLines };
+// adversarial-ux-test 發現：全站有十幾處連結的 JSON 資料 href 還是佔位用的 "#"，
+// 點下去會觸發瀏覽器預設的「跳到頁面最頂端」行為，對使用者來說像網站忽然壞掉，
+// 而且發生在使用者主動點擊、最容易被注意到的時刻。這裡統一處理：href 是真正的
+// "#"（純佔位，不是 "#some-real-id" 這種功能性錨點）時，直接不輸出 href 屬性，
+// 讓 <a> 變成不可點擊、游標維持預設樣式，視覺上就先誠實地告訴使用者「還不能點」；
+// 之後使用者填入真實網址，href 屬性就會正常出現，不需要改任何程式碼。
+function hrefAttr(href) {
+  if (!href || href === '#') return '';
+  return ` href="${escapeHtml(href)}"`;
+}
+
+module.exports = { escapeHtml, joinLines, hrefAttr };

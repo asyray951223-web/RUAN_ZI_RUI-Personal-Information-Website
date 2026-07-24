@@ -5,7 +5,7 @@
 //   （near/far）決定哪一顆點亮，不是逐筆目標自己算，避免同一組內的點位不一致
 // - 「為什麼／完成定義」收進原生 <details>/<summary>，完全比照 #skills__evidence 的既有
 //   做法（不用 JavaScript），評估佐證/連結才會在收合區「之後」出現，維持快速掃描時的輕量感
-const { escapeHtml, joinLines } = require('./html-utils');
+const { escapeHtml, joinLines, hrefAttr } = require('./html-utils');
 
 function renderDots(dotPosition) {
   const nearOn = dotPosition === 'near';
@@ -45,7 +45,7 @@ function renderItem(item, dotPosition) {
     renderWhy(item),
     // 連結放在「為什麼／完成定義」之後，是這輪確認過的順序（見規格文件）
     item.link
-      ? `                <a class="goals__link" href="${escapeHtml(item.link.href)}">↗ ${escapeHtml(item.link.text)}</a>`
+      ? `                <a class="goals__link"${hrefAttr(item.link.href)}>↗ ${escapeHtml(item.link.text)}</a>`
       : '',
     '              </div>',
     '            </div>',

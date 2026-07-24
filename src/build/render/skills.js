@@ -2,7 +2,7 @@
 // - 6 顆圓點的 on/off 與熟練度文字，由 level（1–6 整數）透過下面的固定對照表推導，
 //   不在 JSON 存已經算好的 levelLabel（對照表見 docs/superpowers/specs/2026-07-23-skills-redesign-design.md）
 // - 65 年尺標的寬度百分比，由 tenureYears 數字算出，不在 JSON 存已經算好的百分比字串
-const { escapeHtml, joinLines } = require('./html-utils');
+const { escapeHtml, joinLines, hrefAttr } = require('./html-utils');
 
 // CEFR 六級量表對照：入門/基礎/中等/中高/高等/精通，index 對應 level 1–6
 const LEVEL_LABELS = ['入門', '基礎', '中等', '中高', '高等', '精通'];
@@ -31,7 +31,7 @@ function renderEvidence(evidence) {
   const links = evidence
     .map(
       (work) =>
-        `                  <a class="skills__evidence-link" href="${escapeHtml(work.href)}" title="${escapeHtml(
+        `                  <a class="skills__evidence-link"${hrefAttr(work.href)} title="${escapeHtml(
           work.name
         )}">${escapeHtml(work.name)}</a>`
     )
