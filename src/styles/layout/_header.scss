@@ -110,11 +110,15 @@
       transition: width 0.2s;
     }
 
-     &:hover {
-      color: #fff; // 滑鼠移入時文字變亮
+    // .is-active 由 nav-scroll.js 依捲動位置切換，代表「目前所在區塊」，
+    // 刻意跟 hover 共用同一組規則（變白 + 底線展開），不另外發明一套視覺語彙
+     &:hover,
+    &.is-active {
+      color: #fff;
     }
 
-    &:hover::after {
+    &:hover::after,
+    &.is-active::after {
       width: 100%;
     }
   }

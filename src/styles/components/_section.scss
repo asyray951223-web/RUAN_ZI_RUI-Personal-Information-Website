@@ -21,6 +21,14 @@
   display: none;
 }
 
+// scroll-margin-top：header 是 position: fixed，錨點跳轉（不管是點導覽列、瀏覽器
+// 上一頁/下一頁、還是直接帶 #hash 開啟頁面）預設會讓區塊頂端貼齊視窗頂端、被固定
+// header 蓋住一截。這條規則是不依賴 JS 的安全網，nav-scroll.js 的平滑捲動計算
+// 也會參照同一個 $header-height，兩邊維持一致
+.section {
+  scroll-margin-top: $header-height;
+}
+
 // .section__title：#about／#resume／#skills／#portfolio／#activities 都已經升級成
 // 專屬的「eyebrow」樣式（短豎線色塊＋blink 閃爍動畫），#casestudy／#notes／#goals／
 // #contact 目前還是原生 <h2 class="section__title">、完全吃瀏覽器預設樣式。

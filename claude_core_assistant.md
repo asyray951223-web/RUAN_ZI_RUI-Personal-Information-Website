@@ -843,3 +843,62 @@ src/styles/
 - 動機/完成定義收進 `<details>` 而非常態展開：6 個欄位全部平鋪會讓清單變成文字牆，比照 `#skills__evidence` 已驗證過的收合模式，讓快速掃描（目標/時間/佐證/連結）與深入閱讀（動機/完成定義）分成兩層。
 
 **驗證方式**：`node build/build.js` 成功執行，`git diff --stat` 確認只有 `#goals` 相關檔案被改動（`src/build/build.js`／`src/pages/index.html`／`src/styles/main.css`／`_goals.scss` 修改，`goals.json`／`render/goals.js` 新增）；`sass` 重新編譯成功。Playwright 截圖確認桌面寬度（1400px）eyebrow／願景引言／雙點標記／時間標籤／佐證／連結呈現正確；點擊「為什麼／完成定義」確認 `<details>` 展開收合正常運作，且展開後連結確實排在收合區下方；縮到手機寬度（420px）用 `getBoundingClientRect`/`scrollWidth` 確認 `#goals` 本身無橫向溢出（頁面其餘位置與 header 導覽列的橫向捲動/重疊是既有、與本次變更無關的問題，在 `#about` 區塊也能重現）；`#portfolio` 篩選器回歸測試（點擊「課程作業」／「全部」）確認未受影響。測試用截圖、臨時 HTTP 伺服器、`.playwright-mcp` 暫存資料夾、暫存目錄下的排版比較 demo 檔事後已清除，不留在版控中。
+
+
+### 50. `#contact`（聯絡方式）內容架構規劃＋落地實作——全站最後一個區塊補齊
+
+**背景**：`#contact` 是全站九大區塊中最後一個還沒被認真規劃過的區塊：只有一句 Email（真實資料）、GitHub/LinkedIn 兩個佔位社群連結，以及一份完全沒有 `action`/後端的聯絡表單骨架（2026-07-20 建立時就刻意「只搭骨架、不串接」，見第 9 筆）。這輪依 `CLAUDE.md` 固定流程完整走了一輪：內容架構規劃（Plan Mode）→ 三輪 AskUserQuestion 確認技術選型（mailto 表單改用 JS 組連結／社群連結清單納入 JSON+建置範圍／圖示改用 inline SVG 品牌標誌而非 Google Material Symbols 通用圖示／標題升級 eyebrow）＋內容擴充（求職合作意向 CTA、回覆時間/聯絡偏好說明、新增 Discord或LINE／Instagram）→ 排版方向先給「單欄堆疊 vs. 左右兩欄」兩款通用骨架，使用者認為「缺乏創新」→ 改給 4 款各自有明確論述的方向（終端機提示列／Email 簽名檔式收尾／狀態列／回音式對話預覽）→ 使用者選定「方向 A：終端機提示列」→ 落地實作。
+
+**產出**：`docs/superpowers/specs/2026-07-24-contact-content-design.md`（規格文件，記錄完整內容架構、技術選型確認結果、兩輪排版方向迭代）。
+
+**變更**：
+- `src/data/contact.json`（新增）：`email`／`cta`（求職意向）／`replyNote`（聯絡偏好）／`socialLinks` 陣列（每筆含 `platform`／`label`／`href`）。
+- `src/build/render/contact.js`（新增）：`BRAND_ICONS` 品牌 SVG 對照表（GitHub/LinkedIn/Discord/Instagram 的 Simple Icons 標準 path data），依 `item.platform` 查表產生對應圖示，圖示本身不存進 JSON 避免跟內容資料重複維護；`renderContact()` 輸出終端機提示列（CTA + 閃爍游標）／聯絡偏好／Email／社群圖示列。
+- `src/build/build.js`：加入 `renderContact` 的 require 與 sections 陣列項目。
+- `src/scripts/contact-mailto.js`（新增）：全站第二支自訂 JavaScript（第一支是 `filter.js`）。表單送出時攔截預設行為，讀取姓名/Email/訊息欄位值，組出帶 `subject`/`body`（URL encode）的 `mailto:` 連結後導頁，比純 HTML `action="mailto:"` 跨瀏覽器可靠。目的地信箱由 `<form data-mailto="...">` 屬性提供，不寫死在 JS 裡。
+- `src/pages/index.html`：`#contact` 標題升級為 `.contact__eyebrow`；JSON 驅動的部分（提示列/偏好/Email/社群列）包進 `<!-- BUILD:contact:start/end -->`；表單本身（不依賴 JSON 資料）維持手寫，加上 `data-mailto` 屬性；`</body>` 前加 `<script src="/src/scripts/contact-mailto.js" defer>`。
+- `src/styles/pages/_contact.scss`（原本完全空白）：`.contact__prompt-bar`／`-cursor` 沿用全站既有 `@keyframes blink`（不新增動畫）；`.contact__social-link` 圓形灰底 + hover 變強調色實心圓，`svg { fill: currentColor }` 讓圖示顏色跟著文字色切換；表單樣式（input/textarea/submit）補齊。
+
+**取捨說明**：
+- 社群圖示原本考慮用 Google Fonts 的 Material Symbols，但那套圖示字型只有通用 UI 符號（箭頭、設定等），沒有 GitHub/LinkedIn 等品牌專屬圖示，改用 inline SVG 品牌標誌——不需要外部 CDN/字型依賴，圖示可辨識度也更高。
+- 排版方向的第一輪（單欄/兩欄）被使用者認為「缺乏創新」，第二輪吸取上一次 `#goals` 規劃「深色 goals.log 面板被打槍」的教訓，4 款新方向都刻意維持全站淺色調性、不引入新視覺系統，只是重組已有語彙（header 閃爍游標、`#about__motto`、`#goals`/`#skills` 圓點）——這次一次選中，沒有再被要求修改方向，顯示「先問清楚會不會偏離全站調性」比「先給論述充分的大膽方向」更重要。
+- mailto 表單改用 JS 組連結而非純 HTML `action="mailto:"`：雖然讓 `#contact` 變成全站第二個用 JS 的區塊，但純 HTML 版本的換行/編碼在瀏覽器間行為不一致，這是使用者明確選擇「加」JS 換取可靠度的取捨。
+
+**驗證方式**：`node build/build.js` 與 `sass` 編譯成功；`git diff --stat` 確認只有 `#contact` 相關檔案被改動。Playwright 截圖確認桌面寬度（1400px）提示列/游標/社群 SVG 圖示呈現正確；填寫姓名/Email/訊息後點擊送出，透過 `browser_console_messages` 確認瀏覽器印出「Launched external handler for 'mailto:asyray951223@gmail.com?subject=...&body=...'」且 `subject`/`body` 內容與編碼正確、頁面 URL 未變成表單預設的 GET 查詢字串（證明 `preventDefault()` 生效）；縮到手機寬度（420px）用 `getBoundingClientRect`/`scrollWidth` 確認 `#contact` 本身無橫向溢出（頁面其餘位置與 header 導覽列的橫向捲動/重疊是既有、與本次變更無關的問題，前幾輪已確認過）；`#portfolio` 篩選器回歸測試（點擊「課程作業」／「全部」，`browser_console_messages` 確認錯誤數沒有增加，唯一的錯誤是既有、無關的 favicon 404）確認未受影響。測試用截圖、臨時 HTTP 伺服器、`.playwright-mcp` 暫存資料夾、暫存目錄下的排版比較 demo 檔事後已清除，不留在版控中。
+
+**里程碑**：至此全站九大區塊（about/resume/skills/portfolio/activities/casestudy/notes/goals/contact）皆已完成內容架構規劃與落地實作。
+
+
+### 51. `#contact` 表單與品牌圖示列重新排版：表單置中，圖示移到表單下方
+
+**背景**：使用者看過第 50 筆的實作後，要求把表單欄位置中，並把品牌 SVG 圖示列從 Email 下方移到表單下方，也置中呈現。
+
+**變更**：
+- `src/build/render/contact.js`：`renderContact()` 拆成 `renderContactTop()`（提示列/聯絡偏好/Email，位置不變）與 `renderContactSocial()`（社群圖示列，獨立輸出）——因為表單本身不吃 JSON 資料、要插在兩段 JSON 驅動內容中間，原本單一個 BUILD 區塊沒辦法讓表單「夾」在提示列與圖示列之間。
+- `src/build/build.js`：`sections` 陣列改成兩筆 contact 相關項目（`contact`／`contact-social`），共用同一份 `contact.json`，分別對應 index.html 裡兩組獨立的 BUILD 標記。
+- `src/pages/index.html`：`<!-- BUILD:contact:end -->` 提前到 Email 那行之後；表單移到第一組 BUILD 區塊之後；社群圖示列移到表單之後，包進新增的 `<!-- BUILD:contact-social:start/end -->`。
+- `src/styles/pages/_contact.scss`：`.contact__form` 加 `margin: 0 auto`（欄位內部文字維持左對齊，只置中整個表單區塊）；`.contact__social-list` 加 `justify-content: center`、調整 `margin`（從表單下方的間距改為 `2.2rem 0 0`）。
+
+**取捨說明**：拆成兩個 BUILD 區塊而不是把表單也塞進 render 函式：表單是純結構、不隨 `contact.json` 內容變動，維持手寫在 `index.html` 裡更直接，也符合其他區塊「JSON 驅動的部分才進 render 函式」的既有慣例（例如 `#skills` 的 details/summary 是 render 函式產生，但 `#contact` 表單本身跟資料無關，沒有理由塞進去）。
+
+**驗證方式**：`node build/build.js` 與 `sass` 編譯成功（`BUILD:contact` 與 `BUILD:contact-social` 兩組標記都正確找到並替換，沒有拋出 `inject.js` 的找不到標記錯誤）；`git diff` 確認範圍正確。Playwright 截圖確認桌面寬度（1400px）表單置中於區塊內、圖示列在表單下方也置中對齊；縮到手機寬度（420px）截圖與 `scrollWidth`/`clientWidth` 確認 `#contact` 本身無橫向溢出。測試用截圖與臨時 HTTP 伺服器事後已清除，不留在版控中。
+
+
+### 52. 導覽列「目前狀態」標示＋點擊跳轉動畫
+
+**背景**：導覽列（`.site-nav__link`）原本只有 hover 底線展開的互動，捲動頁面看不出目前所在區塊；點擊導覽連結跳轉是瀏覽器預設的瞬間跳轉、沒有動畫。用 Plan Mode 規劃並以 AskUserQuestion 確認兩個方向：(1) 目前所在區塊的視覺標示延伸現有 hover 底線語彙（不引入新視覺元素）；(2) 跳轉動畫自寫 JS（換取可控制的時長/緩動曲線，而非瀏覽器原生 `scroll-behavior: smooth`）。
+
+**變更**：
+- `src/styles/components/_section.scss`：新增 `.section { scroll-margin-top: $header-height; }`——不依賴 JS 的安全網，涵蓋直接帶 `#hash` 開啟頁面、瀏覽器上一頁/下一頁等情境，避免固定 header 蓋住錨點跳轉後的區塊頂端。
+- `src/styles/layout/_header.scss`：`.site-nav__link` 原本的 `&:hover` / `&:hover::after` 規則改寫成 `&:hover, &.is-active` / `&:hover::after, &.is-active::after`，讓「目前所在區塊」共用 hover 既有的「變白＋底線展開」效果，不新增獨立的視覺語彙。
+- `src/scripts/nav-scroll.js`（新增，全站第三支自訂 JavaScript，前兩支是 `filter.js`／`contact-mailto.js`）：
+  - 平滑捲動：攔截 `.site-nav__link` 的 click，用 `requestAnimationFrame` + `easeInOutCubic` 緩動曲線 animate `window.scrollTo`（600ms），目標位置扣掉 `.site-header` 實際渲染高度（`header.offsetHeight`，不是寫死換算的 px 值，跟 `_section.scss` 的 `scroll-margin-top` 概念一致）；動畫開始後用 `history.pushState` 補上 URL hash（`preventDefault` 蓋掉了瀏覽器預設的 hash 更新行為）；`prefers-reduced-motion: reduce` 時改用 `scrollIntoView()` 直接跳過動畫。
+  - Scrollspy：用 `IntersectionObserver` 搭配 `rootMargin: '-45% 0px -50% 0px'`（抓視窗垂直中段一條窄帶）偵測目前經過的區塊，命中時把對應 nav 連結標成 `.is-active`、其餘移除。用「區塊是否經過視窗中段」判斷而非捲動百分比，區塊高度不一也能正確運作。
+- `src/pages/index.html`：`</body>` 前加上 `<script src="/src/scripts/nav-scroll.js" defer>`。
+
+**取捨說明**：
+- `.is-active` 完全複用 hover 的 CSS 規則（同一組 `color`/`::after` width），不是另外寫一套顏色系統，維持「一個視覺語彙、兩種觸發時機」的簡潔對應。
+- Scrollspy 用 `rootMargin` 抓視窗中段窄帶，而不是「哪個區塊佔螢幕面積最大」之類的計算：後者在區塊高度差異很大時（例如 `#casestudy` 遠比 `#notes` 高）容易誤判，中段窄帶的做法只看「使用者視線大概落在哪個區塊」，判斷更貼近直覺。
+- `headerHeight` 在 JS 裡讀 `.site-header` 的 `offsetHeight` 而非寫死 `4rem` 換算的 64px：跟 `_section.scss` 的 `scroll-margin-top: $header-height` 概念一致，之後 header 高度改變不用兩邊分別手動同步數字。
+
+**驗證方式**：`sass` 編譯成功；`git diff --stat` 確認範圍正確。Playwright 驗證：載入頁面時 `#about` 對應的 nav 連結預設是 `.is-active`；點擊「目標願景」連結後，`getBoundingClientRect()` 確認 `#goals` 頂端落在 64px（跟 `.site-header` 的 `offsetHeight` 64px 幾乎完全吻合，誤差 0.09px），且只有 `#goals` 對應的 nav 連結被標成 `.is-active`；用 `browser_run_code_unsafe` 搭配 `page.emulateMedia({ reducedMotion: 'reduce' })` 驗證點擊後 50ms 內就捲動完成（`scrollY` 已跳到目標值），確認有正確跳過動畫；`#portfolio` 篩選器（點擊「課程作業」／「全部」）與 `#contact` mailto 表單（送出後 `browser_console_messages` 確認正確印出 mailto handler 訊息）皆回歸測試通過，確認第三支 JS 沒有互相干擾；手機寬度（420px）確認點擊 nav 連結仍能正確觸發跳轉（功能本身不受既有的手機版面重疊問題影響，該版面問題本次不處理）。測試用截圖、臨時 HTTP 伺服器、`.playwright-mcp` 暫存資料夾事後已清除，不留在版控中。

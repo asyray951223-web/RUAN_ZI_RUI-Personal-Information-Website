@@ -1,1 +1,174 @@
-// .contact 專屬樣式放這裡
+@use '../abstracts/variables' as *;
+
+// .contact 專屬樣式放這裡。依 docs/superpowers/specs/2026-07-24-contact-content-design.md
+// 落地：視覺方向「終端機提示列」——CTA 寫成一行指令，尾端接 header 同款閃爍游標，維持
+// 全站淺色調性（不引入深底面板，這是上一輪 #goals 規劃時被打槍過的方向）。社群連結
+// 圖示改用 inline SVG 品牌標誌，圓形灰底、hover 變強調色。
+
+.contact {
+  padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
+}
+
+.contact__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: $color-deep-space-blue;
+  margin-bottom: 1.4rem;
+
+  &-bar {
+    width: 5px;
+    height: 1.5em;
+    background: $color-accent;
+    border-radius: 2px;
+    animation: blink 1s steps(1) infinite;
+  }
+}
+
+// 終端機提示列：CTA 用一行「指令」呈現，尾端游標沿用全站既有的 @keyframes blink
+// （跟 header 拼音字尾、各區塊 eyebrow-bar 同一組動畫），不是另外發明的效果
+.contact__prompt-bar {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.94rem;
+  border: 1px solid #e2e6e9;
+  border-radius: 6px;
+  padding: 0.9rem 1.1rem;
+  margin-bottom: 0.6rem;
+}
+
+.contact__prompt-prefix {
+  color: $color-accent;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.contact__prompt-text {
+  color: $color-deep-space-blue;
+  font-weight: 700;
+}
+
+.contact__prompt-cursor {
+  display: inline-block;
+  width: 0.5em;
+  height: 1.05em;
+  background: $color-accent;
+  animation: blink 1s steps(1) infinite;
+  vertical-align: text-bottom;
+}
+
+.contact__reply-note {
+  font-size: 0.86rem;
+  color: #9aa8b0;
+  margin: 0.6rem 0 1.6rem;
+}
+
+.contact__text {
+  font-size: 1rem;
+  margin: 0 0 1.2rem;
+}
+
+.contact__link {
+  color: $color-accent;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(179, 64, 31, 0.4);
+  padding-bottom: 1px;
+
+  &:hover {
+    border-bottom-style: solid;
+  }
+}
+
+// 社群圖示列：inline SVG 品牌標誌，圓形灰底，hover 變強調色實心圓——跟全站「不做卡片」
+// 原則一致（圓形色塊不是卡片外框）。這輪改移到表單下方，用 justify-content: center
+// 置中（ul 本身是 block 層級的 flex 容器，預設就撐滿可用寬度，center 才會真的置中，
+// 不需要額外設定容器寬度）
+.contact__social-list {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 0.9rem;
+  margin: 2.2rem 0 0;
+  padding: 0;
+}
+
+.contact__social-link {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: #eef2f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #32424d;
+  transition: background 0.15s, color 0.15s;
+
+  svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    fill: currentColor;
+  }
+
+  &:hover {
+    background: $color-accent;
+    color: #fff;
+  }
+}
+
+// 表單這輪改置中呈現：margin: 0 auto 讓 480px 的欄寬區塊在 section 裡水平置中，
+// 欄位內部（label/input）維持左對齊，只置中整個表單區塊本身，不置中文字
+.contact__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.contact__form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.contact__form-label {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: $color-deep-space-blue;
+}
+
+.contact__form-input,
+.contact__form-textarea {
+  border: 1px solid #e2e6e9;
+  border-radius: 6px;
+  padding: 0.6rem 0.7rem;
+  font-family: inherit;
+  font-size: 0.94rem;
+  color: #32424d;
+}
+
+.contact__form-textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.contact__form-submit {
+  align-self: flex-start;
+  background: $color-accent;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.4rem;
+  border-radius: 6px;
+  font-size: 0.94rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}

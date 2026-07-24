@@ -1,0 +1,11 @@
+{
+  "email": "asyray951223@gmail.com",
+  "cta": "求職狀態佔位（例如：目前積極尋找 2026 年暑期前端實習機會）",
+  "replyNote": "聯絡偏好佔位（例如：Email 是最快找到我的方式，通常 3 天內回覆）",
+  "socialLinks": [
+    { "platform": "github", "label": "GitHub", "href": "#" },
+    { "platform": "linkedin", "label": "LinkedIn", "href": "#" },
+    { "platform": "discord", "label": "Discord 或 LINE", "href": "#" },
+    { "platform": "instagram", "label": "Instagram", "href": "#" }
+  ]
+}
