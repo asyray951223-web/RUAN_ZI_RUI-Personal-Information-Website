@@ -1,0 +1,34 @@
+{
+  "items": [
+    {
+      "slug": "note-1",
+      "type": "tech",
+      "typeLabel": "技術學習",
+      "title": "筆記標題佔位（例如：30 天學 JavaScript 心得）",
+      "excerpt": "摘要佔位（課程筆記／技術學習／讀書或課程心得）",
+      "date": "日期佔位",
+      "platform": "Medium",
+      "href": "#"
+    },
+    {
+      "slug": "note-2",
+      "type": "course",
+      "typeLabel": "課程筆記",
+      "title": "筆記標題佔位（例如：資料庫正規化整理）",
+      "excerpt": "摘要佔位（課程筆記／技術學習／讀書或課程心得）",
+      "date": "日期佔位",
+      "platform": "Notion",
+      "href": "#"
+    },
+    {
+      "slug": "note-3",
+      "type": "reading",
+      "typeLabel": "讀書心得",
+      "title": "筆記標題佔位（例如：《人月神話》讀後感）",
+      "excerpt": "摘要佔位（課程筆記／技術學習／讀書或課程心得）",
+      "date": "日期佔位",
+      "platform": "個人部落格",
+      "href": "#"
+    }
+  ]
+}

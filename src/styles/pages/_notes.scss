@@ -1,1 +1,135 @@
-// .notes 專屬樣式放這裡
+@use '../abstracts/variables' as *;
+
+// .notes 專屬樣式放這裡。視覺方向選定「RSS 訂閱源」（A方案）：每篇筆記是指向外部
+// 平台的一筆索引清單，用左側圖示 + 右側內文的橫向排版模擬 feed reader 的閱讀節奏，
+// 跟 #portfolio 卡片式、#casestudy 段落式刻意做出區隔——同一個網站不需要每個
+// list 型區塊都做成卡片（見 CLAUDE.md「本站預設不做卡片」原則），這裡改用清單
+// + 圖示的方式呈現「這是外部索引，不是站內全文」的定位。
+
+.notes {
+  padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
+}
+
+// .notes__eyebrow：標題列，比照 #portfolio/#activities/#casestudy 已升級的
+// eyebrow 做法（短豎線色塊＋blink 閃爍動畫＋文字）。全站標題統一為 2rem
+.notes__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: $color-deep-space-blue;
+  margin-bottom: 1.6rem;
+
+  &-bar {
+    width: 5px;
+    height: 1.5em;
+    background: $color-accent;
+    border-radius: 2px;
+    animation: blink 1s steps(1) infinite;
+  }
+}
+
+// 摘要列（共 N 篇 · 依日期排序）：呼應 feed reader 頂端的訂閱資訊列，
+// 同時誠實揭露目前筆記篇數，不是裝飾性文字
+.notes__head {
+  margin: 0 0 1.2rem;
+  font-size: 0.92rem;
+  color: #9aa8b0;
+
+  b {
+    color: $color-deep-space-blue;
+  }
+}
+
+.notes__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+// 每篇筆記用上細框分隔（不是卡片外框/陰影），比照全站清單式區塊的留白慣例
+.notes__item {
+  border-top: 1px solid #e2e6e9;
+
+  &:first-child {
+    border-top: none;
+  }
+
+  article {
+    display: flex;
+    gap: 1rem;
+    padding: 1.2rem 0;
+  }
+}
+
+// 圖示：直接取平台名稱第一個字（見 render/notes.js renderIcon），
+// 用色塊圓角方框呈現，不需要額外的圖片素材
+.notes__icon {
+  flex: none;
+  width: 2.4rem;
+  height: 2.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #eef2f5;
+  color: $color-accent;
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.notes__body {
+  min-width: 0;
+  flex: 1;
+}
+
+.notes__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.3rem;
+}
+
+.notes__type {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: $color-accent;
+  font-family: 'Space Mono', monospace;
+}
+
+.notes__date {
+  font-size: 0.82rem;
+  color: #9aa8b0;
+}
+
+.notes__title {
+  margin: 0 0 0.35rem;
+  font-size: 1.04rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.notes__link {
+  color: $color-deep-space-blue;
+  text-decoration: none;
+
+  &:hover {
+    color: $color-accent;
+  }
+}
+
+.notes__excerpt {
+  margin: 0 0 0.5rem;
+  font-size: 0.94rem;
+  line-height: 1.7;
+  color: #32424d;
+}
+
+// 外部平台標註：只加箭頭符號（↗）提示會離站，不寫完整句子（維持這輪確認的
+// 「只加箭頭」技術選型），視覺上跟 .notes__type 同一色但字級較小、不加粗
+.notes__platform {
+  font-size: 0.82rem;
+  color: $color-accent;
+}

@@ -788,3 +788,37 @@ src/styles/
 - 4 筆佔位交錯連結到 `#portfolio` 現有的 2 個作品（而非虛構不存在的 `project-3`/`project-4` portfolio 項目）：避免「查看關聯作品」連結指向不存在的錨點，維持連結的真實可用性。
 
 **驗證方式**：`npm run build` 成功執行；用 Playwright 截圖確認桌面寬度（1400px）下 4 筆案例排成 2 欄，卡片因為少了圖片佔位框而更緊湊；確認 4 個「查看關聯作品」連結的 `href` 正確交錯指向 `#portfolio-project-1`／`#portfolio-project-2`；縮到手機寬度（420px）用 `getBoundingClientRect` 逐一核對 `.casestudy__item` 寬度與容器一致（`min(520px,100%)` 生效，無強制撐寬溢出）；`#portfolio` 篩選器回歸測試確認未受影響。測試用截圖與臨時 HTTP 伺服器、`.playwright-mcp` 暫存資料夾事後已清除，不留在版控中。
+
+### 47. `#notes`（學習筆記）內容架構分析（未動程式碼）
+
+**背景**：使用者要求規劃 `#notes`，依 `CLAUDE.md`「設計新區塊時的固定流程」執行第一階段（內容架構規劃、只出規格文件）。盤點現況發現 `#notes` 是繼 `#casestudy` 之後另一個完全沒規劃過的核心區塊：只有 1 筆佔位（標題連結、摘要、日期），`_notes.scss` 完全空白，`href="#"` 尚未指向任何實際目標。用 AskUserQuestion 確認三個方向：(1) 筆記連結最終連到外部平台（Medium／個人部落格／Notion），不規劃站內獨立詳情頁——這跟 `FuturePlan.md`「規劃三」當初設想的「未來可能站內列表頁＋內文頁」部落格式方向不同，這次明確選擇外部連結模式；(2) 「分類/類型」獨立成必要欄位，比照 `portfolio__type` 做法；(3) 規模預期中高量（部落格性質、會持續累積），跟 `#casestudy` 的「少量精選」明顯不同。
+
+**產出**：`docs/superpowers/specs/2026-07-23-notes-content-design.md`（規格文件，比照既有五份 spec 文件格式慣例，尚未修改 `index.html`／`_notes.scss` 任何程式碼）。重點決定：
+- 必要資訊：筆記標題、分類/類型（新欄位）、摘要、日期、外部連結（補上真正的目標語意，取代 `href="#"`）。
+- 補充資訊 Tier 1（中高規模預期，現在就該定案命名）：分類篩選 slug（比照 `data-type` 模式）、來源平台標示、精選/置頂標記。Tier 2：細部標籤、閱讀時間/字數估計、系列/專題分組。
+- Governance：筆記全文只在外部平台維護，本站不重複打字，這跟 `#portfolio` 詳細頁（全文在站內）是不同治理模式；分類欄位命名比照 `portfolio__type` 兩層結構（顯示文字+slug），為未來篩選打底。
+- 文件結尾附上技術選型清單：要不要納入 JSON 建置範圍、標題要不要升級 eyebrow、這輪要不要就做分類篩選器 UI、外部連結視覺提示怎麼呈現。
+
+**取捨說明**：
+- 拿掉了 `FuturePlan.md` 原本設想的「站內獨立文章頁」方向：因為使用者這次明確選擇外部平台模式，這個決策比之前的展望更具體，之後若要改變方向需要使用者重新確認，不是自動延續舊展望。
+- 分類欄位不只當顯示用途，同時定案 `data-type` slug 命名：因為規模預期中高，現在决定比之後回頭幫每篇筆記補欄位便宜。
+
+**驗證方式**：這次是內容架構分析階段，沒有程式碼可驗證；規格文件經欄位前後矛盾、必要/補充分級、命名是否沿用現有 BEM 慣例（`portfolio__type`/`data-type` 等既有詞彙）的自我檢查後才交付，等使用者確認規格文件內容（含技術選型清單）後才會另開一輪請求進入 HTML/SCSS 實作。
+
+### 48. `#notes`（學習筆記）落地實作——RSS 訂閱源版型，納入 JSON + 建置腳本範圍
+
+**背景**：使用者確認第 47 筆規格文件的視覺方向為「A方案」（RSS 訂閱源：每篇筆記是指向外部平台的一筆索引，不是站內全文），並用 AskUserQuestion 確認四項技術選型：(1) 納入 JSON + 建置腳本範圍；(2) 標題一併升級成 eyebrow 樣式；(3) 分類篩選 UI 這輪先不做，只定義 `data-type` 欄位命名；(4) 外部連結視覺提示只加箭頭符號（↗），不寫完整句子。
+
+**變更**：
+- `src/data/notes.json`（新增）：3 筆佔位筆記（`note-1`/tech/Medium、`note-2`/course/Notion、`note-3`/reading/個人部落格），每筆含 `slug`／`type`／`typeLabel`／`title`／`excerpt`／`date`／`platform`／`href`。
+- `src/build/render/notes.js`（新增）：`renderIcon()` 直接取 `platform` 欄位的第一個字當圖示文字，不另外在 JSON 存一個 icon 欄位，避免兩份資料要手動保持同步；`renderItem()`／`renderNotes()` 輸出 `.notes__head` 摘要列（共 N 篇）＋ `.notes__list`，每筆 `<li class="notes__item" id="notes-{slug}" data-type="{type}">` 包 icon／`.notes__meta`（type+date）／標題連結／摘要／`.notes__platform`（平台名稱 + ↗ 箭頭）。
+- `src/build/build.js`：加入 `renderNotes` 的 require 與 sections 陣列項目，console.log 訊息同步補上 notes。
+- `src/pages/index.html`：`#notes` 標題從 `<h2 class="section__title">` 改成 `.notes__eyebrow`（比照 `#portfolio`/`#activities`/`#casestudy` 已升級的樣式），內容區塊加上 `<!-- BUILD:notes:start/end -->` 標記，交給建置腳本產生。
+- `src/styles/pages/_notes.scss`（原本完全空白）：新增 RSS 訂閱源版型樣式——`.notes__item` 用細框（`border-top`）分隔取代卡片外框/陰影（比照全站「預設不做卡片」原則）、`.notes__icon` 色塊圓角方框、`.notes__meta`（type 磚紅 Space Mono + date 灰階）、`.notes__platform` 磚紅色配合 ↗ 箭頭。
+
+**取捨說明**：
+- 圖示（icon）不另存欄位，直接從 `platform` 首字動態算，減少一份需要手動同步的資料；之後若某平台首字重複或想要用真正的品牌圖示，再回頭改 `renderIcon()` 邏輯即可，不影響 JSON 結構。
+- 分類篩選 UI 這輪刻意不做：只在每個 `.notes__item` 上輸出 `data-type` 屬性把命名定案，等筆記數量真的累積到需要篩選的規模，直接複用全站共用的 `src/scripts/filter.js`（已經是通用邏輯，只認 `[data-filter]`/`[data-type]`），屆時只需要加篩選按鈕，不需要改資料結構。
+- 沒有額外幫 `.notes__item` 加卡片外框/陰影，維持全站「.section 內容區塊預設不做卡片」的既定原則，只用細框分隔呈現 RSS/feed 清單感。
+
+**驗證方式**：`node build/build.js` 成功執行，`git diff` 確認只有 `#notes` 區塊被改動（60 行新增/12 行刪除），其餘五區塊輸出不受影響；`sass` 重新編譯成功。Playwright 截圖確認桌面寬度（1400px）圖示/分類/日期/標題/摘要/平台箭頭正確呈現；縮到手機寬度（420px）截圖與 `getBoundingClientRect` 確認 `.notes__item`/`#notes` 本身寬度跟容器一致、無強制撐寬溢出（頁面其餘位置量到的橫向捲動是既有、與本次變更無關的問題）；`document.querySelectorAll('.notes__item')` 逐筆核對 `id`/`data-type` 屬性正確；`#portfolio` 篩選器回歸測試（點擊「課程作業」／「全部」按鈕，核對 `.portfolio__item` 的 `display` 正確切換）確認未受影響；修改 `notes.json` 其中一筆 `date` 欄位、重新建置、`grep` 確認新值出現在 `index.html`，驗證資料驅動生效後，改回原始佔位值並重新建置還原。測試用截圖與臨時 HTTP 伺服器、`.playwright-mcp` 暫存資料夾事後已清除，不留在版控中。

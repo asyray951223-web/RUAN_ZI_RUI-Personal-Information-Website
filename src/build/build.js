@@ -10,6 +10,7 @@ const { renderActivities } = require('./render/activities');
 const { renderSkills } = require('./render/skills');
 const { renderPortfolio } = require('./render/portfolio');
 const { renderCasestudy } = require('./render/casestudy');
+const { renderNotes } = require('./render/notes');
 
 const SRC_DIR = path.join(__dirname, '..');
 const INDEX_HTML_PATH = path.join(SRC_DIR, 'pages', 'index.html');
@@ -29,6 +30,7 @@ function main() {
     { name: 'skills', data: readJson('skills.json'), render: renderSkills },
     { name: 'portfolio', data: readJson('portfolio.json'), render: renderPortfolio },
     { name: 'casestudy', data: readJson('casestudy.json'), render: renderCasestudy },
+    { name: 'notes', data: readJson('notes.json'), render: renderNotes },
   ];
 
   sections.forEach(({ name, data, render }) => {
@@ -37,7 +39,7 @@ function main() {
   });
 
   fs.writeFileSync(INDEX_HTML_PATH, html, 'utf8');
-  console.log('已依 src/data/*.json 重新產生 index.html 的 resume/activities/skills/portfolio/casestudy 區塊');
+  console.log('已依 src/data/*.json 重新產生 index.html 的 resume/activities/skills/portfolio/casestudy/notes 區塊');
 }
 
 main();

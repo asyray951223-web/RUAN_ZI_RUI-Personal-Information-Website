@@ -1084,25 +1084,73 @@
 <!-- BUILD:casestudy:end -->
       </section>
 
-      <!-- notes 是學習紀錄／筆記清單，每篇用 <article> 包裹，之後可能會連到獨立的文章頁面，先用 # 佔位連結 -->
+      <!-- #notes 依 docs/superpowers/specs/2026-07-23-notes-content-design.md 規劃落地：
+           視覺方向選定「RSS 訂閱源」——筆記全文只在外部平台維護（Medium/個人部落格/Notion
+           等），本站只放摘要+外部連結，不規劃站內詳情頁。分類欄位比照 portfolio__type
+           兩層結構（typeLabel 顯示文字 + data-type slug），slug 先定案命名，篩選器 UI
+           留到筆記數量真的累積到一定程度再做（這輪不輸出篩選按鈕）。外部連結視覺提示只加
+           箭頭符號（↗），不寫完整句子。資料改由 src/data/notes.json 驅動。 -->
       <section id="notes" class="section notes">
-        <h2 class="section__title">學習筆記</h2>
+        <div class="notes__eyebrow">
+          <span class="notes__eyebrow-bar" aria-hidden="true"></span>學習筆記
+        </div>
 
+        <!-- BUILD:notes:start -->
+        <p class="notes__head"><b>學習筆記</b> · 共 3 篇 · 依日期排序</p>
         <ul class="notes__list">
-          <li class="notes__item">
+          <li class="notes__item" id="notes-note-1" data-type="tech">
             <article>
-              <h3 class="notes__title">
-                <a class="notes__link" href="#"
-                  >筆記標題佔位（例如：30 天學 JavaScript 心得）</a
-                >
-              </h3>
-              <p class="notes__excerpt">
-                摘要佔位（課程筆記／技術學習／讀書或課程心得）
-              </p>
-              <p class="notes__date">日期佔位</p>
+              <div class="notes__icon" aria-hidden="true">M</div>
+              <div class="notes__body">
+                <div class="notes__meta">
+                  <span class="notes__type">技術學習</span>
+                  <span class="notes__date">日期佔位</span>
+                </div>
+                <h3 class="notes__title">
+                  <a class="notes__link" href="#">筆記標題佔位（例如：30 天學 JavaScript 心得）</a>
+                </h3>
+                <p class="notes__excerpt">摘要佔位（課程筆記／技術學習／讀書或課程心得）</p>
+                <!-- 外部連結視覺提示只加箭頭符號（↗），不寫完整句子，維持簡潔 -->
+                <span class="notes__platform">Medium ↗</span>
+              </div>
+            </article>
+          </li>
+          <li class="notes__item" id="notes-note-2" data-type="course">
+            <article>
+              <div class="notes__icon" aria-hidden="true">N</div>
+              <div class="notes__body">
+                <div class="notes__meta">
+                  <span class="notes__type">課程筆記</span>
+                  <span class="notes__date">日期佔位</span>
+                </div>
+                <h3 class="notes__title">
+                  <a class="notes__link" href="#">筆記標題佔位（例如：資料庫正規化整理）</a>
+                </h3>
+                <p class="notes__excerpt">摘要佔位（課程筆記／技術學習／讀書或課程心得）</p>
+                <!-- 外部連結視覺提示只加箭頭符號（↗），不寫完整句子，維持簡潔 -->
+                <span class="notes__platform">Notion ↗</span>
+              </div>
+            </article>
+          </li>
+          <li class="notes__item" id="notes-note-3" data-type="reading">
+            <article>
+              <div class="notes__icon" aria-hidden="true">個</div>
+              <div class="notes__body">
+                <div class="notes__meta">
+                  <span class="notes__type">讀書心得</span>
+                  <span class="notes__date">日期佔位</span>
+                </div>
+                <h3 class="notes__title">
+                  <a class="notes__link" href="#">筆記標題佔位（例如：《人月神話》讀後感）</a>
+                </h3>
+                <p class="notes__excerpt">摘要佔位（課程筆記／技術學習／讀書或課程心得）</p>
+                <!-- 外部連結視覺提示只加箭頭符號（↗），不寫完整句子，維持簡潔 -->
+                <span class="notes__platform">個人部落格 ↗</span>
+              </div>
             </article>
           </li>
         </ul>
+<!-- BUILD:notes:end -->
       </section>
 
       <!-- goals 分短期／中長期兩段，都是簡短一兩句話即可，不需要複雜結構 -->
