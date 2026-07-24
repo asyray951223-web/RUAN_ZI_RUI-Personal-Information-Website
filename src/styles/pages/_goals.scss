@@ -1,1 +1,209 @@
-// .goals 專屬樣式放這裡
+@use '../abstracts/variables' as *;
+
+// .goals 專屬樣式放這裡。依 docs/superpowers/specs/2026-07-24-goals-content-design.md 落地：
+// 內容從單段落文字改成群組容器 + 清單，補上時間範圍/行動佐證/連結/為什麼與完成定義，
+// 版面刻意不引入新的視覺系統，全部沿用全站已驗證過的元素（#about__motto 的斜體引言、
+// #skills 的等級圓點與 details/summary 收合語彙、#notes 的清單分隔線與箭頭連結）。
+
+.goals {
+  padding: clamp(2.5rem, 9vw, 4.5rem) clamp(1rem, 6vw, 3.5rem);
+}
+
+// .goals__eyebrow：標題列，比照全站已升級的 eyebrow 做法
+.goals__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: $color-deep-space-blue;
+  margin-bottom: 1.4rem;
+
+  &-bar {
+    width: 5px;
+    height: 1.5em;
+    background: $color-accent;
+    border-radius: 2px;
+    animation: blink 1s steps(1) infinite;
+  }
+}
+
+// 整體願景總述：直接沿用 #about__motto 的斜體強調色 + 上緣虛線做法，這裡放在區塊最上方，
+// 把短期/中長期兩組清單串成一個故事，不是兩份互不相關的清單
+.goals__vision {
+  font-size: 1.3rem;
+  font-weight: 700;
+  font-style: italic;
+  color: $color-accent;
+  line-height: 1.6;
+  margin: 0 0 1.6rem;
+  padding-bottom: 1.3rem;
+  border-bottom: 1px dashed rgba(13, 50, 77, 0.18);
+}
+
+.goals__group {
+  margin-bottom: 2.2rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.goals__subtitle {
+  margin: 0 0 0.9rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: $color-deep-space-blue;
+}
+
+.goals__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+// 每筆目標用上緣分隔線區分（不是卡片外框/陰影），比照 #notes__item 的清單慣例
+.goals__item {
+  border-top: 1px solid #e2e6e9;
+
+  &:first-child {
+    border-top: none;
+  }
+}
+
+.goals__row {
+  display: flex;
+  gap: 1rem;
+  padding: 1.1rem 0;
+  align-items: flex-start;
+}
+
+// 雙點時間感標記：沿用 #skills 等級指示的圓點語彙，兩點代表「短期/中長期」在時間軸上
+// 的相對位置（哪一顆點亮由 group.dotPosition 決定），不是逐筆目標各算一次，也沒有
+// 捏造任何量化資料——純粹標示分類，跟 #skills 圓點代表真實熟練度的用途不同
+.goals__dots {
+  flex: none;
+  display: flex;
+  gap: 3px;
+  margin-top: 0.5rem;
+}
+
+.goals__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #e2e6e9;
+
+  &--on {
+    background: $color-accent;
+  }
+}
+
+.goals__body {
+  min-width: 0;
+  flex: 1;
+}
+
+.goals__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: 0.35rem;
+}
+
+.goals__desc {
+  margin: 0;
+  font-weight: 700;
+  color: $color-deep-space-blue;
+  font-size: 1rem;
+}
+
+// 時間範圍標籤：小型 monospace 灰底 pill，刻意用中性色不用強調色——跟 #skills 的
+// 65 年尺標同一個道理，避免時間長短/遠近被誤讀成「重要度」
+.goals__time {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  color: #32424d;
+  background: #eef2f5;
+  padding: 0.15rem 0.5rem;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.goals__evidence {
+  margin: 0 0 0.3rem;
+  font-size: 0.86rem;
+  color: #32424d;
+
+  &::before {
+    content: '✓ ';
+    color: $color-accent;
+  }
+}
+
+// 「為什麼／完成定義」收合區：完全比照 .skills__evidence／.skills__evidence-summary
+// 的既有做法（原生 details/summary，不用 JavaScript），只是換內容，平常收起維持
+// 清單掃描時的輕量感，點開才看到動機與衡量標準這類較長的反思性文字
+.goals__why {
+  margin-top: 0.2rem;
+}
+
+.goals__why-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.86rem;
+  color: #32424d;
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &::after {
+    content: '▾';
+    color: $color-accent;
+    font-family: 'Space Mono', monospace;
+  }
+}
+
+.goals__why[open] .goals__why-summary::after {
+  content: '▴';
+}
+
+.goals__why-body {
+  margin: 0.5rem 0 0;
+  font-size: 0.86rem;
+  color: #32424d;
+  line-height: 1.7;
+
+  p {
+    margin: 0 0 0.4rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  b {
+    color: $color-deep-space-blue;
+  }
+}
+
+// 連結刻意放在「為什麼／完成定義」之後（這輪確認過的順序），沿用全站磚紅色
+// dashed underline 連結語彙，只加箭頭符號提示會離站，不寫完整句子
+.goals__link {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-size: 0.86rem;
+  color: $color-accent;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(179, 64, 31, 0.4);
+  padding-bottom: 1px;
+
+  &:hover {
+    border-bottom-style: solid;
+  }
+}

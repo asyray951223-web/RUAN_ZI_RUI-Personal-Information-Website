@@ -822,3 +822,24 @@ src/styles/
 - 沒有額外幫 `.notes__item` 加卡片外框/陰影，維持全站「.section 內容區塊預設不做卡片」的既定原則，只用細框分隔呈現 RSS/feed 清單感。
 
 **驗證方式**：`node build/build.js` 成功執行，`git diff` 確認只有 `#notes` 區塊被改動（60 行新增/12 行刪除），其餘五區塊輸出不受影響；`sass` 重新編譯成功。Playwright 截圖確認桌面寬度（1400px）圖示/分類/日期/標題/摘要/平台箭頭正確呈現；縮到手機寬度（420px）截圖與 `getBoundingClientRect` 確認 `.notes__item`/`#notes` 本身寬度跟容器一致、無強制撐寬溢出（頁面其餘位置量到的橫向捲動是既有、與本次變更無關的問題）；`document.querySelectorAll('.notes__item')` 逐筆核對 `id`/`data-type` 屬性正確；`#portfolio` 篩選器回歸測試（點擊「課程作業」／「全部」按鈕，核對 `.portfolio__item` 的 `display` 正確切換）確認未受影響；修改 `notes.json` 其中一筆 `date` 欄位、重新建置、`grep` 確認新值出現在 `index.html`，驗證資料驅動生效後，改回原始佔位值並重新建置還原。測試用截圖與臨時 HTTP 伺服器、`.playwright-mcp` 暫存資料夾事後已清除，不留在版控中。
+
+
+### 49. `#goals`（目標願景）內容架構規劃＋落地實作
+
+**背景**：`#goals` 是「大學生版九大區塊」加分四項中唯一從 2026-07-20 建立後就沒再被規劃過的區塊——只有短期/中長期各一段佔位文字，`_goals.scss` 完全空白，`src/data/` 底下唯獨缺 `goals.json`，是進度最落後的一個。這輪依 `CLAUDE.md`「設計新區塊時的固定流程」完整走了一輪：內容架構規劃（Plan Mode）→ 5 項技術選型全數確認採用（清單結構化／行動佐證／對應技能作品連結／eyebrow 標題／納入 JSON 建置範圍）→ 排版方向先用文字/ASCII 給 6 款範例，使用者認為「缺乏創新」→ 改用 `frontend-design` skill 設計一版獨立的深色 `goals.log` 終端機面板方向（背景沿用 header 已在用的 `$color-deep-space-blue`／`$color-accent-on-dark`）→ 使用者要求「重新設計 2 款，參考本網頁整體風格」，顯示深色面板偏離全站淺色調性太多→ 改成完全重組全站既有元素（`#about__motto` 斜體引言、`#skills` 圓點與 details/summary 收合語彙、`#notes` 清單分隔線）的 2 款新方向→ 使用者指出「缺乏一些目標願景需要有的資訊」，用 AskUserQuestion 確認追加「動機/原因」「整體願景總述」「具體衡量標準/完成定義」「時間範圍」四項欄位→ 補齊欄位後的整合版 demo 確認方向，並要求把 ↗ 連結移到「為什麼／完成定義」收合區下方→ 使用者下達「可以開始實作」，正式落地。
+
+**產出**：`docs/superpowers/specs/2026-07-24-goals-content-design.md`（規格文件，記錄完整內容架構與三輪視覺方向迭代過程）。
+
+**變更**：
+- `src/data/goals.json`（新增）：`vision`（整體願景總述）＋兩個 `groups`（`short-term`／`long-term`，各帶 `dotPosition: near/far`），每組 `items` 陣列可放多筆，每筆含 `slug`／`desc`／`timeframe`／`why`／`criteria`／`evidence`／`link`。
+- `src/build/render/goals.js`（新增）：`renderDots()` 依 `group.dotPosition` 決定兩顆時間感標記圓點哪一顆點亮（整組共用同一個判斷，不逐筆目標各算一次）；`renderWhy()` 只要 `why`/`criteria` 任一有值就輸出 `<details>` 收合區，都沒有才整段省略；連結刻意排在收合區「之後」（比照 `#skills`/`#activities` 的「有值才輸出對應標籤」慣例）。
+- `src/build/build.js`：加入 `renderGoals` 的 require 與 sections 陣列項目，console.log 訊息同步補上 goals。
+- `src/pages/index.html`：`#goals` 標題升級為 `.goals__eyebrow`，內容區塊加上 `<!-- BUILD:goals:start/end -->` 標記。
+- `src/styles/pages/_goals.scss`（原本完全空白）：新增完整樣式——`.goals__vision` 沿用 `#about__motto` 的斜體強調色+上緣虛線；`.goals__dots`/`.goals__dot` 沿用 `#skills` 等級圓點語彙；`.goals__time` 用中性灰底 pill（不用強調色，跟 `#skills` 65 年尺標同一個「不讓時間長短被誤讀成重要度」的原則）；`.goals__why`/`.goals__why-summary` 完全比照 `.skills__evidence`/`.skills__evidence-summary` 的 details/summary 做法；`.goals__link` 沿用全站磚紅色 dashed underline + ↗ 箭頭語彙。
+
+**取捨說明**：
+- 深色 `goals.log` 終端機面板方向雖然有明確論述（呼應 header 既有的深底配色、blink 游標象徵「還在寫、還沒寫完」），但使用者判斷它偏離全站一貫的淺色、無卡片調性太多，最終選擇完全不引入新視覺系統的方向——這比「規劃新區塊時，排版有歧義就先給範例」的既有規則又更進一步：即使給出有設計論述支撐的大膽方向，仍然可能不符合使用者對「跟全站風格一致」的期待，需要視覺化 demo 才能發現這個落差，純文字描述不容易察覺。
+- 雙點時間感標記只標示「短期/中長期」這個既有分類，沒有做成連續的量化進度指示，避免無中生有捏造使用者尚未提供的百分比資料，維持全站「誠實感優先」原則。
+- 動機/完成定義收進 `<details>` 而非常態展開：6 個欄位全部平鋪會讓清單變成文字牆，比照 `#skills__evidence` 已驗證過的收合模式，讓快速掃描（目標/時間/佐證/連結）與深入閱讀（動機/完成定義）分成兩層。
+
+**驗證方式**：`node build/build.js` 成功執行，`git diff --stat` 確認只有 `#goals` 相關檔案被改動（`src/build/build.js`／`src/pages/index.html`／`src/styles/main.css`／`_goals.scss` 修改，`goals.json`／`render/goals.js` 新增）；`sass` 重新編譯成功。Playwright 截圖確認桌面寬度（1400px）eyebrow／願景引言／雙點標記／時間標籤／佐證／連結呈現正確；點擊「為什麼／完成定義」確認 `<details>` 展開收合正常運作，且展開後連結確實排在收合區下方；縮到手機寬度（420px）用 `getBoundingClientRect`/`scrollWidth` 確認 `#goals` 本身無橫向溢出（頁面其餘位置與 header 導覽列的橫向捲動/重疊是既有、與本次變更無關的問題，在 `#about` 區塊也能重現）；`#portfolio` 篩選器回歸測試（點擊「課程作業」／「全部」）確認未受影響。測試用截圖、臨時 HTTP 伺服器、`.playwright-mcp` 暫存資料夾、暫存目錄下的排版比較 demo 檔事後已清除，不留在版控中。

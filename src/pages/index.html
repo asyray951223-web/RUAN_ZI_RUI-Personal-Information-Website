@@ -1154,22 +1154,122 @@
       </section>
 
       <!-- goals 分短期／中長期兩段，都是簡短一兩句話即可，不需要複雜結構 -->
+      <!-- #goals 依 docs/superpowers/specs/2026-07-24-goals-content-design.md 落地：
+           內容從單段落文字改成可放多筆的清單結構，每筆目標補上時間範圍/行動佐證/
+           對應技能或作品的連結/為什麼與完成定義，區塊最上方加一句整體願景總述。
+           資料改由 src/data/goals.json 驅動，經 build/render/goals.js 產生。 -->
       <section id="goals" class="section goals">
-        <h2 class="section__title">目標願景</h2>
+        <div class="goals__eyebrow">
+          <span class="goals__eyebrow-bar" aria-hidden="true"></span>目標願景
+        </div>
+
+        <!-- BUILD:goals:start -->
+        <p class="goals__vision">「整體願景總述佔位（例如：短期把基本功打紮實，中長期朝全端工程師的方向持續累積）」</p>
 
         <div class="goals__group">
           <h3 class="goals__subtitle">短期目標</h3>
-          <p class="goals__short-term">
-            短期目標佔位（例如：希望在大四前找到前端實習）
-          </p>
+          <ul class="goals__list">
+          <li class="goals__item" id="goals-goal-1">
+            <div class="goals__row">
+              <span class="goals__dots" aria-hidden="true">
+                <span class="goals__dot goals__dot--on"></span>
+                <span class="goals__dot"></span>
+              </span>
+              <div class="goals__body">
+                <div class="goals__top">
+                  <p class="goals__desc">短期目標佔位（例如：希望在大四前找到前端實習）</p>
+                  <span class="goals__time">時間範圍佔位（例如：2026 Q4 前）</span>
+                </div>
+                <p class="goals__evidence">行動佐證佔位（例如：已完成 80%，剩兩區塊待補）</p>
+              <details class="goals__why">
+                <summary class="goals__why-summary">為什麼／完成定義</summary>
+                <div class="goals__why-body">
+                  <p><b>為什麼：</b>動機佔位（例如：求職前需要一個能證明實作能力的作品，而不是只有文字履歷）</p>
+                  <p><b>完成定義：</b>完成定義佔位（例如：完成度 100%、手機瀏覽正常、至少 1 位朋友實際測試過）</p>
+                </div>
+              </details>
+                <a class="goals__link" href="#">↗ 查看作品：個人資訊網站</a>
+              </div>
+            </div>
+          </li>
+          <li class="goals__item" id="goals-goal-2">
+            <div class="goals__row">
+              <span class="goals__dots" aria-hidden="true">
+                <span class="goals__dot goals__dot--on"></span>
+                <span class="goals__dot"></span>
+              </span>
+              <div class="goals__body">
+                <div class="goals__top">
+                  <p class="goals__desc">短期目標佔位（例如：熟悉 React 與元件化開發流程）</p>
+                  <span class="goals__time">時間範圍佔位（例如：2026 Q4 前）</span>
+                </div>
+                <p class="goals__evidence">行動佐證佔位（例如：已完成 2 個練習專案）</p>
+              <details class="goals__why">
+                <summary class="goals__why-summary">為什麼／完成定義</summary>
+                <div class="goals__why-body">
+                  <p><b>為什麼：</b>動機佔位（例如：目前多數前端實習職缺都要求 React 經驗）</p>
+                  <p><b>完成定義：</b>完成定義佔位（例如：能獨立完成一個含表單與 API 串接的小專案）</p>
+                </div>
+              </details>
+                <a class="goals__link" href="#">↗ 查看技能：React</a>
+              </div>
+            </div>
+          </li>
+          </ul>
         </div>
 
         <div class="goals__group">
           <h3 class="goals__subtitle">中長期方向</h3>
-          <p class="goals__long-term">
-            中長期方向佔位（例如：對新創產品開發很有興趣）
-          </p>
+          <ul class="goals__list">
+          <li class="goals__item" id="goals-goal-3">
+            <div class="goals__row">
+              <span class="goals__dots" aria-hidden="true">
+                <span class="goals__dot"></span>
+                <span class="goals__dot goals__dot--on"></span>
+              </span>
+              <div class="goals__body">
+                <div class="goals__top">
+                  <p class="goals__desc">中長期方向佔位（例如：朝前端／全端工程師方向發展）</p>
+                  <span class="goals__time">時間範圍佔位（例如：2027–2028）</span>
+                </div>
+                <p class="goals__evidence">行動佐證佔位（例如：目前累積 3 項專案經驗）</p>
+              <details class="goals__why">
+                <summary class="goals__why-summary">為什麼／完成定義</summary>
+                <div class="goals__why-body">
+                  <p><b>為什麼：</b>動機佔位（例如：對「把想法變成使用者看得到、用得到的畫面」這件事最有成就感）</p>
+                  <p><b>完成定義：</b>完成定義佔位（例如：能獨立負責一個中型專案的前端架構規劃）</p>
+                </div>
+              </details>
+                <a class="goals__link" href="#">↗ 查看作品集</a>
+              </div>
+            </div>
+          </li>
+          <li class="goals__item" id="goals-goal-4">
+            <div class="goals__row">
+              <span class="goals__dots" aria-hidden="true">
+                <span class="goals__dot"></span>
+                <span class="goals__dot goals__dot--on"></span>
+              </span>
+              <div class="goals__body">
+                <div class="goals__top">
+                  <p class="goals__desc">中長期方向佔位（例如：持續累積開源貢獻與技術寫作習慣）</p>
+                  <span class="goals__time">時間範圍佔位（例如：長期持續）</span>
+                </div>
+                <p class="goals__evidence">行動佐證佔位（例如：已開始寫技術學習筆記）</p>
+              <details class="goals__why">
+                <summary class="goals__why-summary">為什麼／完成定義</summary>
+                <div class="goals__why-body">
+                  <p><b>為什麼：</b>動機佔位（例如：想透過寫作整理自己的學習過程，也希望能回饋開源社群）</p>
+                  <p><b>完成定義：</b>完成定義佔位（例如：平均每月至少 1 篇技術筆記，累積至少 1 個 open source PR）</p>
+                </div>
+              </details>
+                <a class="goals__link" href="#">↗ 查看學習筆記</a>
+              </div>
+            </div>
+          </li>
+          </ul>
         </div>
+<!-- BUILD:goals:end -->
       </section>
 
       <!-- contact__form 只是先搭好骨架（label for 對應 input id，方便無障礙），
