@@ -34,7 +34,22 @@
       <!-- site-nav 是「獨立的另一個 Block」，不是 site-header 的 Element，
            因為導覽列本身也是一個可以獨立存在、重複使用的元件 -->
       <nav class="site-nav">
-        <ul class="site-nav__list">
+        <!-- 漢堡選單按鈕：只在窄螢幕顯示（見 _header.scss 的 max-width media query）。
+             adversarial-ux-test 發現 9 個導覽項目在手機寬度換行成 3 排，讓固定 header
+             永久佔掉快 30% 視窗高度；收進選單後手機版 header 只剩標題列高度，
+             選單只在點開時才暫時展開、疊在內容上方，不影響版面 -->
+        <button
+          class="site-nav__toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="site-nav-list"
+          aria-label="開啟導覽選單"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
+        <ul class="site-nav__list" id="site-nav-list">
           <li class="site-nav__item">
             <a class="site-nav__link" href="#about">個人介紹</a>
           </li>
@@ -681,6 +696,9 @@
             </article>
           </li>
         </ul>
+        <!-- 篩選後若該分類目前沒有任何作品，filter.js 會取消這裡的 hidden，
+             避免畫面直接開天窗、讓人誤以為網站壞掉 -->
+        <p class="portfolio__empty js-filter-empty" hidden>這個分類目前還沒有作品。</p>
 <!-- BUILD:portfolio:end -->
       </section>
 
@@ -1310,6 +1328,7 @@
               type="text"
               id="contact-name"
               name="name"
+              required
             />
           </div>
           <div class="contact__form-field">
@@ -1319,6 +1338,7 @@
               type="email"
               id="contact-email"
               name="email"
+              required
             />
           </div>
           <div class="contact__form-field">
@@ -1329,9 +1349,20 @@
               class="contact__form-textarea"
               id="contact-message"
               name="message"
+              required
             ></textarea>
           </div>
-          <button class="contact__form-submit" type="submit">送出</button>
+          <!-- 送出鈕 + 複製 Email 備援鈕並排：mailto: 依賴使用者裝置有設定好預設郵件 App，
+               沒設定的人按下送出可能悄悄沒反應，複製 Email 讓這種情況也能繼續聯絡 -->
+          <div class="contact__form-actions">
+            <button class="contact__form-submit" type="submit">送出</button>
+            <button class="contact__form-copy" type="button" data-copy-email="asyray951223@gmail.com">
+              複製 Email
+            </button>
+          </div>
+          <!-- 送出後的狀態提示：mailto 表單本身在頁面上完全沒有「已送出」的視覺回饋，
+               這裡用 aria-live 讓螢幕報讀器也能唸出提示，預設 hidden 由 contact-mailto.js 控制 -->
+          <p class="contact__form-status" role="status" aria-live="polite" hidden></p>
         </form>
 
         <!-- 品牌 SVG 圖示列這輪改移到表單下方並置中，資料仍來自 contact.json，

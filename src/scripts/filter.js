@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.section').forEach((section) => {
     const filterButtons = section.querySelectorAll('[data-filter]');
     const items = section.querySelectorAll('[data-type]');
+    // 空狀態文字：篩選到零筆資料時顯示，取代原本「畫面直接開天窗」的空白
+    // （adversarial-ux-test 發現：使用者點到沒有對應項目的分類，會誤以為網站壞掉）
+    const emptyMessage = section.querySelector('.js-filter-empty');
 
     if (!filterButtons.length || !items.length) return;
 
@@ -26,10 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
           btn.setAttribute('aria-pressed', String(isActive));
         });
 
+        let anyVisible = false;
         items.forEach((item) => {
           const matches = filter === 'all' || item.dataset.type === filter;
           item.classList.toggle('js-filter-hidden', !matches);
+          if (matches) anyVisible = true;
         });
+
+        if (emptyMessage) emptyMessage.hidden = anyVisible;
       });
     });
   });

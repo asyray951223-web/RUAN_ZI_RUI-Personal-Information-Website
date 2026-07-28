@@ -1,6 +1,12 @@
 $font-family-base: "Inter", "Noto Sans TC", sans-serif;
 $header-height: 4rem;
 
+// 斷點變數：全站預設 fluid-first（clamp/minmax(min())/auto-fit 處理留白、字級、欄數），
+// 只有版面需要「質變」（例如導覽列整個收進選單）才用斷點，且統一透過這裡的變數 +
+// abstracts/_mixins.scss 的 below() mixin 引用，避免各檔案各自寫一個 767/768/800
+// 的 magic number。768px 沿用 header 漢堡選單原本就用、已測過的數值，不是新設數字
+$bp-tablet: 768px;
+
 //顏色專區
 $color-platinum: rgba(243, 243, 244);
 $color-pacific-cyan:rgba(34, 146, 164);

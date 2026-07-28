@@ -1,5 +1,6 @@
 // .site-header / .site-nav 樣式放這裡
 @use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
 
 .site-header {
   position: fixed; // 固定在視窗頂端，滾動時不隨頁面移動
@@ -88,6 +89,47 @@
 }
 
 .site-nav {
+  position: relative; // 讓行動版下拉選單可以用 position: absolute 對齊這裡，不影響 header 版面
+
+  // &__toggle 會編譯成 .site-nav__toggle：漢堡選單按鈕，預設（桌機）不顯示，
+  // 只在下面 max-width media query 的窄螢幕情境啟用
+  &__toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    width: 36px;
+    height: 32px;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 0;
+
+    span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      margin: 0 auto;
+      background: $color-platinum;
+      border-radius: 1px;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    // 開啟時三條線變成一個 X，是漢堡選單常見的「已展開」視覺回饋
+    &[aria-expanded="true"] span:nth-child(1) {
+      transform: translateY(6px) rotate(45deg);
+    }
+
+    &[aria-expanded="true"] span:nth-child(2) {
+      opacity: 0;
+    }
+
+    &[aria-expanded="true"] span:nth-child(3) {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+  }
+
   // &__list 會編譯成 .site-nav__list
   &__list {
     display: flex; // 導覽項目橫向排列
@@ -131,6 +173,62 @@
     &:hover::after,
     &.is-active::after {
       width: 100%;
+    }
+  }
+}
+
+// 768px（$bp-tablet）以下：9 個導覽項目換行成 3 排會讓固定 header 永久佔掉近 30%
+// 手機視窗高度（adversarial-ux-test 實測 812px 視窗中佔 238px），改收進漢堡選單，
+// 只在點開時才暫時展開、疊在內容上方（position: absolute），不佔用 header 本身的版面高度。
+// 改用 below() mixin（RWD 分階段規劃 Phase 0）而不是直接寫 @media (max-width: 768px)：
+// 全站斷點值統一從 abstracts/_variables.scss 的 $bp-tablet 來，之後其他區塊如果也需要
+// 斷點，直接 @include below($bp-tablet) 就好，不會出現不同檔案各寫一個數字的情況
+@include below($bp-tablet) {
+  .site-nav {
+    // 標題（中文名＋英文拼音＋副標）本身在窄螢幕會換行變高，如果 nav 還跟標題
+    // 一起排在 header 的 flex row 裡，nav 只剩漢堡鈕會被擠到自己另起一行、
+    // 且單獨一個 flex item 時 space-between 會讓它貼左而不是貼右，跟標題長高
+    // 與否綁在一起、位置會跳來跳去。改成絕對定位釘死在 header 右上角，
+    // 不再參與 header 的 flex 排版，位置固定、也讓 header 高度只由標題決定
+    position: absolute;
+    top: 0.6rem;
+    right: 2rem;
+
+    &__toggle {
+      display: flex;
+    }
+
+    &__list {
+      position: absolute;
+      top: calc(100% + 0.6rem);
+      right: 0;
+      flex-direction: column;
+      align-items: flex-end;
+      width: max-content;
+      max-width: min(80vw, 320px);
+      background: $color-deep-space-blue;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      // 左右內距固定不變；上下內距跟著 max-height 一起從 0 展開，避免收合時
+      // 還留一截透明但佔高度的 padding
+      padding: 0 1.2rem;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+
+      // 預設收合：max-height: 0 + overflow hidden 做展開/收合動畫，
+      // 比 display: none 多了過渡效果，也比較好維護開關狀態
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none; // 收合時即使還在 DOM 裡也不能被點到/Tab 到
+      transition: max-height 0.25s ease, opacity 0.2s ease, padding 0.25s ease;
+
+      &.is-open {
+        max-height: 70vh;
+        padding-block: 1rem;
+        opacity: 1;
+        pointer-events: auto;
+        overflow-y: auto;
+      }
     }
   }
 }

@@ -12,6 +12,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // ---- 漢堡選單開關（768px 以下才會顯示，見 _header.scss 的 media query）----
+  const navToggle = document.querySelector('.site-nav__toggle');
+  const navList = document.querySelector('.site-nav__list');
+
+  function closeNavMenu() {
+    if (!navToggle || !navList) return;
+    navList.classList.remove('is-open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  if (navToggle && navList) {
+    navToggle.addEventListener('click', () => {
+      const isOpen = navList.classList.toggle('is-open');
+      navToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    // 點選單外側也收合，符合一般漢堡選單的慣例行為
+    document.addEventListener('click', (event) => {
+      const clickedInsideNav = event.target === navToggle || navToggle.contains(event.target) || navList.contains(event.target);
+      if (!clickedInsideNav) closeNavMenu();
+    });
+  }
+
   function getHeaderHeight() {
     return header.offsetHeight;
   }
@@ -67,15 +90,25 @@ document.addEventListener('DOMContentLoaded', () => {
       // preventDefault 蓋掉了瀏覽器預設的 hash 更新行為，手動補上，
       // 讓網址列/上一頁按鈕/分享連結還是能正確定位到該區塊
       history.pushState(null, '', targetId);
+
+      // 手機版點完導覽連結就該收合選單，不然選單會一直疊在畫面上擋住剛跳轉到的內容
+      closeNavMenu();
     });
   });
 
   // ---- Scrollspy：用 IntersectionObserver 偵測目前經過視窗中段的區塊 ----
   // rootMargin 抓視窗垂直中段一條窄帶（上緣扣掉 header 再抓 45%、下緣抓 50%），
   // 用「區塊是否經過這條窄帶」判斷目前所在區塊，不用捲動百分比——
-  // 這樣區塊高度不一也能正確運作，不會因為某區塊特別高/特別矮而誤判
+  // 這樣區塊高度不一也能正確運作，不會因為某區塊特別高/特別矮而誤判。
+  // 只挑 href 以 # 開頭的連結才查詢（跟上面點擊處理的判斷一致）：project-1.html
+  // 這類子頁面的 nav 連結是指回首頁的絕對路徑（例如 /src/pages/index.html#about），
+  // 不是本頁的錨點，直接丟給 document.querySelector 會因為選擇器字串不合法而丟出
+  // SyntaxError（RWD 分階段規劃 Phase 4 幫 project-1.html 補上這支腳本時發現）
   const sections = navLinks
-    .map((link) => document.querySelector(link.getAttribute('href')))
+    .map((link) => {
+      const href = link.getAttribute('href');
+      return href && href.startsWith('#') ? document.querySelector(href) : null;
+    })
     .filter(Boolean);
 
   const observer = new IntersectionObserver(

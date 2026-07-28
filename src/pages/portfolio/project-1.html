@@ -30,7 +30,21 @@
       <!-- nav 連結全部改成絕對路徑指回首頁對應錨點：這個頁面不是首頁本身，
            裸 href="#about" 這種寫法會變成在這支子頁面裡找不到對應區塊 -->
       <nav class="site-nav">
-        <ul class="site-nav__list">
+        <!-- 漢堡選單按鈕：跟 index.html 同步補上（RWD 分階段規劃 Phase 4 發現遺漏）。
+             這支子頁面原本沒有這顆按鈕，導致 768px 以下 .site-nav__list 被 CSS 收合成
+             max-height:0 卻沒有任何方式展開，整份導覽選單在手機/平板寬度完全打不開 -->
+        <button
+          class="site-nav__toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="site-nav-list"
+          aria-label="開啟導覽選單"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
+        <ul class="site-nav__list" id="site-nav-list">
           <li class="site-nav__item">
             <a class="site-nav__link" href="/src/pages/index.html#about">個人介紹</a>
           </li>
@@ -73,33 +87,33 @@
         <!-- 深度說明沿用 #casestudy 已經設計好的五段式敘事 class，不另外發明新一套，
              因為「作品的深度說明」本來就是 casestudy__block 這套視覺語彙要處理的事 -->
         <div class="casestudy__block">
-          <h4 class="casestudy__block-title">背景</h4>
+          <h4 class="casestudy__block-label">背景</h4>
           <p class="casestudy__block-text">
             背景佔位（為什麼要做？課程作業／競賽／自己想解決的問題？）
           </p>
         </div>
 
         <div class="casestudy__block">
-          <h4 class="casestudy__block-title">目標</h4>
+          <h4 class="casestudy__block-label">目標</h4>
           <p class="casestudy__block-text">目標佔位（想達成什麼？）</p>
         </div>
 
         <div class="casestudy__block">
-          <h4 class="casestudy__block-title">過程</h4>
+          <h4 class="casestudy__block-label">過程</h4>
           <p class="casestudy__block-text">
             過程佔位（怎麼規劃？設計 → 實作 → 測試）
           </p>
         </div>
 
         <div class="casestudy__block">
-          <h4 class="casestudy__block-title">挑戰</h4>
+          <h4 class="casestudy__block-label">挑戰</h4>
           <p class="casestudy__block-text">
             挑戰佔位（遇到什麼困難？怎麼解決？）
           </p>
         </div>
 
         <div class="casestudy__block">
-          <h4 class="casestudy__block-title">成果與收穫</h4>
+          <h4 class="casestudy__block-label">成果與收穫</h4>
           <p class="casestudy__block-text">
             成果與收穫佔位（最後做出來是什麼樣子？學到什麼？下次會怎麼改進？）
           </p>
@@ -110,5 +124,10 @@
     <footer class="site-footer">
       <p class="site-footer__text">&copy; 2026 你的名字</p>
     </footer>
+
+    <!-- 只需要漢堡選單開關邏輯（跟 index.html 同步補上，RWD 分階段規劃 Phase 4）；
+         filter.js／contact-mailto.js 是給 index.html 的篩選器/表單用，這支子頁面
+         沒有這兩種元件，不需要引入 -->
+    <script src="/src/scripts/nav-scroll.js" defer></script>
   </body>
 </html>

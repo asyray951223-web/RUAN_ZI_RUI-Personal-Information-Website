@@ -199,13 +199,20 @@
   color: $color-accent;
 }
 
-// 展開後的網格：6 欄，避免每個作品連結都各佔一整行造成過多空白；
+// 展開後的網格：欄寬響應式，避免每個作品連結都各佔一整行造成過多空白；
 // 淺色底 + 磚紅系細框呼應 resume__pdf-link 的膠囊外框語彙，視覺上跟「作品集卡片」
 // 明確做出區隔（不用彩色標籤），只當「指標」不當「展示」。
-// 卡片欄寬已改回貼近原本單欄設計的 ~600px+，維持 6 欄不會太擠
+// 原本寫死 6 欄，假設父層 .skills__list 永遠 ≥600px 寬；但父層本身是
+// minmax(min(600px,100%),1fr)，手機寬度會縮到 ~340px，6 欄硬擠會讓每欄只剩
+// ~50px，文字截斷到看不出內容（RWD 分階段規劃 Phase 2 修正）。改用
+// auto-fill（不是 auto-fit）+ min(110px, 100%)：多數技能只有 2 個作品佐證，
+// auto-fill 會保留其餘空欄不把寬度分給既有項目，讓連結維持原本緊湊、不被拉伸
+// 撐滿整行的樣子（auto-fit 會把空欄收合、寬度讓給僅有的 2 個項目，變成兩顆
+// 異常寬的膠囊，跟全站其他標籤類元件都是「依內容寬度」的緊湊樣式不一致）；
+// 110px 大約能顯示佔位資料「作品名稱佔位（一）」這類 7-8 字短連結名稱的大半
 .skills__evidence-grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(110px, 100%), 1fr));
   gap: 0.4rem 0.5rem;
   margin-top: 0.5rem;
   padding: 0.6rem 0.7rem;

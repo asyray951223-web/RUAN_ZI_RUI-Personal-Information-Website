@@ -159,8 +159,15 @@
   resize: vertical;
 }
 
+// 送出鈕 + 複製 Email 鈕並排：兩者都是「聯絡我」的路徑，並排讓兩個選項份量相近，
+// 不會讓複製鈕看起來像次要到會被忽略
+.contact__form-actions {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
 .contact__form-submit {
-  align-self: flex-start;
   background: $color-accent;
   color: #fff;
   border: none;
@@ -173,4 +180,28 @@
   &:hover {
     opacity: 0.9;
   }
+}
+
+// 複製 Email 備援鈕：視覺上刻意比送出鈕輕（外框而非實心色塊），標示這是次要動作，
+// 但字級/邊界跟送出鈕一致，維持可點擊份量相近
+.contact__form-copy {
+  background: #fff;
+  color: $color-accent;
+  border: 1px solid $color-accent;
+  padding: 0.6rem 1.4rem;
+  border-radius: 6px;
+  font-size: 0.94rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(179, 64, 31, 0.06);
+  }
+}
+
+// 送出/複製後的狀態提示文字：預設 hidden，由 contact-mailto.js 切換顯示
+.contact__form-status {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #32424d;
 }

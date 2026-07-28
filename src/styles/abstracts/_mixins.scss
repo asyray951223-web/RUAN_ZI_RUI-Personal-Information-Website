@@ -1,1 +1,11 @@
 // 共用 mixin / function 放這裡
+
+// below($breakpoint)：視窗寬度 <= $breakpoint 時套用內容。全站斷點策略是「fluid 為主，
+// 只有真的需要質變時才用斷點」，這顆 mixin 是唯一的斷點寫法來源，避免不同檔案各自
+// 寫死不同的 @media 數字（例如 767 / 768 / 800 混用），之後要調整斷點值只需要改
+// abstracts/_variables.scss 裡對應的變數，不用逐檔案搜尋 @media
+@mixin below($breakpoint) {
+  @media (max-width: $breakpoint) {
+    @content;
+  }
+}

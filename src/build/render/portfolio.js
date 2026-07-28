@@ -99,6 +99,9 @@ function renderPortfolio(data) {
     '        <ul class="portfolio__list">',
     data.items.map(renderCard).join('\n'),
     '        </ul>',
+    '        <!-- 篩選後若該分類目前沒有任何作品，filter.js 會取消這裡的 hidden，',
+    '             避免畫面直接開天窗、讓人誤以為網站壞掉 -->',
+    '        <p class="portfolio__empty js-filter-empty" hidden>這個分類目前還沒有作品。</p>',
   ]);
 }
 

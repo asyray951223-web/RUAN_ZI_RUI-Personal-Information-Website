@@ -67,30 +67,45 @@
 
 // 卡片格線：固定欄寬（不是 auto-fit + 1fr 彈性拉伸），讓每張卡片維持固定大小，
 // 不會因為同一列卡片數量或視窗寬度不同而忽寬忽窄；auto-fill 讓容器依可用寬度
-// 自動決定塞得下幾欄固定寬度的卡片，容器變窄時一樣會自然收成單欄，不需要 @media
+// 自動決定塞得下幾欄固定寬度的卡片，容器變窄時一樣會自然收成單欄。
+// 上下限都用 min(300px, 100%)（RWD 分階段規劃 Phase 1 修正，不是改成 1fr 彈性拉伸，
+// 維持上面註解說的「固定欄寬」設計）：容器窄於 300px（例如更窄裝置扣掉左右 padding 後）
+// 時，原本寫死的 300px 下限仍會逼欄位撐超過容器造成整頁橫向溢出——這是全站唯一沒套用
+// activities/casestudy/skills 都已修過的 min() 包法的地方，這裡補齊同款寫法；容器夠寬
+// 時 min(300px,100%) 就是 300px，卡片行為與修正前完全一致
 .portfolio__list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 300px));
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), min(300px, 100%)));
   gap: 1.8rem;
 }
 
-// 卡片本體：固定高度＋圓角＋輕量陰影，數值參考 components/_section.scss 的
+// 卡片本體：高度基準＋圓角＋輕量陰影，數值參考 components/_section.scss 的
 // section-card mixin（同樣的圓角/陰影色調），但不直接 @include 那個 mixin——它是
 // 設計給整個 section 用的固定寬度（920px），不適合套在 grid 內的固定寬度卡片上，
 // 所以獨立寫一組卡片專屬數值。
-// 固定 height + flex column：讓每張卡片不論內容長短都維持一致高度，
-// article 用 flex:1 撐滿卡片剩餘高度，最後一個可見欄位（連結列/深度連結/NDA 說明，
-// 三者其中一個一定是卡片最後一個子元素）用 margin-top:auto 推到卡片底部對齊，
-// 避免卡片因為連結數量／有無深度連結不同而長短不一
+// min-height（不是固定 height，RWD 分階段規劃 Phase 2 修正）：原本用固定 560px +
+// overflow:hidden 讓卡片一律等高，但 .portfolio__role／.portfolio__tech-list／
+// .portfolio__type 目前沒有行數限制，真實內容（角色描述較長、技術標籤較多）會被
+// 悄悄裁掉、完全看不出來——這跟螢幕寬度無關，是內容量風險，且「資訊被藏起來」比
+// 「卡片高度不完全一致」的代價更高。改成 min-height:560px 當基準：內容少的卡片
+// 維持 560px，內容多的卡片自然長高、不裁切。同一列的卡片仍會因為 grid 預設的
+// align-items:stretch 而彼此等高（跟著同列最高的卡片），只有「列與列之間」高度
+// 才可能不同，不是每張卡片各自零散不一致
 .portfolio__item {
-  height: 560px;
+  min-height: 560px;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(13, 50, 77, 0.08);
   overflow: hidden; // 讓封面圖的直角被卡片的圓角裁切
+
+  // scroll-margin-top：跟 components/_section.scss 的 .section 同一個原因——
+  // #casestudy 的「查看關聯作品」連結會跳到這裡的 id（例如 #portfolio-project-1），
+  // 但這個 <li> 本身不是 .section，沒繼承到那邊的 scroll-margin-top，導致跳轉後
+  // 卡片頂端（封面圖/標題）被 fixed header 蓋住。這裡補上同一個變數來源
+  scroll-margin-top: var(--header-height, #{$header-height});
 
   article {
     display: flex;
@@ -230,4 +245,14 @@
   font-size: 0.86rem;
   color: #9aa8b0;
   font-style: italic;
+}
+
+// 篩選結果為空時的提示文字：預設 hidden，由 filter.js 依篩選結果切換，
+// 視覺沿用跟 .portfolio__nda-note 同一套「灰階斜體」語彙
+.portfolio__empty {
+  margin: 1rem 0 0;
+  font-size: 0.95rem;
+  color: #9aa8b0;
+  font-style: italic;
+  text-align: center;
 }

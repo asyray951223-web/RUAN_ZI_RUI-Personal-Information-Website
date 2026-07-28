@@ -928,3 +928,104 @@ src/styles/
 **尚未處理（使用者要求先在此總結，之後可視需要繼續）**：
 - 篩選器按鈕觸控高度約 35px，略低於 44px 的建議觸控目標尺寸（YELLOW，非阻擋性問題）。
 - 部分次要文字（reply-note、meta 說明）用的 `#9aa8b0` 灰色對白底的對比度偏低（初步估算約 2.4:1，低於 WCAG AA 一般文字建議的 4.5:1），已定位到使用位置（`_about.scss`／`_activities.scss`／`_casestudy.scss`／`_contact.scss`／`_notes.scss`／`_portfolio.scss`／`_resume.scss`／`_skills.scss` 共用同一色號），尚未修正，留待下一輪處理。
+
+### 54. Adversarial UX Test（persona：人資主管「陳姐」）——修掉 2 個真實 bug + 2 個經使用者確認方向的體驗缺口
+
+**背景**：再次用 `/adversarial-ux-test` skill，persona 改為「45 歲人資主管，一天篩 20-30 份候選人網站，只給 30 秒決定要不要約面試，通勤時用手機看」。這輪測到的是「上一輪（第 53 筆）之後新增的區塊（`#casestudy`／`#goals`／`#contact`）跟新功能（漢堡選單以外的篩選器/表單）」有沒有新的真實缺陷，不是重測第 53 筆已修過的項目。
+
+**發現並修正的 RED 項目（任何使用者都會踩到，不分裝置）**：
+
+1. **`#casestudy`「查看關聯作品」連結跳轉後，目標卡片頂端被固定 header 蓋住一截**——實測 `#portfolio-project-1` 跳轉後 `getBoundingClientRect().top` 恰好落在 `0px`（貼齊視窗頂端），但 header 是 `position: fixed` 且高度 64px（桌機）～238px（手機），導致封面圖＋標題整個被蓋住，跟第 53 筆修過的「連結跳頂」是同一類問題，但這次是漏在 `.portfolio__item`（案例故事連結真正跳轉的目標，是巢狀在 `.section` 裡的 `<li>`，不是 `.section` 本身）。修法：`src/styles/pages/_portfolio.scss` 的 `.portfolio__item` 補上跟 `components/_section.scss` 的 `.section` 同一個 `scroll-margin-top: var(--header-height, ...)`。
+2. **`#portfolio` 篩選鈕點到「零筆資料」的分類，畫面直接開天窗，沒有任何提示文字**——`src/scripts/filter.js` 原本只有隱藏/顯示邏輯，篩選後如果全部項目都被隱藏，畫面留一大片空白直接接到下一個區塊，容易讓人誤以為網站壞掉。修法：`src/build/render/portfolio.js` 在 `<ul class="portfolio__list">` 後面補一段預設 `hidden` 的 `<p class="portfolio__empty js-filter-empty">這個分類目前還沒有作品。</p>`；`filter.js` 篩選時額外算一個 `anyVisible`，全部不吻合時取消該段落的 `hidden`。這是通用邏輯（用 `.js-filter-empty` 找同一個 `.section` 底下的提示元素），之後 `#activities` 若也做篩選器可以直接沿用，不用重寫。
+
+**經使用者用 AskUserQuestion 確認方向後修正的 YELLOW 項目**：
+
+3. **`#contact` 表單沒有必填驗證，且送出後頁面上完全沒有回饋**——三個欄位空白也能觸發 `mailto:`，且 `mailto:` 表單本身無法得知使用者裝置是否真的開啟郵件軟體，裝置沒設定預設郵件 App 時可能悄悄沒反應。使用者選擇「必填驗證 + 送出提示文字 + 複製 Email 按鈕」全套修正（而不是只加必填）：`src/pages/index.html` 三個欄位補 `required`；`src/scripts/contact-mailto.js` 新增 `.contact__form-status`（`role="status" aria-live="polite"`）在送出後顯示「已為你開啟郵件軟體...如果沒有反應，可以直接複製下方 Email」，並新增「複製 Email」按鈕（`navigator.clipboard.writeText`，失敗時退回顯示文字讓人手動複製）；`src/styles/pages/_contact.scss` 新增 `.contact__form-actions`（送出鈕＋複製鈕並排）與對應樣式。
+4. **手機版 header 固定佔用視窗約 29%（238px／812px），且是「捲到哪都持續佔用」**——根因是 9 個導覽項目在窄螢幕換行成 3 排。使用者從三個方向（漢堡選單／精簡標題文字／導覽列橫向捲動）中選擇「導覽列收進漢堡選單」，標題區文字不變。修法：`src/pages/index.html` 的 `<nav class="site-nav">` 新增 `.site-nav__toggle` 按鈕（3 條線的 CSS 圖示，開啟時變 X）；`src/styles/layout/_header.scss` 新增 **全站第一個 `@media (max-width: 768px)`**——768px 以下 `.site-nav` 改用 `position: absolute` 釘死在 header 右上角（不再參與 header 本身的 flex 排版，避免標題换行變高時把漢堡鈕一起擠到不可預期的位置），`.site-nav__list` 預設 `max-height: 0` 收合、`.is-open` 時展開成疊在內容上方的下拉選單；`src/scripts/nav-scroll.js` 新增開關邏輯（點漢堡鈕切換、點導覽連結後自動收合、點選單外側也收合）。手機視窗 header 高度從 238px（29.4%）降到 152px（18.7%），且不再隨捲動位置變動。
+
+  **重要：這筆改動推翻了第 53 筆記錄過的架構決策**——第 53 筆當時選擇「導覽列自然換行」而非漢堡選單，明確理由是「維持全站沒有 `@media`、純 fluid 手法自適應的既有慣例」。這次因為换行方案本身在 9 個項目的情境下讓 header 佔用手機視窗近 3 成，經使用者這輪重新確認方向後，改採漢堡選單、正式引入全站第一個 `@media` 斷點。**之後如果有人依第 53 筆的舊記錄以為「這個專案不用 `@media`」，那筆假設在手機導覽列這裡已經不成立，此為使用者本輪重新選擇後的結果，不是疏漏。**
+
+**取捨說明**：
+- `.portfolio__item` 的 `scroll-margin-top` 直接複用跟 `.section` 同一個 CSS 變數（`--header-height`），不是另外定義一個數值，避免之後 header 高度再變動時要多處同步。
+- 空狀態文字用「這個分類目前還沒有作品。」而不是「即將推出」之類的字眼，因為這是通用邏輯（也會在真實內容都填完、但剛好某個分類沒有作品時繼續生效），不是專門講給現在的佔位資料聽的。
+- `.site-nav__toggle` 用 `position: absolute` 脫離 header 的 flex 排版，而不是調整 `justify-content`／`align-items` 去將就標題换行：因為標題本身的换行高度會隨內容變動，硬要用 flex 排版讓漢堡鈕跟著「猜」標題有多高，位置會不穩定；直接釘死在 header 右上角最簡單也最穩定。
+- 768px 斷點沒有特別跟設計稿或既有數值對齊，是抓「9 個導覽項目明顯塞不下一行」的常見手機/平板交界值；已實測 375px（手機）、900px（斷點以上）皆正常，768px 前後沒有做逐 px 微調。
+
+**驗證方式**：`node build/build.js` 重新產生 `index.html`（`#portfolio` 的空狀態段落來自 render 模板，不是手改產出檔）、`npx sass` 編譯成功。Playwright 驗證（本機 `python -m http.server`，測完即關閉，暫存截圖與伺服器皆未留在版控中）：手機寬度（375px）點擊「查看關聯作品」確認 `#portfolio-project-1` 頂端貼齊 header 底部（`itemTop` 151.6px vs `headerHeight` 151.65px，桌機 1440px 同樣驗證通過）；點擊「課程作業」篩選鈕（目前資料无匹配項目）確認 `.portfolio__empty` 的 `hidden` 變 `false` 且文字正確顯示；聯絡表單空白送出觸發瀏覽器原生必填提示（無 `mailto` console 訊息代表沒送出）、填寫後送出正確顯示提示文字、點擊「複製 Email」正確顯示複製成功文字；手機版點擊漢堡鈕確認選單展開／點導覽連結後選單自動收合並正確捲動且 `.is-active` 正確更新；額外測試 900px 中間寬度確認斷點上下沒有版面斷層（沒有漢堡鈕卡在導覽列旁邊的過渡態）。
+
+### 55. RWD 分階段實作 Phase 0——建立斷點共用基礎設施（純重構，行為不變）
+
+**背景**：使用者要求「開始分階段實作 RWD，請先規畫需求」。用 3 個 Explore agent 盤點全站 SCSS 後，確認全站是 fluid-first（`clamp()`／`minmax(min(Xpx,100%),1fr)`／`auto-fit`），只有第 54 筆新增的 header 漢堡選單斷點（`@media (max-width: 768px)`）是例外，且該斷點是寫死的 magic number，沒有共用來源。使用者確認採用業界慣用的「fluid 為主、必要時才用斷點，且斷點值統一管理」策略後，先做這個不改變任何視覺輸出的基礎設施重構，讓之後（Phase 1 起）如果真的需要斷點時有地方可以直接複用。
+
+**變更**：
+- `src/styles/abstracts/_variables.scss`：新增 `$bp-tablet: 768px;`（沿用 header 原本就用、已測過的數值，不是新設數字）。
+- `src/styles/abstracts/_mixins.scss`（原本是空檔案）：新增 `@mixin below($breakpoint) { @media (max-width: $breakpoint) { @content; } }`。
+- `src/styles/layout/_header.scss`：`@use "../abstracts/mixins" as *;`，把寫死的 `@media (max-width: 768px)` 改成 `@include below($bp-tablet)`。
+
+**取捨說明**：只重構「來源」，不改任何數值或行為——編譯後 `main.css` 該處的 `@media (max-width: 768px)` 輸出跟修改前逐字相同（純粹是變數/mixin 展開結果），這是刻意的：這一步的目的只是把「斷點值」跟「斷點寫法」各自收斂到單一來源，之後其他區塊如果真的需要斷點，直接 `@include below($bp-tablet)` 就好，不會有人在不同檔案各寫一個 767/768/800 的情況；不在這筆順便調整任何視覺，避免這筆重構的影響範圍跟之後的實際修復（Phase 1 起）混在一起難以追蹤。
+
+**驗證方式**：`npx sass` 編譯成功；`grep` 確認編譯後 `main.css` 的 `@media (max-width: 768px)` 字串與重構前完全一致；Playwright 於 375px 驗證 header 高度仍為 151.65px、漢堡鈕 `display: flex`，跟重構前數值相同，確認純重構沒有引入任何行為變化。
+
+### 56. RWD 分階段實作 Phase 1——修 `#portfolio` 格線在極窄寬度會橫向溢出的 bug
+
+**背景**：延續第 55 筆的分階段 RWD 規劃，Phase 1 處理盤點中風險最高（「會真的壞」）的項目：`_portfolio.scss` 的 `.portfolio__list` 格線用 `repeat(auto-fill, minmax(300px, 300px))`，下限寫死 300px，是全站唯一沒有套用 `min(Xpx, 100%)` 包法的地方（`_activities.scss`／`_casestudy.scss`／`_skills.scss` 都已經用這個包法修過同一類問題）。容器寬度低於「300px + 左右 padding」（實測約 &lt;330-340px）時，格線仍會撐出 300px 欄位，造成整頁橫向捲動。
+
+**變更**：`src/styles/pages/_portfolio.scss` 的 `.portfolio__list`：`grid-template-columns: repeat(auto-fill, minmax(300px, 300px))` 改成 `repeat(auto-fill, minmax(min(300px, 100%), min(300px, 100%)))`。
+
+**取捨說明**：上下限都用 `min(300px, 100%)`，不是只修下限、上限改成 `1fr`——原本這段程式碼的註解明確寫「固定欄寬（不是 auto-fit + 1fr 彈性拉伸），讓每張卡片維持固定大小，不會因為同一列卡片數量或視窗寬度不同而忽寬忽窄」，這是刻意的設計決策（避免卡片隨同列數量忽寬忽窄）。第一次修改時誤把上限也改成 `1fr`，會讓卡片變成彈性拉伸、違背原本註解講的設計意圖，動手途中自行發現並改正——確認上下限都用 `min(300px, 100%)` 才能「容器夠寬時維持固定 300px、容器窄於 300px 時才縮小」，同時滿足「不溢出」跟「不改變既有固定欄寬設計」兩個要求。
+
+**驗證方式**：`npx sass` 編譯成功。Playwright 驗證：320px（比一般手機更窄）確認 `document.documentElement.scrollWidth`（319px）不超過 `window.innerWidth`（320px），無橫向捲動，且截圖確認卡片正確縮小填滿可用寬度；1440px 確認 `.portfolio__item` 實際寬度仍是 300px（`getBoundingClientRect().width`），沒有被改成彈性拉伸，與修正前的固定欄寬視覺一致。
+
+### 57. RWD 分階段實作 Phase 2——修 `#skills` 佐證格線擁擠 + `#portfolio` 卡片高度改用 min-height
+
+**背景**：延續分階段 RWD 規劃，Phase 2 處理「擁擠但不會壞」的兩個問題。
+
+1. `_skills.scss` 的 `.skills__evidence-grid` 原本寫死 `repeat(6, minmax(0, 1fr))`，假設父層 `.skills__list` 永遠 ≥600px 寬；但父層本身是 `minmax(min(600px,100%),1fr)`，手機寬度會縮到 ~340px，6 欄硬擠導致每欄只剩 ~50px，連結文字被截斷到看不出內容。
+2. `_portfolio.scss` 的 `.portfolio__item` 固定 `height: 560px` + `overflow: hidden`，但 `.portfolio__role`／`.portfolio__tech-list`／`.portfolio__type` 沒有行數限制，真實內容（角色描述較長、技術標籤較多）會被悄悄裁掉、完全看不出來——這是內容量風險，跟螢幕寬度無關。這裡有兩種合理修法（維持固定高度並幫其餘欄位也加裁切限制／改成 min-height 讓內容決定實際高度），依專案慣例（排版類決策有多種合理解讀時要先問）用 AskUserQuestion 請使用者選，使用者選擇「改成 min-height」。
+
+**變更**：
+- `src/styles/pages/_skills.scss`：`.skills__evidence-grid` 的 `grid-template-columns` 改成 `repeat(auto-fill, minmax(min(110px, 100%), 1fr))`。
+- `src/styles/pages/_portfolio.scss`：`.portfolio__item` 的 `height: 560px` 改成 `min-height: 560px`。
+
+**取捨說明**：
+- `.skills__evidence-grid` 刻意用 `auto-fill` 不是 `auto-fit`：多數技能只有 2 個作品佐證，`auto-fit` 會把沒有內容的空欄收合、把多出來的寬度整個讓給僅有的 2 個項目，變成兩顆異常寬、被拉伸撐滿整行的膠囊，跟全站其他標籤類元件（`.skills__name`／`.about__tag`）都是「依內容寬度」的緊湊樣式不一致；`auto-fill` 會保留空欄、不把寬度分給既有項目，讓連結維持原本緊湊的樣子，只是不再寫死 6 欄。110px 的欄寬下限是抓佔位資料「作品名稱佔位（一）」這類 7-8 字短連結名稱的大半可讀範圍。
+- `.portfolio__item` 改 `min-height` 而非「維持固定高度＋幫欄位加裁切限制」：使用者確認「資訊被藏起來」的代價比「同一批卡片高度不完全一致」更高。改完後因為 `.portfolio__list` 是 `display: grid` 且預設 `align-items: stretch`，同一列的卡片仍會互相撐到同一列最高卡片的高度，只有「列與列之間」才可能高度不同，不是每張卡片各自零散不一致，等高視覺紀律大致保留。
+
+**驗證方式**：`npx sass` 編譯成功。Playwright 驗證：`.skills__evidence-grid` 展開後在 375px 確認兩則佐證連結文字完整可讀（截圖確認）、1440px 確認連結寬度回落到 ~116px（接近 110px 下限，沒有被拉伸撐滿整行）；`.portfolio__item` 用 JS 模擬塞入 10 個技術標籤＋長角色描述文字，確認卡片從 560px 自然長高到 744px、內容完整可見無裁切，且同一列兩張卡片高度仍一致（grid stretch 生效）。
+
+### 58. RWD 分階段實作 Phase 3——系統性複查全站三種寬度（實測，未發現新問題）
+
+**背景**：延續分階段 RWD 規劃，Phase 1/2 修完兩個真實風險點後，使用者要求「系統性複查」而不只是依賴程式碼審查判斷——實際打開瀏覽器在 375px（手機）／768px（平板/斷點邊界）／1440px（桌機）三種寬度逐一檢查 about/resume/skills/portfolio/activities/casestudy/notes/goals/contact 九個區塊，並額外加測 900px 交叉驗證先前盤點提到「768-900px 之間 header nav 是否還會擠成多排」的疑慮。
+
+**檢查結果**：
+- 375px／768px／1440px 三個寬度皆用 `document.documentElement.scrollWidth <= window.innerWidth` 確認全站無橫向溢出（`scrollWidth`／`innerWidth` 分別為 360/375、753/768、1425/1440）。
+- 九個區塊逐一截圖檢查（about／resume／skills／portfolio／activities／casestudy／notes／goals／contact），375px 下皆為單欄堆疊、無文字重疊或截斷；768px 下 portfolio 兩欄、skills 維持單欄（600px 下限在 768px 扣除留白後的可用寬度裝不下兩欄）、casestudy 單欄；1440px 下 portfolio/skills/casestudy 皆順利展開多欄，卡片等高、無跑版。
+- **900px header 交叉驗證**：`.site-nav__list` 的 `flex-wrap` 計算高度僅 21.6px（單行），header 總高度 91.35px，9 個導覽項目在 900px 仍完整排在同一行，沒有換行變擠的情況——先前盤點階段推測的「768-900px 中間可能擠成多排」風險，實測後確認**沒有發生**（900px 對這份標題文字長度／導覽項目數量而言，剩餘寬度仍夠排單行），不需要額外調整斷點或延伸漢堡選單的觸發範圍。
+
+**取捨說明**：這個 Phase 主要是實測驗證，不是修復——大部分區塊經前期程式碼審查判斷已經安全，這輪逐一截圖確認「實際畫面」跟「程式碼審查的判斷」一致，沒有發現程式碼審查漏掉的新問題，因此本筆沒有程式碼變更。
+
+**驗證方式**：如上所述，Playwright 於 4 個寬度（375/768/900/1440）分別截圖 + `scrollWidth`/`innerWidth` 檢查，測試用截圖與本機伺服器皆於驗證後清除，不進版控。
+
+### 59. RWD 分階段實作 Phase 4——修正 `project-1.html` class 名稱不一致，並意外發現、修正該頁漢堡選單完全打不開的功能缺陷
+
+**背景**：延續分階段 RWD 規劃，Phase 4 原訂範圍只有一件事：`src/pages/portfolio/project-1.html` 用了 `casestudy__block-title`，但 `_casestudy.scss` 只定義了 `.casestudy__block-label`，導致這支子頁面的「▸ 背景／目標／過程／挑戰／成果與收穫」小標吃不到樣式、退回瀏覽器預設 `<h4>`。修正這個之後，依計畫對這支頁面做三寬度複查時，意外發現一個嚴重許多的問題：這支頁面的 `<nav class="site-nav">` 是第 54 筆新增手機漢堡選單「之前」就手動複製過來的舊版本，沒有同步補上 `.site-nav__toggle` 按鈕；但 CSS（`_header.scss` 的 `@include below($bp-tablet)`）已經全站套用「768px 以下 `.site-nav__list` 收合成 `max-height:0`」的規則。結果是這支頁面在手機/平板寬度下，整份導覽選單完全打不開（沒有任何按鈕可以展開），只剩「← 回作品集」這個獨立連結還能用。因為嚴重度明顯高於一般「擁擠但不會壞」的問題，動手前先跟使用者確認是否要擴大這個 Phase 的範圍，使用者確認「現在就修」。
+
+**變更**：
+- `src/pages/portfolio/project-1.html`：
+  - `casestudy__block-title` → `casestudy__block-label`（5 處）。
+  - `<nav class="site-nav">` 補上跟 `index.html` 同步的 `.site-nav__toggle` 漢堡按鈕（含 `aria-expanded`/`aria-controls`/`aria-label`），`<ul class="site-nav__list">` 補上 `id="site-nav-list"` 供 `aria-controls` 對應。
+  - `</body>` 前新增 `<script src="/src/scripts/nav-scroll.js" defer></script>`（這支頁面原本沒有引入任何 JavaScript，補上按鈕的 HTML 沒有對應的開關邏輯還是打不開）。
+- `src/scripts/nav-scroll.js`：補上這支腳本後，測出一個連帶的既有缺陷——Scrollspy 區段用 `document.querySelector(link.getAttribute('href'))`，但 `project-1.html` 的 nav 連結 href 是指回首頁的絕對路徑（例如 `/src/pages/index.html#about`），不是本頁錨點，直接丟給 `querySelector` 會因為選擇器字串不合法丟出 `SyntaxError`。改成跟上面點擊處理同一個判斷式：只有 `href` 以 `#` 開頭才查詢，否則回傳 `null`（會被後面的 `.filter(Boolean)` 濾掉）。
+
+**取捨說明**：
+- 漢堡按鈕跟開關邏輯選擇「完整同步 index.html 現有版本」，不是重新設計一套子頁面專用的簡化版：這支頁面的 header/nav 從一開始就是刻意跟首頁維持外觀一致（`project-1.html` 自己的註解也寫明「header/nav/footer 是從 index.html 手動複製過來的...之後改版時記得同步」），維持一致是既有慣例，不是這次新引入的規則。
+- `nav-scroll.js` 的 scrollspy 修正用「只處理 `#` 開頭的 href」而不是用 `try/catch` 包住 `querySelector` 吞掉錯誤：前者是修正邏輯本身的假設錯誤（scrollspy 概念上就只對「本頁錨點」有意義，跨頁連結不應該被納入 IntersectionObserver 觀察名單），後者只是掩蓋症狀；且這個修正是全站共用腳本的一部分，之後如果有其他子頁面比照 `project-1.html` 做法（nav 連結指回首頁絕對路徑），也會自動受益，不用每支子頁面各自處理。
+- 這個 bug 沒有在最初的 Phase 4 規劃範圍內（規劃時只知道 class 名稱問題），是複查過程中才發現；因為嚴重度是「功能完全無法使用」而不是「視覺不夠好」，跟使用者確認後才擴大範圍處理，沒有自行決定擴大。
+
+**驗證方式**：`.casestudy__block-label` 套用樣式後截圖確認 Space Mono 字體／灰階色／▸ 前綴皆正確顯示（`getComputedStyle` 確認 `font-family`/`color`）。漢堡選單修正後：375px 點擊按鈕確認 `.site-nav__list` 正確加上 `is-open`、截圖確認選單正確展開顯示 9 個連結；點擊「履歷」連結確認正確導向 `index.html#resume`。`nav-scroll.js` 修正前後對照 `browser_console_messages`：修正前每次載入都印出 `SyntaxError: ... is not a valid selector`，修正後 0 錯誤（曾一度懷疑修正沒生效，後確認是瀏覽器分頁快取了舊版 script，改用 `about:blank` 中繼再重新導航後確認錯誤消失，非真實迴歸）。375px／768px／1440px 三個寬度皆確認 `scrollWidth === innerWidth`，無橫向溢出。
+
+---
+
+## RWD 分階段實作總結（Phase 0-4 全部完成）
+
+依 `全站 RWD 分階段實作規劃`（使用者核准的規劃文件）完成五個階段：Phase 0 建立斷點共用基礎設施（`$bp-tablet` 變數 + `below()` mixin）、Phase 1 修 `#portfolio` 格線溢出、Phase 2 修 `#skills` 佐證格線擁擠 + `#portfolio` 卡片高度改用 `min-height`、Phase 3 系統性複查全站三種寬度（實測無新問題）、Phase 4 修正 `project-1.html` class 名稱不一致並意外發現修正該頁漢堡選單完全打不開的問題。明確排除範圍（篩選鈕觸控高度、灰色文字對比度）維持未處理，留待之後另外排時間。
