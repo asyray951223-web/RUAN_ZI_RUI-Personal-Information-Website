@@ -184,18 +184,77 @@
 // 全站斷點值統一從 abstracts/_variables.scss 的 $bp-tablet 來，之後其他區塊如果也需要
 // 斷點，直接 @include below($bp-tablet) 就好，不會出現不同檔案各寫一個數字的情況
 @include below($bp-tablet) {
+  // header 標題區塊改回一般文件流（不再 fixed），捲動時跟著內容一起捲走，
+  // 立刻拿回被它佔用的螢幕空間；只有下面的 .site-nav（漢堡按鈕）維持固定，
+  // 讓使用者不管捲到哪裡都能隨時點開選單跳轉——两邊各自解決「header 太高
+  // 永久佔視窗空間」跟「捲走後失去導覽入口」的問題
+  .site-header {
+    position: static;
+  }
+
+  // .site-nav 改 position: absolute 後（見下方），header 的 flex row 裡就只剩
+  // .site-header__title 這一個還在排版流程裡的子元素，沒有寬度上限的話會自然
+  // 撐滿整個可用寬度——包括原本該留給漢堡按鈕的右上角空間。實機回報「標題排版
+  // 跑掉、漢堡選單重疊」的根源就是這裡：先前只用 Playwright 測過 320/375/768/900px
+  // 幾個寬度剛好沒撞上，但這不是穩固的保證。這裡明確幫按鈕保留淨空，不管標題
+  // 內部文字怎麼換行撐多寬都不會延伸進按鈕的固定角落
+  .site-header__title {
+    // 4.5rem = 按鈕寬度 36px(2.25rem) + .site-nav 的 right: 2rem 偏移量 + 一點緩衝
+    max-width: calc(100% - 4.5rem);
+
+    // 手機版改用 Grid 兩欄式排版：姓名（中文疊英文）自成一欄、副標另成一欄，
+    // 不再像桌機版那樣 4 個元素塞在同一個橫排 flex 裡互搶寬度——這正是使用者
+    // 實機截圖「阮/梓/睿」逐字換行、跟其他元素互疊的根源
+    display: grid;
+    grid-template-columns: max-content auto 1fr; // 姓名欄／分隔線欄／副標欄
+    // 姓名欄用 max-content 而非 auto：確保欄寬永遠夠放下中文名+英文拼音較長的
+    // 那一行，即使整個標題被上面的 max-width 壓縮，真正該讓步換行的是副標欄
+    // （1fr），不會反過來擠壓姓名欄逼中文逐字換行
+    gap: 0.15rem 0.6rem; // row-gap 讓中文/英文緊貼、column-gap 分隔欄與欄
+
+    &-cn {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    &-en {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    &-divider {
+      grid-column: 2;
+      grid-row: 1 / 3; // 跨兩列，靠既有 align-self: center 垂直置中在姓名區塊高度內
+    }
+
+    &-tagline {
+      grid-column: 3;
+      grid-row: 1 / 3; // 同上垂直置中，欄寬不夠時交給瀏覽器自然換行到多行
+    }
+  }
+
   .site-nav {
     // 標題（中文名＋英文拼音＋副標）本身在窄螢幕會換行變高，如果 nav 還跟標題
     // 一起排在 header 的 flex row 裡，nav 只剩漢堡鈕會被擠到自己另起一行、
     // 且單獨一個 flex item 時 space-between 會讓它貼左而不是貼右，跟標題長高
-    // 與否綁在一起、位置會跳來跳去。改成絕對定位釘死在 header 右上角，
-    // 不再參與 header 的 flex 排版，位置固定、也讓 header 高度只由標題決定
-    position: absolute;
+    // 與否綁在一起、位置會跳來跳去。改成固定定位釘死在視窗右上角，不再參與
+    // header 的排版——header 現在不是 fixed 了，用 position: absolute 只能
+    // 釘在 header 這個已經隨內容捲走的容器裡，必須改成 position: fixed 才能
+    // 不管捲到哪裡都維持在視窗右上角
+    position: fixed;
     top: 0.6rem;
     right: 2rem;
+    // header 不再 fixed 之後，這裡的疊放順序不能再依賴 header 的 z-index，
+    // 要自己明確宣告，確保按鈕/選單永遠蓋在捲動經過的頁面內容之上
+    z-index: 100;
 
     &__toggle {
       display: flex;
+      // 原本的半透明白色邊框是設計給深藍色 header 背景用的；header 不再 fixed
+      // 後，按鈕會獨立浮在頁面內容（多半是淺色背景）上方，改成實心深底＋陰影，
+      // 不管底下捲過什麼顏色的區塊都維持清楚可讀
+      background-color: $color-deep-space-blue;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
     }
 
     &__list {

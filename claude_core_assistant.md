@@ -1029,3 +1029,66 @@ src/styles/
 ## RWD 分階段實作總結（Phase 0-4 全部完成）
 
 依 `全站 RWD 分階段實作規劃`（使用者核准的規劃文件）完成五個階段：Phase 0 建立斷點共用基礎設施（`$bp-tablet` 變數 + `below()` mixin）、Phase 1 修 `#portfolio` 格線溢出、Phase 2 修 `#skills` 佐證格線擁擠 + `#portfolio` 卡片高度改用 `min-height`、Phase 3 系統性複查全站三種寬度（實測無新問題）、Phase 4 修正 `project-1.html` class 名稱不一致並意外發現修正該頁漢堡選單完全打不開的問題。明確排除範圍（篩選鈕觸控高度、灰色文字對比度）維持未處理，留待之後另外排時間。
+
+### 60. 修正手機版 header 標題與漢堡選單重疊的實機回報 bug
+
+**背景**：整批 RWD 分階段實作 commit/push 後，使用者附上實機手機截圖回報：標題排版跑掉，漢堡選單重疊、沒有乾淨落在右上角。
+
+**根本原因**：第 54 筆把 `.site-nav`（包住漢堡按鈕的容器）改成 `position: absolute`，讓按鈕脫離 `.site-header` 的 flex 排版、固定釘在右上角，解決了「按鈕位置跳來跳去」的問題。但這造成一個沒被注意到的副作用：`.site-header__title` 從此變成 `.site-header` 這個 flex row 裡「唯一」還留在排版流程裡的子元素，沒有任何寬度上限，會自然撐滿整個可用寬度——包括原本該留給按鈕的右上角空間。先前只用 Playwright 測過 320/375/768/900/1440px 幾個寬度，剛好都沒有讓標題延伸到跟按鈕重疊的臨界點，但使用者這支實機的實際寬度／字型渲染結果讓標題延伸得更右，因而撞上按鈕。這是「測過的幾個寬度剛好沒事」掩蓋掉的脆弱設計，不是新引入的獨立 bug。
+
+**變更**：`src/styles/layout/_header.scss` 的 `@include below($bp-tablet)` 區塊內，新增：
+```scss
+.site-header__title {
+  max-width: calc(100% - 4.5rem);
+}
+```
+`4.5rem`＝按鈕寬度 36px(2.25rem) ＋ `.site-nav` 的 `right: 2rem` 偏移量 ＋ 一點緩衝，讓標題不管內部文字（中文名/英文拼音/分隔線/副標）怎麼換行撐多寬，永遠留出這個按鈕固定佔用角落的淨空。
+
+**取捨說明**：只解決「標題延伸進按鈕角落」這個重疊問題本身，沒有連帶重新設計標題在極窄寬度會逐字換行（阮/梓/睿分行）的既有視覺特性——這是加大字級（2.4rem）後就存在的獨立現象，跟本次「跟按鈕重疊」是兩件事，本次只確保「不管怎麼換行都不會撞到按鈕」。加了寬度上限後，副標「資訊管理・全端開發」在較窄寬度會換成 2-3 行（縮小的可用寬度導致），這是預期中的副作用，沒有另外處理。
+
+**驗證方式**：`npx sass` 編譯成功。Playwright 在 320／360／375／390／393／412／768px 七個寬度分別量測 `.site-header__title` 與 `.site-nav__toggle` 的 `getBoundingClientRect()`，確認兩者水平/垂直範圍皆不重疊（每個寬度都印出 `overlap: false`）；截圖確認 412px／390px 下按鈕清楚落在右上角、與標題有明顯間距；390px 下實際點擊按鈕確認選單正常展開、收合；1440px 桌機版截圖確認完整 9 項導覽列不受影響（規則只在 `$bp-tablet` 以下生效）。測試用截圖與本機伺服器驗證後清除，不進版控。
+
+### 61. 手機版標題重新排版：中文/英文疊放成姓名區塊，副標獨立成欄
+
+**背景**：上一筆（#60）修完標題跟漢堡按鈕重疊的 bug 後，使用者提供手繪參考圖＋現況截圖，要求進一步重新規劃手機版標題內部的排版：中文名跟英文拼音疊在一起（中文在上、英文在下）形成一個姓名區塊，旁邊另外並排副標題（黃色，資訊管理・全端開發），而不是像原本那樣 4 個元素（中文名／英文拼音／分隔線／副標）全部塞在同一個橫排 flex 裡搶寬度。
+
+**變更**：`src/styles/layout/_header.scss` 的 `@include below($bp-tablet)` 區塊內，`.site-header__title` 新增一組 Grid 排版規則（只在手機斷點生效，桌機版維持原本橫排 flex 不變）：
+```scss
+.site-header__title {
+  max-width: calc(100% - 4.5rem); // 既有規則不動
+
+  display: grid;
+  grid-template-columns: max-content auto 1fr; // 姓名欄／分隔線欄／副標欄
+  gap: 0.15rem 0.6rem;
+
+  &-cn { grid-column: 1; grid-row: 1; }
+  &-en { grid-column: 1; grid-row: 2; }
+  &-divider { grid-column: 2; grid-row: 1 / 3; }
+  &-tagline { grid-column: 3; grid-row: 1 / 3; }
+}
+```
+姓名欄（`&-cn`／`&-en` 所在的第 1 欄）刻意用 `max-content` 而不是 `auto`：確保欄寬永遠夠放下中文名＋英文拼音較長的那一行，即使整個標題被外層 `max-width` 壓縮，真正該讓步、換行到多行的是副標欄（`1fr`），不會反過來擠壓姓名欄逼中文逐字換行——這正是 #60 截圖裡「阮/梓/睿」逐字換行的根源之一。`&-divider`／`&-tagline` 沿用既有的 `align-self: center`（不在任何 breakpoint 裡、全站共用），在 Grid 情境下一樣有效，垂直置中在姓名區塊高度內，不需要另外處理。
+
+**取捨說明**：
+- 沒有改動 HTML 結構，純粹靠 CSS Grid 重新排版：`src/pages/index.html` 的 4 個標題元素本來就是扁平地直接放在 `.site-header__title` 底下，用 `grid-column`/`grid-row` 直接指定每個元素落在哪一格即可達成「姓名疊放＋副標並排」的視覺效果，不需要額外包一層 `<div>` 分組。
+- 副標欄用 `1fr` 而非固定寬度：窄寬度（320px）下欄寬會被壓到只剩約 30px，副標會逐字換行成 5-6 行短行；這是刻意接受的結果，對應使用者參考圖右側大方框畫的多行短行，比起限制副標最小寬度、犧牲姓名欄空間更符合使用者要的視覺方向。
+- 桌機版（`.site-header__title` 主規則）完全沒有變動，這組 Grid 規則只在 `below($bp-tablet)` 內生效，離開斷點自動還原成原本的橫排 flex + baseline 對齊。
+
+**驗證方式**：`npx sass` 編譯成功。Playwright 於 320／375／390／412／767px（手機斷點內）截圖確認：中文名維持一行不逐字換行、英文拼音緊接在中文名正下方、副標在右側依欄寬自然換行、分隔線置中在姓名區塊與副標之間；`getBoundingClientRect()` 確認 320px 下中文名 `height` 等於單行 `line-height`（無換行）、390px 下標題與漢堡按鈕之間仍有清楚間距（`overlap: false`）；390px 下實際點擊漢堡按鈕確認選單仍正常展開/收合（`aria-expanded`/`is-open` 正確切換）；900px 截圖確認桌機版排版（橫排、完整 9 項導覽列）不受影響。測試用截圖與本機伺服器驗證後清除，不進版控。
+
+### 62. 手機版 header 標題不再固定，只保留漢堡選單固定在右上角
+
+**背景**：接續 #60/#61，使用者詢問「手機版深藍色標題區塊不固定在最上方」的優缺點：拿掉 fixed 可以立即拿回被 header 永久佔用的螢幕空間（尤其這輪標題改成中文疊英文＋副標可換多行後，header 可能長到 100px 以上），但代價是使用者失去隨時點開導覽選單跳轉的入口。討論後使用者選定折衷方案：標題區塊隨內容捲走，但漢堡選單按鈕維持固定在右上角，兩邊的好處都拿到。範圍僅限手機斷點（`below($bp-tablet)`），桌機版不受影響。
+
+**變更**：
+- `src/styles/layout/_header.scss`（`@include below($bp-tablet)` 區塊內）：
+  - `.site-header` 新增 `position: static;`，標題區塊回到一般文件流，隨內容捲動。
+  - `.site-nav` 的 `position: absolute` 改成 `position: fixed`（`top: 0.6rem; right: 2rem;` 數值不變，視覺位置不變），並補上 `z-index: 100`——header 不再 fixed 後，按鈕/選單不能再依賴 header 的疊放脈絡置頂，需要自己明確宣告。
+  - `.site-nav__toggle` 補上 `background-color: $color-deep-space-blue;` 與 `box-shadow: 0 2px 8px rgba(0,0,0,0.25);`：原本的半透明白色邊框是設計給深藍 header 背景用的，按鈕獨立浮在頁面內容（多半是淺色背景）上方後，改成實心深底＋陰影維持清楚可讀。
+- `src/scripts/nav-scroll.js` 的 `getHeaderHeight()`：從無條件回傳 `header.offsetHeight`，改成 `getComputedStyle(header).position === 'fixed' ? header.offsetHeight : 0`。這一處改動讓 `syncHeaderHeightVar()` 寫入的 `--header-height`（供 `.site-main` 的 `padding-top`、`.section`／`.portfolio__item` 的 `scroll-margin-top` 使用）與 `animateScrollTo` 的捲動落點計算，四處全部自動跟著正確：手機斷點都變成 0（header 不再蓋住內容，不需要任何補償），桌機斷點維持原本行為不變。
+
+**取捨說明**：
+- 讀 CSS 算出來的 `position` 而不是在 JS 裡另外判斷一次 `768px`：斷點的唯一權威來源維持在 `_variables.scss` 的 `$bp-tablet`，JS 不用重複硬寫一次數字、之後也不會出現兩邊斷點兜不起來的情況。
+- 接受一個極小的已知風險，不另外處理：漢堡按鈕固定在右上角後，理論上跳轉到某區塊時，若該區塊最上方剛好有靠右對齊的內容，有極小機率被按鈕短暫遮住一角（按鈕只有 36×32px，多數區塊標題都左側起始，實測 9 個區塊沒有踩到）；跟 #60 的「阮/梓/睿逐字換行」屬於同一類「已知但不擴大處理」的既有慣例。
+
+**驗證方式**：`npx sass` 編譯成功。Playwright 於 390px 測試：`getComputedStyle` 確認 `.site-header` 變成 `static`、`.site-nav` 變成 `fixed`、`--header-height` 為 `0px`、`.site-main` 的 `padding-top` 為 `0px`；截圖確認頁面頂端標題正常顯示，捲動到 1200px 後標題區塊已捲走、漢堡按鈕仍固定在右上角且背景清楚可讀（底下捲過履歷區塊的淺色內容）；點擊按鈕確認選單正常展開（`is-open` 正確切換），點擊「聯絡方式」連結確認正確捲動並精準停在 `#contact` 頂端（`getBoundingClientRect().top` 誤差僅 0.3px）、選單自動收合。切回 1440px 確認桌機版 `.site-header` 仍是 `fixed`、`.site-nav` 仍是 `relative`、`--header-height` 仍是 `64px`，完全不受影響。測試用截圖與本機伺服器驗證後清除，不進版控。

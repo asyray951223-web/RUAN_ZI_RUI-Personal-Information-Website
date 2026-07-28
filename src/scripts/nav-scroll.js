@@ -35,8 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // 手機斷點下 header 改回一般文件流（見 _header.scss 的 below($bp-tablet)），
+  // 不再蓋住視窗頂端一段高度，這裡的補償邏輯（下方 padding-top/scroll-margin-top/
+  // 捲動落點）就不該再扣掉 header 高度；讀 CSS 算出來的 position 而不是自己
+  // 另外判斷一次視窗寬度，跟斷點永遠對得上，不會出現兩邊斷點數字兜不起來的情況
   function getHeaderHeight() {
-    return header.offsetHeight;
+    return getComputedStyle(header).position === 'fixed' ? header.offsetHeight : 0;
   }
 
   // header 現在會因為導覽列換行而變高（手機寬度常見），把實際高度同步寫進
