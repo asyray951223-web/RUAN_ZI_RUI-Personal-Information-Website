@@ -15,3 +15,9 @@ $color-accent-on-dark: #ff6b47;  // 深色背景專用，同色系但拉高亮�
 $color-deep-space-blue: rgba(13, 50, 77);
 $color-golden-pollen:  #FFD046;
 $color-silver:  #A3A3A3;
+// 次要文字用的灰藍色：取代原本的 #9aa8b0（對白底對比度僅約 2.4:1，低於 WCAG AA
+// 一般文字要求的 4.5:1）。維持原色的色相/飽和度比例、等比調暗；比純白色暗的卡片
+// 背景（例如 #eef2f5）反而會讓對比度變差不是變好，所以是用全站最暗的實際使用背景
+// （about__avatar 佔位圓框 #eef2f5，實測 4.13:1 不合格）當基準調深，而不是只測純白：
+// 對 #fff 約 5.95:1、對 #eef2f5 約 5.29:1，兩邊都通過 WCAG AA
+$color-slate-gray: #5c656a;

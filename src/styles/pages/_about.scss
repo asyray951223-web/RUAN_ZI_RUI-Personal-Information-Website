@@ -64,7 +64,7 @@
   b {
     display: inline-block;
     width: 4.2em; // 固定寬度讓欄位名稱對齊，數值統一從同一個位置開始
-    color: #9aa8b0;
+    color: $color-slate-gray;
     font-weight: 700;
     font-size: 0.81rem;
     letter-spacing: 0.04em;
@@ -104,7 +104,7 @@
   border-radius: 50%;
   border: 2px solid $color-accent;
   background: #eef2f5;
-  color: #9aa8b0;
+  color: $color-slate-gray;
   // 這次全區塊 ×1.25 放大：0.75rem → 0.94rem
   // 本次全區塊 ×0.9 微幅縮小：0.94rem → 0.85rem
   font-size: 0.85rem;

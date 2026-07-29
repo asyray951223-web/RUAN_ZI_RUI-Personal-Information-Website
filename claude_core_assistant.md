@@ -1092,3 +1092,18 @@ src/styles/
 - 接受一個極小的已知風險，不另外處理：漢堡按鈕固定在右上角後，理論上跳轉到某區塊時，若該區塊最上方剛好有靠右對齊的內容，有極小機率被按鈕短暫遮住一角（按鈕只有 36×32px，多數區塊標題都左側起始，實測 9 個區塊沒有踩到）；跟 #60 的「阮/梓/睿逐字換行」屬於同一類「已知但不擴大處理」的既有慣例。
 
 **驗證方式**：`npx sass` 編譯成功。Playwright 於 390px 測試：`getComputedStyle` 確認 `.site-header` 變成 `static`、`.site-nav` 變成 `fixed`、`--header-height` 為 `0px`、`.site-main` 的 `padding-top` 為 `0px`；截圖確認頁面頂端標題正常顯示，捲動到 1200px 後標題區塊已捲走、漢堡按鈕仍固定在右上角且背景清楚可讀（底下捲過履歷區塊的淺色內容）；點擊按鈕確認選單正常展開（`is-open` 正確切換），點擊「聯絡方式」連結確認正確捲動並精準停在 `#contact` 頂端（`getBoundingClientRect().top` 誤差僅 0.3px）、選單自動收合。切回 1440px 確認桌機版 `.site-header` 仍是 `fixed`、`.site-nav` 仍是 `relative`、`--header-height` 仍是 `64px`，完全不受影響。測試用截圖與本機伺服器驗證後清除，不進版控。
+
+### 63. 修正兩個既有 YELLOW 待辦：篩選按鈕觸控高度、次要文字對比度不足
+
+**背景**：第 53 筆 adversarial-ux-test 找出兩個非阻擋性但值得修的問題，一直標記「另外排時間」：① `#portfolio` 篩選按鈕觸控高度約 35px，低於 WCAG 建議的 44px；② 全站 8 個檔案共用同一個灰色 `#9aa8b0` 當次要文字色（日期、備註、佔位提示等），對白底對比度僅約 2.4:1，低於 WCAG AA 一般文字要求的 4.5:1。這次使用者主動要求先處理，動手前先用 Grep 盤點所有使用位置，確認全部都是「文字色」用在淺色背景上（沒有跟 header 深藍底那種深色背景搭配的情況），排除了像 `$color-accent`/`$color-accent-on-dark`（第 16 筆）那種需要分深底/淺底兩個變數的複雜度，可以直接用單一新色統一取代。
+
+**變更**：
+- `src/styles/abstracts/_variables.scss`：新增 `$color-slate-gray: #5c656a;`，取代原本的 `#9aa8b0`。
+- `src/styles/pages/_about.scss`／`_activities.scss`／`_casestudy.scss`／`_contact.scss`／`_notes.scss`／`_portfolio.scss`／`_resume.scss`／`_skills.scss`：16 處 `color: #9aa8b0;` 全部改成 `color: $color-slate-gray;`。**刻意保留** `_skills.scss` 裡另外 1 處 `background: #9aa8b0;`（`.skills__tenure-fill` 年資長條的填色，是裝飾用背景色不是文字，本次只處理「文字對比度」，不在範圍內）。
+- `src/styles/pages/_portfolio.scss` 的 `.portfolio__filter-btn`：新增 `display: inline-flex; align-items: center; min-height: 2.75rem;`（44px），文字字級/圓角/顏色都不變，只把可點擊高度撐到符合觸控目標建議值。
+
+**取捨說明**：
+- 新色數值不是憑感覺挑的，是照 WCAG 公式反推：先抓全站所有淺色背景（`#fff`／`#eef2f5`／`#fbf1ee`／`#eef0f2`／`#e2e6e9`／頁面底色 `$color-parchment`）逐一算相對亮度，找出「文字實際會疊在上面」的最暗背景。第一次只用純白 `#fff` 當基準調出 `#6c767b`（對白 4.65:1），結果 Playwright 實測 `.about__avatar` 佔位圓框（背景 `#eef2f5`）只有 4.13:1 不合格——因為背景比純白暗，對比度是變差不是變好，我先前的假設反了。改用「全站實際會被文字疊上去的最暗背景」（`#eef2f5`）反推，才定出 `#5c656a`（對白 5.96:1、對 `#eef2f5` 5.29:1，都留有安全餘裕）。`#e2e6e9` 更暗，但盤點後確認只用在裝飾用的分隔線/圓點（`.resume__group` 底線、`.skills__level-dot`、`.casestudy__footer-dot`），從沒被拿來當文字容器背景，所以不用照它反推、不用犧牲更多可讀性去配合一個不會發生的情境。
+- 觸控目標用 `min-height` + `inline-flex` 置中，而不是加大 `padding` 硬湊高度：`padding` 湊法要手動試算行高才能踩準 44px 這個數字，換字型/縮放時容易再度跑掉；`min-height` 直接宣告下限、`flex` 置中負責把文字擺正，兩者分工更穩固。
+
+**驗證方式**：`npx sass` 編譯成功，`grep -c "9aa8b0"`／`grep -c "5c656a"` 確認只剩 1 處背景色殘留、16 處文字色都換成新變數。Playwright 用 WCAG 公式現場計算 11 個代表性選擇器（涵蓋 8 個檔案＋兩種背景情境）的實際渲染對比度，全部 `pass: true`（4.5:1 以上，多數落在 5.96:1，`.about__avatar` 最低但仍有 5.29:1）；`.portfolio__filter-btn` 6 個按鈕 `getBoundingClientRect().height` 全部確認為 44px；375px／1440px 截圖確認視覺無跑版、按鈕文字置中、`scrollWidth === innerWidth` 無橫向溢出。測試用截圖與本機伺服器驗證後清除，不進版控。

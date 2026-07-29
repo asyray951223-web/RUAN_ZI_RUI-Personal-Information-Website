@@ -42,6 +42,12 @@
 }
 
 .portfolio__filter-btn {
+  // min-height: 2.75rem(44px) 是 WCAG 建議的觸控目標下限；原本只靠 padding 撐高度
+  // 實測只有約 35px。用 inline-flex + align-items:center 讓文字在加高後的按鈕裡
+  // 垂直置中，不用去猜 line-height 換算，也不影響原本的字級/圓角視覺
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
   padding: 0.4rem 0.9rem;
   border: 1px solid #d8dee2;
   border-radius: 999px;
@@ -163,7 +169,7 @@
 .portfolio__date {
   margin: 0 0 0.7rem;
   font-size: 0.82rem;
-  color: #9aa8b0;
+  color: $color-slate-gray;
 }
 
 // 技術標籤：沿用 skills__name 的「# + Space Mono」chip 語彙，維持全站標籤類資訊統一視覺
@@ -243,7 +249,7 @@
 .portfolio__nda-note {
   margin: 0.2rem 0 0;
   font-size: 0.86rem;
-  color: #9aa8b0;
+  color: $color-slate-gray;
   font-style: italic;
 }
 
@@ -252,7 +258,7 @@
 .portfolio__empty {
   margin: 1rem 0 0;
   font-size: 0.95rem;
-  color: #9aa8b0;
+  color: $color-slate-gray;
   font-style: italic;
   text-align: center;
 }

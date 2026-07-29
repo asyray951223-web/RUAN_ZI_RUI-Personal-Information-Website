@@ -235,7 +235,7 @@
 .skills__evidence-empty {
   margin: 0.3rem 0 0;
   font-size: 0.9rem;
-  color: #9aa8b0;
+  color: $color-slate-gray;
 }
 
 // .skills__cert-meta：語言子群組專用，取代「圓點量表 + 年資長條」。
@@ -245,7 +245,7 @@
 .skills__cert-meta {
   margin: 0.2rem 0 0;
   font-size: 0.88rem;
-  color: #9aa8b0;
+  color: $color-slate-gray;
 
   b {
     color: $color-deep-space-blue;

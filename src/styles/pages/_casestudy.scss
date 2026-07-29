@@ -92,7 +92,7 @@
 
 .casestudy__num {
   font-family: 'Space Mono', monospace;
-  color: #9aa8b0;
+  color: $color-slate-gray;
   font-size: 0.9rem;
 }
 
@@ -118,7 +118,7 @@
   font-family: 'Space Mono', monospace;
   font-size: 0.78rem;
   font-weight: 700;
-  color: #9aa8b0;
+  color: $color-slate-gray;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin: 0 0 0.4rem;
@@ -146,7 +146,7 @@
   background: #eef2f5;
   border-radius: 8px;
   margin-bottom: 0.6rem;
-  color: #9aa8b0;
+  color: $color-slate-gray;
   font-size: 0.82rem;
   text-align: center;
 }
@@ -184,7 +184,7 @@
   padding-top: 1rem;
   border-top: 1px solid #eef0f2;
   font-size: 0.85rem;
-  color: #9aa8b0;
+  color: $color-slate-gray;
 }
 
 .casestudy__footer-row {
